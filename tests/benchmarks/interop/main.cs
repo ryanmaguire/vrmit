@@ -32,8 +32,8 @@
  *      precision. Using mono for C# and GCC for C, the benchmarks produce:   *
  *                                                                            *
  *          C-C:    0.005688 Seconds                                          *
- *          C-C#:   0.016809 Seconds                                          *
- *          C#-C#:  0.099781 Seconds                                          *
+ *          C-C#:   0.099781 Seconds                                          *
+ *          C#-C#:  0.016809 Seconds                                          *
  *                                                                            *
  *      So C-C > C#-C# > C-C#, with C-C being about three times faster than   *
  *      C#-C#, and C#-C# being about 6 times faster than C-C#.                *
