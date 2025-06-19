@@ -48,11 +48,11 @@ namespace vrmitMeshInteropBenchmark
         [DllImport("libmesh", EntryPoint = "mesh")]
         public static extern void
         CMesh(SurfaceFunction f,
-             double[] data,
-             double xmin, double xmax,
-             double ymin, double ymax,
-             ulong width,
-             ulong height);
+              double[] data,
+              double xmin, double xmax,
+              double ymin, double ymax,
+              ulong width,
+              ulong height);
 
         /*  Import the C surface function, f(x, y) = exp(-x^2 - y^2).         */
         [DllImport("libmesh", EntryPoint = "gaussian")]
