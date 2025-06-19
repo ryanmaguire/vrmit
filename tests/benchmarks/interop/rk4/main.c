@@ -32,9 +32,6 @@
 /*  Trig function sin and cos given here, used to parametrize the curve.      */
 #include <math.h>
 
-/*  clock_t typedef and the clock function, used for timing the calculation.  */
-#include <time.h>
-
 /*  Function prototypes and Vec2 and Vec4 typedefs given here.                */
 #include "rk4.h"
 
@@ -58,9 +55,6 @@ int main(void)
 
     /*  Variable for indexing over the points in the circle.                  */
     size_t n;
-
-    /*  Variables for computing the total amount of time needed.              */
-    clock_t t0, t1;
 
     /*  File pointer for writing the the data. The output can easily plotted  *
      *  using a short Python script.                                          */
@@ -106,14 +100,7 @@ int main(void)
         u[n].v.y = 1.0;
     }
 
-    /*  Start the clock and perform Runge-Kutta for each point in the curve.  */
-    t0 = clock();
-
     integrate(coulomb, u, n_elements, h, steps);
-
-    /*  Calculate how long the computation took.                              */
-    t1 = clock();
-    printf("C Time: %.6f\n", (double)(t1 - t0) / CLOCKS_PER_SEC);
 
     /*  Write the data to the file so we can plot it later.                   */
     for (n = 0; n < n_elements; ++n)

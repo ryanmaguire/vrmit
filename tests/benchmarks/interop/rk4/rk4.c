@@ -23,8 +23,14 @@
  *  Date:       June 19, 2025                                                 *
  ******************************************************************************/
 
+/*  printf found here, used for printing the computation time.                */
+#include <stdio.h>
+
 /*  sqrt found here, used for the Coulomb force.                              */
 #include <math.h>
+
+/*  clock_t typedef and the clock function, used for timing the calculation.  */
+#include <time.h>
 
 /*  Function prototypes, and typedefs for force, Vec2, and Vec4.              */
 #include "rk4.h"
@@ -213,8 +219,18 @@ integrate(force f, Vec4 * const u, size_t n_elements, double h, size_t steps)
     /*  Variable for indexing over the array.                                 */
     size_t n;
 
+    /*  Variables for computing the total amount of time needed.              */
+    clock_t t0, t1;
+
+    /*  Start the clock and perform Runge-Kutta for each point in the curve.  */
+    t0 = clock();
+
     /*  Loop through each point and apply RK4.                                */
     for (n = 0; n < n_elements; ++n)
         rk4(f, &u[n], h, steps);
+
+    /*  Calculate how long the computation took.                              */
+    t1 = clock();
+    printf("C Time: %.6f\n", (double)(t1 - t0) / CLOCKS_PER_SEC);
 }
 /*  End of integrate.                                                         */
