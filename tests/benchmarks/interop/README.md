@@ -1,4 +1,4 @@
-Unix-Link (GNU, Linux, FreeBSD, macOS, etc.):
+Unix-Like (GNU, Linux, FreeBSD, macOS, etc.):
 ```
 gcc -O3 -flto -shared -fPIC -o libmesh.so mesh.c
 mcs -optimize+ mesh.cs main.cs -out:main
@@ -14,11 +14,8 @@ main.exe
 
 Compilers used:
 
-Debian 12 GNU/Linux:
-GCC 12.2.0-14
-Mono C# compiler version 6.8.0.105
-
-
-Windows 10 Virtual Machine:
-MSVC 19.44.35208
-Visual C# Compiler version 4.14.0-3.25229.6
+| OS | Language | Version |
+| Debian 12 GNU/Linux | C  | GCC 12.2.0-14                     |
+| Debian 12 GNU/Linux | C# | Mono C# compiler version 6.8.0.105|
+| Windows 10 | C  | MSVC 19.44.35208                                   |
+| Windows 10 | C# | Roslyn Visual C# Compiler version 4.14.0-3.25229.6 |
