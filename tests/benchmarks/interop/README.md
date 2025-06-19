@@ -15,6 +15,7 @@ main.exe
 Compilers used:
 
 | OS | Language | Version |
+| -- | -------- | ------- |
 | Debian 12 GNU/Linux | C  | GCC 12.2.0-14                     |
 | Debian 12 GNU/Linux | C# | Mono C# compiler version 6.8.0.105|
 | Windows 10 | C  | MSVC 19.44.35208                                   |
