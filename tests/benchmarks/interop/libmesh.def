@@ -1,5 +1,5 @@
 LIBRARY "libmesh"
 
-EXPORT
+EXPORTS
     gaussian
     mesh
