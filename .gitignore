@@ -1,3 +1,15 @@
+# Adding some custom ignores here:
+*.so
+*.lib
+*.dll
+*.a
+*.o
+*.obj
+*.exe
+*.out
+
+# Everything after here is the default Unity gitignore.
+
 # This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
