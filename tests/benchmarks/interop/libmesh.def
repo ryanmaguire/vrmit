@@ -1,0 +1,5 @@
+LIBRARY "libmesh"
+
+EXPORT
+    gaussian
+    mesh
