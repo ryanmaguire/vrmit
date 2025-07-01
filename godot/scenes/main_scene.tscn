@@ -1,0 +1,144 @@
+[gd_scene load_steps=26 format=3 uid="uid://hggdxnibk8n8"]
+
+[ext_resource type="Script" uid="uid://dkxfnywelqqr7" path="res://addons/godot-xr-tools/xr/start_xr.gd" id="1_mngbo"]
+[ext_resource type="Material" uid="uid://csepeix2yvih" path="res://assets/materials/grass.tres" id="2_4w45t"]
+[ext_resource type="PackedScene" uid="uid://xqimcf20s2jp" path="res://addons/godot-xr-tools/hands/scenes/lowpoly/right_fullglove_low.tscn" id="3_r6p65"]
+[ext_resource type="Script" uid="uid://by1fhb86ppdmy" path="res://scenes/xr_origin_3d.gd" id="3_si52b"]
+[ext_resource type="PackedScene" uid="uid://b4ysuy43poobf" path="res://addons/godot-xr-tools/functions/function_pickup.tscn" id="4_si52b"]
+[ext_resource type="PackedScene" uid="uid://c2q5phg8w08o" path="res://addons/godot-xr-tools/functions/movement_jump.tscn" id="5_01n6w"]
+[ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="6_6u1mn"]
+[ext_resource type="PackedScene" uid="uid://b6bk2pj8vbj28" path="res://addons/godot-xr-tools/functions/movement_turn.tscn" id="7_bcnxi"]
+[ext_resource type="PackedScene" uid="uid://bq86r4yll8po" path="res://addons/godot-xr-tools/hands/scenes/lowpoly/left_fullglove_low.tscn" id="8_7nt27"]
+[ext_resource type="PackedScene" uid="uid://bl2nuu3qhlb5k" path="res://addons/godot-xr-tools/functions/movement_direct.tscn" id="9_k6f3i"]
+[ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="10_r6p65"]
+[ext_resource type="PackedScene" uid="uid://diyu06cw06syv" path="res://addons/godot-xr-tools/player/player_body.tscn" id="10_xdqt8"]
+[ext_resource type="PackedScene" uid="uid://puc0opj7m8gf" path="res://assets/wrist_menu.tscn" id="11_si52b"]
+[ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="12_58gk3"]
+[ext_resource type="PackedScene" uid="uid://b5cweef1g885f" path="res://assets/placeable_objects/cardozo_cube.tscn" id="12_mngbo"]
+[ext_resource type="PackedScene" uid="uid://dkyg6h2e64akh" path="res://assets/placeable_objects/bloom_cube.tscn" id="16_6u1mn"]
+[ext_resource type="PackedScene" uid="uid://by14wsvebj51v" path="res://assets/placeable_objects/hagood_cube.tscn" id="17_bcnxi"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vimvf"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_ghshe"]
+sky_material = SubResource("ProceduralSkyMaterial_vimvf")
+
+[sub_resource type="Environment" id="Environment_fv2he"]
+background_mode = 2
+sky = SubResource("Sky_ghshe")
+tonemap_mode = 2
+glow_intensity = 4.42
+
+[sub_resource type="BoxMesh" id="BoxMesh_5smuj"]
+size = Vector3(200, 0.1, 200)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y5ved"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kv3aw"]
+size = Vector3(200, 0.1, 200)
+
+[sub_resource type="BoxMesh" id="BoxMesh_o7u2a"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ijoax"]
+
+[node name="sandbox" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_fv2he")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.836514, -0.547671, 0.0173379, -0.301417, 0.486349, 0.82013, -0.457593, 0.680824, -0.571915, -2, 7.47086, 0)
+light_energy = 0.03
+shadow_enabled = true
+
+[node name="XRToolsStartXR" type="Node" parent="."]
+script = ExtResource("1_mngbo")
+metadata/_custom_type_script = "uid://dkxfnywelqqr7"
+
+[node name="Platform" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+material_override = ExtResource("2_4w45t")
+mesh = SubResource("BoxMesh_5smuj")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Platform"]
+physics_material_override = SubResource("PhysicsMaterial_y5ved")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Platform/StaticBody3D"]
+shape = SubResource("BoxShape3D_kv3aw")
+
+[node name="Table" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("BoxMesh_o7u2a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Table"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Table/StaticBody3D"]
+shape = SubResource("BoxShape3D_ijoax")
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5412, 1.79726, 0)
+script = ExtResource("3_si52b")
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+
+[node name="RightHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"right_hand"
+
+[node name="RightHand" parent="XROrigin3D/RightHand" instance=ExtResource("3_r6p65")]
+
+[node name="FunctionPickup" parent="XROrigin3D/RightHand" instance=ExtResource("4_si52b")]
+
+[node name="MovementJump" parent="XROrigin3D/RightHand" instance=ExtResource("5_01n6w")]
+jump_button_action = "ax_button"
+
+[node name="FunctionPointer" parent="XROrigin3D/RightHand" instance=ExtResource("6_6u1mn")]
+laser_length = 1
+collision_mask = 5242885
+
+[node name="MovementTurn" parent="XROrigin3D/RightHand" instance=ExtResource("7_bcnxi")]
+
+[node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.484235, 0, 0)
+tracker = &"left_hand"
+
+[node name="LeftHand" parent="XROrigin3D/LeftHand" instance=ExtResource("8_7nt27")]
+
+[node name="MovementDirect" parent="XROrigin3D/LeftHand" instance=ExtResource("9_k6f3i")]
+strafe = true
+
+[node name="FunctionPickup" parent="XROrigin3D/LeftHand" instance=ExtResource("4_si52b")]
+
+[node name="WristMenu_2D_in_2D" parent="XROrigin3D/LeftHand" instance=ExtResource("10_r6p65")]
+transform = Transform3D(0.00323173, -0.0671354, 0.0740432, -0.00362321, 0.0739545, 0.0672131, -0.0998821, -0.00485489, -4.24418e-05, -0.0132215, -0.0237857, 0.32744)
+collision_layer = 5242880
+scene = ExtResource("11_si52b")
+unshaded = true
+scene_properties_keys = PackedStringArray()
+
+[node name="PlayerBody" parent="XROrigin3D" instance=ExtResource("10_xdqt8")]
+ground_control = 2
+
+[node name="StartXR" parent="." instance=ExtResource("12_58gk3")]
+
+[node name="cube" parent="." instance=ExtResource("12_mngbo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.289755, 1.62619, -0.203647)
+
+[node name="cube2" parent="." instance=ExtResource("12_mngbo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.255265, 1.58525, -0.21216)
+
+[node name="cube3" parent="." instance=ExtResource("12_mngbo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0493084, 1.51842, -0.407294)
+
+[node name="pickable_cube" parent="." instance=ExtResource("12_mngbo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.100577, 1.58814, 0.158205)
+
+[node name="pickable_cube2" parent="." instance=ExtResource("12_mngbo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.69127, 0.0824074, 0.159917)
+
+[node name="pickable_cube3" parent="." instance=ExtResource("16_6u1mn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.7697, 0.0824074, -13.828)
+
+[node name="pickable_cube4" parent="." instance=ExtResource("17_bcnxi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4209, 0.0824074, -4.48937)
