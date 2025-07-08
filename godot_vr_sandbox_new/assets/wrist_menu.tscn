@@ -1,0 +1,263 @@
+[gd_scene load_steps=6 format=3 uid="uid://puc0opj7m8gf"]
+
+[ext_resource type="Script" uid="uid://ckx1caufkk4mv" path="res://assets/wrist_menu.gd" id="1_37jbf"]
+[ext_resource type="Script" uid="uid://tw5r1ycvfm31" path="res://assets/control.gd" id="1_lbtg7"]
+[ext_resource type="PackedScene" uid="uid://b5cweef1g885f" path="res://assets/placeable_objects/cardozo_cube.tscn" id="2_y5o61"]
+[ext_resource type="PackedScene" uid="uid://dkyg6h2e64akh" path="res://assets/placeable_objects/bloom_cube.tscn" id="3_37jbf"]
+[ext_resource type="PackedScene" uid="uid://by14wsvebj51v" path="res://assets/placeable_objects/hagood_cube.tscn" id="4_jtioi"]
+
+[node name="Wrist Menu" type="Node2D"]
+script = ExtResource("1_37jbf")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 300.0
+offset_bottom = 200.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_lbtg7")
+cardozo_cube_scene = ExtResource("2_y5o61")
+bloom_cube_scene = ExtResource("3_37jbf")
+hagood_cube_scene = ExtResource("4_jtioi")
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_right = 300.0
+offset_bottom = 200.0
+color = Color(0, 1, 1, 0.415686)
+
+[node name="TabContainer" type="TabContainer" parent="Control/ColorRect"]
+layout_mode = 0
+offset_right = 300.0
+offset_bottom = 170.0
+tab_alignment = 1
+current_tab = 0
+all_tabs_in_front = true
+
+[node name="XZ Plot" type="GridContainer" parent="Control/ColorRect/TabContainer"]
+layout_mode = 2
+size_flags_stretch_ratio = 0.0
+columns = 8
+metadata/_tab_index = 0
+
+[node name="x" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "x"
+
+[node name="y" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "y
+"
+
+[node name="z" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "z
+"
+
+[node name="7" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "7
+"
+
+[node name="8" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "8
+"
+
+[node name="9" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "9
+"
+
+[node name="divide" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "/
+"
+
+[node name="back" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(50, 30)
+layout_mode = 2
+text = "<--- X
+"
+
+[node name="(" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "("
+
+[node name=")" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = ")"
+
+[node name="power" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "^
+"
+
+[node name="4" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "4"
+
+[node name="5" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "5
+"
+
+[node name="6" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "6
+"
+
+[node name="times" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "*
+"
+
+[node name="left" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "<-
+"
+
+[node name="sin" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "sin
+"
+
+[node name="cos" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "cos
+"
+
+[node name="tan" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "tan"
+
+[node name="1" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "1
+"
+
+[node name="2" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "2
+"
+
+[node name="3" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "3
+"
+
+[node name="minus" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "-"
+
+[node name="right" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "->"
+
+[node name="ln" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "ln
+"
+
+[node name="pi" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "pi
+"
+
+[node name="e" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "e
+"
+
+[node name="0" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "0
+"
+
+[node name="dot" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = ".
+"
+
+[node name="equals" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "=
+"
+
+[node name="plus" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "+
+"
+
+[node name="enter" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "enter
+"
+
+[node name="Implicit Surface" type="VBoxContainer" parent="Control/ColorRect/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Button" type="Button" parent="Control/ColorRect/TabContainer/Implicit Surface"]
+layout_mode = 2
+text = "Place"
+
+[node name="Cube" type="VBoxContainer" parent="Control/ColorRect/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="Cardozo" type="Button" parent="Control/ColorRect/TabContainer/Cube"]
+layout_mode = 2
+text = "Cardozo"
+
+[node name="Bloom" type="Button" parent="Control/ColorRect/TabContainer/Cube"]
+layout_mode = 2
+text = "Bloom"
+
+[node name="Hagood" type="Button" parent="Control/ColorRect/TabContainer/Cube"]
+layout_mode = 2
+text = "Hagood"
+
+[node name="DebugLabel" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 170.0
+offset_right = 52.0
+offset_bottom = 193.0
+text = "debug label :)"
+
+[connection signal="pressed" from="Control/ColorRect/TabContainer/Cube/Cardozo" to="Control" method="_on_button_pressed"]
