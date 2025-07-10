@@ -4,12 +4,6 @@ extends Node3D
 var expression
 var exp_string = ""
 
-@export var x_press = false
-@export var z_press = false
-@export var plus_press = false
-@export var times_press = false
-@export var clear_press = false
-
 
 
 # Called when the node enters the scene tree for the first time.
@@ -17,24 +11,14 @@ func _ready() -> void:
 	pass # Replace with function body.
 
 func _process(delta: float) -> void:
-	if x_press:
-		add_string("x")
-		x_press = false
-	if z_press:
-		add_string("z")
-		z_press = false
-	if plus_press:
-		add_string("+")
-		plus_press = false
-	if times_press:
-		add_string("*")
-		times_press = false
-	if clear_press:
-		clear()
-		clear_press = false
+	pass
 
 func initialize():
 	expression = Expression.new()
+	parse()
+
+func set_string(s: String):
+	exp_string = s
 	parse()
 	
 func add_string(s: String):

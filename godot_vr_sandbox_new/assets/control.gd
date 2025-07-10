@@ -56,7 +56,8 @@ func _ready():
 	print("reaty")
 	debug_label.text = "debug label :)"
 	
-	surface = get_node("sandbox/Surface")
+	surface = get_parent().get_parent().get_node("Surface")
+	print(surface != null)
 	
 	btn_x.pressed.connect(_on_text_pressed.bind("x"))
 	btn_y.pressed.connect(_on_text_pressed.bind("y"))
@@ -117,7 +118,7 @@ func _on_right_pressed():
 	
 func _on_enter_pressed():
 	surface.hide()
-	surface.update()
+	surface.gen()
 	debug_label.text = surface.function.exp_string
 	
 func _on_cardozo_pressed():

@@ -25,6 +25,10 @@ GlobalSignals="*res://GlobalSignals.gd"
 
 enabled=PackedStringArray("res://addons/godot-xr-tools/plugin.cfg")
 
+[filesystem]
+
+import/blender/enabled=false
+
 [layer_names]
 
 3d_physics/layer_1="Static World"
