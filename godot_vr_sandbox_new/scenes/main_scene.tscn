@@ -199,3 +199,7 @@ x_min = -10
 x_max = 10
 z_min = -10
 z_max = 10
+expression_implicit = null
+start_left = null
+start_right = null
+find_root = null

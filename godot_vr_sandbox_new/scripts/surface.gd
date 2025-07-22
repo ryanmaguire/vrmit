@@ -7,10 +7,18 @@ extends MeshInstance3D
 @export var z_min: int
 @export var z_max: int
 @export var z_init: int
+@export var g_init: Vector2
 @export var runge_kutta_steps: int
 @export var expression_z: String
 @export var expression_dzdx: String
 @export var expression_dzdy: String
+@export var expression_d2zdx2: String
+@export var expression_d2zdy2: String
+@export var expression_d2zdxdy: String
+@export var expression_implicit: String
+@export var start_left: float
+@export var start_right: float
+@export var find_root = false
 @export var resolution: int
 @export var render_type: int # 0 for nothing, 1 for checkers, 2 for height, 3 for gradient, 4 for curvature, 5 for levels
 @export var checkers_size: int
@@ -33,6 +41,14 @@ func _ready() -> void:
 		function.set_string(expression_dzdx, 1)
 	if expression_dzdy != "":
 		function.set_string(expression_dzdy, -1)
+	if expression_d2zdx2 != "":
+		function.set_string(expression_d2zdx2, 2)
+	if expression_d2zdy2 != "":
+		function.set_string(expression_d2zdy2, -2)
+	if expression_d2zdxdy != "":
+		function.set_string(expression_d2zdxdy, 22)
+	if expression_implicit != "":
+		function.set_string(expression_implicit, 3)
 	#gen_mesh(x_min, x_max, z_min, z_max, resolution)
 	
 func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
@@ -55,6 +71,7 @@ func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 			var X: float = float(x) / res
 			var Z: float = float(z) / res
 			var H: float
+			var G: Vector2
 			if degree == 0:	
 				H = function.calculate(X, Z, 0, 0)
 			elif degree == 1:
@@ -62,23 +79,49 @@ func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 				if x == xmin * res and z == zmin * res:
 					H = z_init
 				elif x == xmin * res:
-					H = runge_kutta(-1, X, float(z - 1) / res, heights[coordsToIndexReal(Vector2(x, z - 1), true)], runge_kutta_steps, res)
+					H = runge_kutta(-1, X, float(z - 1) / res, heights[coordsToIndexReal(Vector2(x, z - 1), true)], 0, runge_kutta_steps, res).x
 				elif z == zmin * res:
-					H = runge_kutta(1, float(x - 1) / res, Z, heights[coordsToIndexReal(Vector2(x - 1, z), true)], runge_kutta_steps, res)
+					H = runge_kutta(1, float(x - 1) / res, Z, heights[coordsToIndexReal(Vector2(x - 1, z), true)], 0, runge_kutta_steps, res).x
 				else:
-					H = (runge_kutta(1, float(x - 1) / res, Z, heights[coordsToIndexReal(Vector2(x - 1, z), true)], runge_kutta_steps, res) + runge_kutta(-1, X, float(z - 1) / res, heights[coordsToIndexReal(Vector2(x, z - 1), true)], runge_kutta_steps, res)) / 2
+					H = (runge_kutta(1, float(x - 1) / res, Z, heights[coordsToIndexReal(Vector2(x - 1, z), true)], 0, runge_kutta_steps, res).x + runge_kutta(-1, X, float(z - 1) / res, heights[coordsToIndexReal(Vector2(x, z - 1), true)], 0, runge_kutta_steps, res).x) / 2
+			elif degree == 2:
+				#print(heights.size())
+				if x == xmin * res and z == zmin * res:
+					H = z_init
+					G = g_init
+				elif x == xmin * res:
+					var temp = runge_kutta(-2, X, float(z - 1) / res, heights[coordsToIndexReal(Vector2(x, z - 1), true)], gradients[coordsToIndexReal(Vector2(x, z - 1), true)].y, runge_kutta_steps, res)
+					H = temp.x
+					G = Vector2(runge_kutta_cross(-2, X, float(z - 1) / res, heights[coordsToIndexReal(Vector2(x, z - 1), true)], gradients[coordsToIndexReal(Vector2(x, z - 1), true)].x, gradients[coordsToIndexReal(Vector2(x, z - 1), true)].y, runge_kutta_steps, res).x, temp.y)
+				elif z == zmin * res:
+					var temp = runge_kutta(2, float(x - 1) / res, Z, heights[coordsToIndexReal(Vector2(x - 1, z), true)], gradients[coordsToIndexReal(Vector2(x - 1, z), true)].x, runge_kutta_steps, res)
+					H = temp.x
+					G = Vector2(temp.y, runge_kutta_cross(2, float(x - 1) / res, Z, heights[coordsToIndexReal(Vector2(x - 1, z), true)], gradients[coordsToIndexReal(Vector2(x - 1, z), true)].x, gradients[coordsToIndexReal(Vector2(x - 1, z), true)].y, runge_kutta_steps, res).y)
+				else:
+					var tempX = runge_kutta(2, float(x - 1) / res, Z, heights[coordsToIndexReal(Vector2(x - 1, z), true)], gradients[coordsToIndexReal(Vector2(x - 1, z), true)].x, runge_kutta_steps, res)
+					var tempZ = runge_kutta(-2, X, float(z - 1) / res, heights[coordsToIndexReal(Vector2(x, z - 1), true)], gradients[coordsToIndexReal(Vector2(x, z - 1), true)].y, runge_kutta_steps, res)
+					H = (tempX.x + tempZ.x) / 2
+					var tempG = Vector2(runge_kutta_cross(-2, X, float(z - 1) / res, heights[coordsToIndexReal(Vector2(x, z - 1), true)], gradients[coordsToIndexReal(Vector2(x, z - 1), true)].x, gradients[coordsToIndexReal(Vector2(x, z - 1), true)].y, runge_kutta_steps, res).x, runge_kutta_cross(2, float(x - 1) / res, Z, heights[coordsToIndexReal(Vector2(x - 1, z), true)], gradients[coordsToIndexReal(Vector2(x - 1, z), true)].x, gradients[coordsToIndexReal(Vector2(x - 1, z), true)].y, runge_kutta_steps, res).y)
+					G = Vector2((tempX.y + tempG.x) / 2, (tempZ.y + tempG.y) / 2)
+				gradients.append(G)
+				if (G.length() < g_min):
+					g_min = G.length()
+				if (G.length() > g_max):
+					g_max = G.length()
+			elif degree == 3:
+				H = function.bisection(X, Z, 0, 1000)
 			vertices.append(Vector3(X, H, Z))
 			if (x < xmax * res and z < zmax * res or true):
 				heights.append(H);
-			if (H < h_min):
+			if H < h_min:
 				h_min = H
-			if (H > h_max):
+			if H > h_max:
 				h_max = H
 				
 	var offset = (zmax - zmin) * res + 1
 
-	for x in range(0, (xmax - xmin) * res):
-		for z in range(0, (zmax - zmin) * res):
+	for x in range(0, (xmax - xmin) * res + 1):
+		for z in range(0, (zmax - zmin) * res + 1):
 			var h = heights[coordsToIndex(Vector2(x, z), true)]
 			var hxl = 0
 			var hxr = 0
@@ -92,8 +135,12 @@ func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 				hzl = heights[coordsToIndex(Vector2(x, z - 1), true)]
 			if (z < (zmax - zmin) * res):
 				hzr = heights[coordsToIndex(Vector2(x, z + 1), true)]
-			var G = 	Vector2((hxr-h)*res if x == 0 else (h-hxl)*res if x == (x_max - x_min) * res else (hxr-hxl)*res/2, (hzr-h)*res if z == 0 else (h-hzl)*res if z == (z_max - z_min) * res else (hzr-hzl)*res/2)
-			if (x < (xmax - xmin) * res and z < (zmax - zmin) * res or true):
+			var G : Vector2
+			if degree == 0 && degree == 3:
+				G = Vector2((hxr-h)*res if x == 0 else (h-hxl)*res if x == (x_max - x_min) * res else (hxr-hxl)*res/2, (hzr-h)*res if z == 0 else (h-hzl)*res if z == (z_max - z_min) * res else (hzr-hzl)*res/2)	
+			elif degree == 1:
+				G = Vector2(function.calculate(float(x) / res + xmin, float(z) / res + zmin, heights[coordsToIndex(Vector2(x, z), true)], 1), function.calculate(float(x) / res + xmin, float(z) / res + zmin, heights[coordsToIndex(Vector2(x, z), true)], -1))
+			if degree != 2:
 				gradients.append(G)
 				if (G.length() < g_min):
 					g_min = G.length()
@@ -251,27 +298,11 @@ func indexToCoordsReal(index: int, isBounds: bool) -> Vector2:
 func indexToIndex(index: int, isBounds: bool) -> int:
 	return coordsToIndex(indexToCoords(index, isBounds), !isBounds)
 	
-func runge_kutta(type: int, x_0: float, y_0: float, z_0: float, n: int, res: int) -> float:
-	"""
-	Solves an ordinary differential equation using the fourth-order Runge-Kutta method.
-
-	Args:
-		f: A function representing the differential equation dy/dx = f(x, y).
-		x_0: The initial x value.
-		y_0: The initial y value.
-		h: The step size.
-		x_end: The final x value.
-
-	Returns:
-		A tuple containing two lists: x_values and y_values, representing the x and y coordinates
-		at each step.
-	"""
-
-	#x_values = [x_0]
-	#y_values = [y_0]
+func runge_kutta(type: int, x_0: float, y_0: float, z_0: float, g_0: float, n: int, res: int) -> Vector2:
 	var X: float = x_0
 	var Y: float = y_0
 	var Z: float = z_0
+	var G: float = g_0
 
 	if type == 1:
 		for i in n:
@@ -282,9 +313,6 @@ func runge_kutta(type: int, x_0: float, y_0: float, z_0: float, n: int, res: int
 
 			Z = Z + (k1 + 2*k2 + 2*k3 + k4) / 6 / res / n
 			X = X + 1.0 / res / n
-
-			#x_values.append(x)
-			#y_values.append(y)
 	if type == -1:
 		for i in n:
 			var k1: float = function.calculate(X, Y, Z, type)
@@ -294,8 +322,84 @@ func runge_kutta(type: int, x_0: float, y_0: float, z_0: float, n: int, res: int
 
 			Z = Z + (k1 + 2*k2 + 2*k3 + k4) / 6 / res / n
 			Y = Y + 1.0 / res / n
+	if type == 2:
+		for i in n:
+			var k1: float = G
+			var kk1: float = function.calculate(X, Y, Z, type)
+			var k2: float = G + kk1 * 0.5 / res / n
+			var kk2: float = function.calculate(X + 0.5 / res / n, Y, Z + k1 * 0.5 / res / n, type)
+			var k3: float = G + kk2 * 0.5 / res / n
+			var kk3: float = function.calculate(X + 0.5 / res / n, Y, Z + k2 * 0.5 / res / n, type)
+			var k4: float = G + kk3 / res / n
+			var kk4: float = function.calculate(X + 1.0 / res / n, Y, Z + k3 / res / n, type)
 
-	return Z
+			G = G + (kk1 + 2*kk2 + 2*kk3 + kk4) / 6 / res / n
+			Z = Z + (k1 + 2*k2 + 2*k3 + k4) / 6 / res / n
+			X = X + 1.0 / res / n
+	if type == -2:
+		for i in n:
+			var k1: float = G
+			var kk1: float = function.calculate(X, Y, Z, type)
+			var k2: float = G + kk1 * 0.5 / res / n
+			var kk2: float = function.calculate(X, Y + 0.5 / res / n, Z + k1 * 0.5 / res / n, type)
+			var k3: float = G + kk2 * 0.5 / res / n
+			var kk3: float = function.calculate(X, Y + 0.5 / res / n, Z + k2 * 0.5 / res / n, type)
+			var k4: float = G + kk3 / res / n
+			var kk4: float = function.calculate(X, Y + 1.0 / res / n, Z + k3 / res / n, type)
+
+			G = G + (kk1 + 2*kk2 + 2*kk3 + kk4) / 6 / res / n
+			Z = Z + (k1 + 2*k2 + 2*k3 + k4) / 6 / res / n
+			Y = Y + 1.0 / res / n
+
+	return Vector2(Z, G)
+	
+func runge_kutta_cross(type: int, x_0: float, y_0: float, z_0: float, gx_0: float, gy_0: float, n: int, res: int) -> Vector2:
+	var X: float = x_0
+	var Y: float = y_0
+	var Z: float = z_0
+	var Gx: float = gx_0
+	var Gy: float = gy_0
+
+	if type == 2:
+		for i in n:
+			var k1: float = Gx
+			var kk1: float = function.calculate(X, Y, Z, type)
+			var kx1: float = function.calculate(X, Y, Z, 22)
+			var k2: float = Gx + kk1 * 0.5 / res / n
+			var kk2: float = function.calculate(X + 0.5 / res / n, Y, Z + k1 * 0.5 / res / n, type)
+			var kx2: float = function.calculate(X + 0.5 / res / n, Y, Z + k1 * 0.5 / res / n, 22)
+			var k3: float = Gx + kk2 * 0.5 / res / n
+			var kk3: float = function.calculate(X + 0.5 / res / n, Y, Z + k2 * 0.5 / res / n, type)
+			var kx3: float = function.calculate(X + 0.5 / res / n, Y, Z + k2 * 0.5 / res / n, 22)
+			var k4: float = Gx + kk3 / res / n
+			var kk4: float = function.calculate(X + 1.0 / res / n, Y, Z + k3 / res / n, type)
+			var kx4: float = function.calculate(X + 1.0 / res / n, Y, Z + k3 / res / n, 22)
+
+			Gx = Gx + (kk1 + 2*kk2 + 2*kk3 + kk4) / 6 / res / n
+			Gy = Gy + (kx1 + 2*kx2 + 2*kx3 + kx4) / 6 / res / n
+			Z = Z + (k1 + 2*k2 + 2*k3 + k4) / 6 / res / n
+			X = X + 1.0 / res / n
+	if type == -2:
+		for i in n:
+			var k1: float = Gy
+			var kk1: float = function.calculate(X, Y, Z, type)
+			var kx1: float = function.calculate(X, Y, Z, 22)
+			var k2: float = Gy + kk1 * 0.5 / res / n
+			var kk2: float = function.calculate(X, Y + 0.5 / res / n, Z + k1 * 0.5 / res / n, type)
+			var kx2: float = function.calculate(X, Y + 0.5 / res / n, Z + k1 * 0.5 / res / n, 22)
+			var k3: float = Gy + kk2 * 0.5 / res / n
+			var kk3: float = function.calculate(X, Y + 0.5 / res / n, Z + k2 * 0.5 / res / n, type)
+			var kx3: float = function.calculate(X, Y + 0.5 / res / n, Z + k2 * 0.5 / res / n, 22)
+			var k4: float = Gy + kk3 / res / n
+			var kk4: float = function.calculate(X, Y + 1.0 / res / n, Z + k3 / res / n, type)
+			var kx4: float = function.calculate(X, Y + 1.0 / res / n, Z + k3 / res / n, 22)
+
+			Gx = Gx + (kx1 + 2*kx2 + 2*kx3 + kx4) / 6 / res / n
+			Gy = Gy + (kk1 + 2*kk2 + 2*kk3 + kk4) / 6 / res / n
+			Z = Z + (kk1 + 2*kk2 + 2*kk3 + kk4) / 6 / res / n
+			Y = Y + 1.0 / res / n
+
+	return Vector2(Gx, Gy)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -303,3 +407,6 @@ func _process(delta: float) -> void:
 	if update:
 		gen()
 		update = false
+	if find_root:
+		print(function.bisection(1.5, 1.5, start_left, start_right))
+		find_root = false
