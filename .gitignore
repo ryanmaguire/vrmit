@@ -1,3 +1,6 @@
+#Godot files
+**/android/
+
 # Adding some custom ignores here:
 *.so
 *.lib

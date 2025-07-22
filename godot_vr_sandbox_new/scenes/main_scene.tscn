@@ -12,10 +12,10 @@
 [ext_resource type="PackedScene" uid="uid://bl2nuu3qhlb5k" path="res://addons/godot-xr-tools/functions/movement_direct.tscn" id="9_k6f3i"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="10_r6p65"]
 [ext_resource type="PackedScene" uid="uid://diyu06cw06syv" path="res://addons/godot-xr-tools/player/player_body.tscn" id="10_xdqt8"]
-[ext_resource type="PackedScene" uid="uid://puc0opj7m8gf" path="res://assets/wrist_menu.tscn" id="11_si52b"]
+[ext_resource type="PackedScene" uid="uid://puc0opj7m8gf" path="res://assets/wrist_ui/wrist_menu.tscn" id="11_si52b"]
 [ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="12_58gk3"]
 [ext_resource type="PackedScene" uid="uid://b5cweef1g885f" path="res://assets/placeable_objects/cardozo_cube.tscn" id="12_mngbo"]
-[ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/surface.tscn" id="15_bcnxi"]
+[ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/widgets/plotter/surface.tscn" id="15_bcnxi"]
 [ext_resource type="PackedScene" uid="uid://dkyg6h2e64akh" path="res://assets/placeable_objects/bloom_cube.tscn" id="16_6u1mn"]
 [ext_resource type="PackedScene" uid="uid://by14wsvebj51v" path="res://assets/placeable_objects/hagood_cube.tscn" id="17_bcnxi"]
 
@@ -199,7 +199,4 @@ x_min = -10
 x_max = 10
 z_min = -10
 z_max = 10
-expression_implicit = null
-start_left = null
-start_right = null
 find_root = null
