@@ -10,6 +10,10 @@ anchors_preset = 0
 offset_right = 300.0
 offset_bottom = 200.0
 script = ExtResource("1_ovr12")
+cardozo_cube_scene = null
+bloom_cube_scene = null
+hagood_cube_scene = null
+chen_cube_scene = null
 
 [node name="ColorRect" type="ColorRect" parent="Control"]
 layout_mode = 0
@@ -71,6 +75,10 @@ text = "Bloom"
 [node name="Hagood" type="Button" parent="Control/ColorRect/TabContainer/Cube"]
 layout_mode = 2
 text = "Hagood"
+
+[node name="Chen" type="Button" parent="Control/ColorRect/TabContainer/Cube"]
+layout_mode = 2
+text = "Chen"
 
 [node name="DebugLabel" type="Label" parent="Control/ColorRect"]
 layout_mode = 0

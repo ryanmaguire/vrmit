@@ -1,0 +1,25 @@
+[gd_scene load_steps=6 format=3 uid="uid://bnp8b0ouwwfdq"]
+
+[ext_resource type="PackedScene" uid="uid://c8l60rnugru40" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_maus4"]
+[ext_resource type="Texture2D" uid="uid://dplxi5evwmx5a" path="res://bloom.png" id="2_maus4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kpoof"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6jp3v"]
+shading_mode = 0
+albedo_texture = ExtResource("2_maus4")
+
+[sub_resource type="BoxMesh" id="BoxMesh_xon3n"]
+material = SubResource("StandardMaterial3D_6jp3v")
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Block" instance=ExtResource("1_maus4")]
+freeze = true
+ranged_grab_method = 0
+
+[node name="CollisionShape3D" parent="." index="0"]
+shape = SubResource("BoxShape3D_kpoof")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
+mesh = SubResource("BoxMesh_xon3n")
