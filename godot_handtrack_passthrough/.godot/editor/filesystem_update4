@@ -1,0 +1,4 @@
+res://assets/parametric_plot/surface_para.tscn
+res://openxr_action_map.tres
+res://assets/xy_plot/surface_material.tres
+res://assets/xy_plot/function.gd

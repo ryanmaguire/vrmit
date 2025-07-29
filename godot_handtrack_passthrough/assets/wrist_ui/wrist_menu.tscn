@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cya6tfp28xtgc"]
 
-[ext_resource type="Script" uid="uid://dqo6jco5m7l8b" path="res://assets/wrist_ui/control.gd" id="1_7e63e"]
-[ext_resource type="PackedScene" uid="uid://btj75wakd5er5" path="res://assets/xy_plot/surface.tscn" id="2_gg2i3"]
+[ext_resource type="Script" uid="uid://cuf6mvj27gtet" path="res://assets/wrist_ui/control.gd" id="1_7e63e"]
+[ext_resource type="PackedScene" uid="uid://btj75wakd5er5" path="res://assets/xy_plot/old/surfaceOld.tscn" id="2_gg2i3"]
 
 [node name="Wrist Menu" type="Node2D"]
 
