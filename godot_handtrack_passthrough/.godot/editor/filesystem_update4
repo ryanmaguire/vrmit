@@ -1,4 +1,9 @@
-res://assets/parametric_plot/surface_para.tscn
+res://addons/godot-xr-tools/player/player_body.tscn
+res://main.tscn
 res://openxr_action_map.tres
 res://assets/xy_plot/surface_material.tres
-res://assets/xy_plot/function.gd
+res://addons/hand_pose_detector/poses/fist.tres
+res://addons/hand_pose_detector/poses/point.tres
+res://addons/godot-xr-tools/misc/hold_button_gaze_pointer_visualshader.tres
+res://bone_attachment_3d.gd
+res://right_tracked_hand.gd
