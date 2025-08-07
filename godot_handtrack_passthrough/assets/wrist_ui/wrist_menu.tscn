@@ -6,12 +6,11 @@
 [node name="Wrist Menu" type="Node2D"]
 
 [node name="Control" type="Control" parent="."]
+custom_minimum_size = Vector2(300, 200)
 layout_mode = 3
 anchors_preset = 0
 offset_right = 300.0
 offset_bottom = 200.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
 script = ExtResource("1_7e63e")
 surface = ExtResource("2_gg2i3")
 
@@ -26,10 +25,11 @@ layout_mode = 0
 offset_right = 300.0
 offset_bottom = 170.0
 tab_alignment = 1
-current_tab = 0
+current_tab = 2
 all_tabs_in_front = true
 
 [node name="XZ Plot" type="GridContainer" parent="Control/ColorRect/TabContainer"]
+visible = false
 layout_mode = 2
 size_flags_stretch_ratio = 0.0
 columns = 8
@@ -230,7 +230,6 @@ layout_mode = 2
 text = "Place"
 
 [node name="Cube" type="VBoxContainer" parent="Control/ColorRect/TabContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
@@ -250,6 +249,28 @@ text = "Hagood"
 layout_mode = 2
 text = "Chen
 "
+
+[node name="Maguire" type="Button" parent="Control/ColorRect/TabContainer/Cube"]
+layout_mode = 2
+text = "Maguire
+"
+
+[node name="Settings" type="VBoxContainer" parent="Control/ColorRect/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="Set Origin" type="Button" parent="Control/ColorRect/TabContainer/Settings"]
+layout_mode = 2
+text = "Set Origin"
+
+[node name="Scan Surroundings" type="Button" parent="Control/ColorRect/TabContainer/Settings"]
+layout_mode = 2
+text = "Scan Surroundings"
+
+[node name="Toggle Mesh Visibility" type="Button" parent="Control/ColorRect/TabContainer/Settings"]
+layout_mode = 2
+text = "Toggle Mesh Visibility"
 
 [node name="DebugLabel" type="Label" parent="Control"]
 layout_mode = 0

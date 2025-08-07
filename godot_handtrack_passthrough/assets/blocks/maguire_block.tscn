@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://rddiapoit2ev"]
+
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_d3tvu"]
+[ext_resource type="Texture2D" uid="uid://v8ewjek4x61b" path="res://assets/blocks/maguire.jpeg" id="2_d3tvu"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kpoof"]
+size = Vector3(0.1, 0.1, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s254a"]
+shading_mode = 0
+albedo_texture = ExtResource("2_d3tvu")
+
+[sub_resource type="BoxMesh" id="BoxMesh_xon3n"]
+material = SubResource("StandardMaterial3D_s254a")
+size = Vector3(0.1, 0.1, 0.1)
+
+[node name="Block" instance=ExtResource("1_d3tvu")]
+ranged_grab_method = 0
+
+[node name="CollisionShape3D" parent="." index="0"]
+shape = SubResource("BoxShape3D_kpoof")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
+mesh = SubResource("BoxMesh_xon3n")

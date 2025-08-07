@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://100a1doosak6"]
+
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_xv5y6"]
+[ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/xy_plot/surface.tscn" id="2_6illx"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="PickableObject" parent="." instance=ExtResource("1_xv5y6")]
+gravity_scale = 0.0
+ranged_grab_method = 2
+
+[node name="Surface" parent="PickableObject" instance=ExtResource("2_6illx")]

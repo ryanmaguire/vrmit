@@ -13,6 +13,7 @@ extends BoneAttachment3D
 @export var bloom_cube_scene   : PackedScene
 @export var hagood_cube_scene  : PackedScene
 @export var chen_cube_scene    : PackedScene
+@export var maguire_cube_scene : PackedScene
 
 var head : Camera3D
 var menu_node : Node3D = null
@@ -80,10 +81,8 @@ func show_menu():
 		basis = basis.rotated(basis.x, -tilt_angle)
 		menu_node.global_transform.basis = basis
 
-		# ✅ Set the scale
 		menu_node.scale = Vector3.ONE * menu_scale
 
-		# ✅ Reparent to world
 		if menu_node.get_parent() != get_tree().current_scene:
 			get_tree().current_scene.add_child(menu_node)
 			menu_node.owner = get_tree().current_scene
@@ -101,6 +100,7 @@ func _on_block_button_pressed(person):
 		"bloom":   scene = bloom_cube_scene
 		"chen":    scene = chen_cube_scene
 		"hagood":  scene = hagood_cube_scene
+		"maguire": scene = maguire_cube_scene
 		_: null
 
 	if scene:

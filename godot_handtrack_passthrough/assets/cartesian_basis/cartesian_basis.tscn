@@ -1,0 +1,110 @@
+[gd_scene load_steps=15 format=3 uid="uid://b3up8t6f46ehq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8s6um"]
+shading_mode = 0
+albedo_color = Color(0.287201, 0.771098, 0.303044, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_kni8w"]
+material = SubResource("StandardMaterial3D_8s6um")
+top_radius = 0.1
+bottom_radius = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_883o0"]
+shading_mode = 0
+albedo_color = Color(0.287201, 0.771098, 0.303044, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_k3xvn"]
+material = SubResource("StandardMaterial3D_883o0")
+top_radius = 0.0
+bottom_radius = 0.3
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_es58n"]
+shading_mode = 0
+albedo_color = Color(0.801181, 0.283617, 0.261131, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_epcbr"]
+material = SubResource("StandardMaterial3D_es58n")
+top_radius = 0.1
+bottom_radius = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ad6c6"]
+shading_mode = 0
+albedo_color = Color(0.801181, 0.283617, 0.261131, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_felof"]
+material = SubResource("StandardMaterial3D_ad6c6")
+top_radius = 0.0
+bottom_radius = 0.3
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p441v"]
+shading_mode = 0
+albedo_color = Color(7.70092e-07, 0.502353, 0.625369, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_inj6g"]
+material = SubResource("StandardMaterial3D_p441v")
+top_radius = 0.1
+bottom_radius = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a0inb"]
+shading_mode = 0
+albedo_color = Color(7.70092e-07, 0.502353, 0.625369, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_28mu8"]
+material = SubResource("StandardMaterial3D_a0inb")
+top_radius = 0.0
+bottom_radius = 0.3
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b7j8x"]
+shading_mode = 0
+
+[sub_resource type="SphereMesh" id="SphereMesh_ql7cf"]
+material = SubResource("StandardMaterial3D_b7j8x")
+radius = 0.74
+height = 1.48
+
+[node name="CartesianBasis" type="Node3D"]
+
+[node name="Y Arrow" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Y Arrow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CylinderMesh_kni8w")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Y Arrow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.03558, 0)
+mesh = SubResource("CylinderMesh_k3xvn")
+skeleton = NodePath("../..")
+
+[node name="X Arrow" type="Node3D" parent="."]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="X Arrow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CylinderMesh_epcbr")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="X Arrow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.03558, 0)
+mesh = SubResource("CylinderMesh_felof")
+skeleton = NodePath("../..")
+
+[node name="Z Arrow" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Z Arrow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CylinderMesh_inj6g")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Z Arrow"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.03558, 0)
+mesh = SubResource("CylinderMesh_28mu8")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+mesh = SubResource("SphereMesh_ql7cf")

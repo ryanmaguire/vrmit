@@ -51,12 +51,19 @@ extends Control
 @onready var bloom_button = $ColorRect/TabContainer/Cube/Bloom
 @onready var hagood_button = $ColorRect/TabContainer/Cube/Hagood
 @onready var chen_button = $ColorRect/TabContainer/Cube/Chen
+@onready var maguire_button = $ColorRect/TabContainer/Cube/Maguire
+
 @onready var debug_label = $DebugLabel
+
+@onready var set_origin_btn = $"ColorRect/TabContainer/Settings/Set Origin"
+@onready var scan_surroundings_btn = $"ColorRect/TabContainer/Settings/Scan Surroundings"
+@onready var toggle_mesh_visibility_btn = $"ColorRect/TabContainer/Settings/Toggle Mesh Visibility"
 
 @onready var expr = ""
 
 
 func _ready():
+	GlobalSignals.connect("debug_message", _on_debug_message)
 	print("ready")
 	debug_label.text = "debug label :)"
 	
@@ -103,10 +110,12 @@ func _ready():
 	bloom_button.pressed.connect(_on_bloom_pressed)
 	hagood_button.pressed.connect(_on_hagood_pressed)
 	chen_button.pressed.connect(_on_chen_pressed)
+	maguire_button.pressed.connect(_on_maguire_pressed)
 	
-	await get_tree().create_timer(1.0).timeout
-	print("Sending Signal")
-	GlobalSignals.expression_entered.emit("x*z")
+	set_origin_btn.pressed.connect(_on_set_origin_btn_pressed)
+	scan_surroundings_btn.pressed.connect(_on_scan_surroundings_btn_pressed)
+	toggle_mesh_visibility_btn.pressed.connect(_on_toggle_mesh_visibility_btn_pressed)
+
 
 func _process(delta: float) -> void:
 	pass
@@ -147,3 +156,18 @@ func _on_chen_pressed():
 	debug_label.text = "Chen selected"
 	GlobalSignals.block_button_pressed.emit("chen")
 	
+func _on_maguire_pressed():
+	debug_label.text = "Maguire selected"
+	GlobalSignals.block_button_pressed.emit("maguire")
+	
+func _on_debug_message(message):
+	debug_label.text = message
+
+func _on_set_origin_btn_pressed():
+	GlobalSignals.set_origin.emit()
+	
+func _on_scan_surroundings_btn_pressed():
+	GlobalSignals.scan_surroundings.emit()
+	
+func _on_toggle_mesh_visibility_btn_pressed():
+	GlobalSignals.toggle_mesh_visibility.emit()

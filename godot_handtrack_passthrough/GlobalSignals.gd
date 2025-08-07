@@ -9,3 +9,11 @@ signal block_button_pressed(person: String)
 signal expression_entered(expr: String)
 
 signal regen_mesh()
+
+signal debug_message(expr: String)
+
+signal scan_surroundings()
+
+signal set_origin()
+
+signal toggle_mesh_visibility()

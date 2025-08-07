@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://dl36n1hl5wcxp"]
+[gd_scene load_steps=42 format=3 uid="uid://dl36n1hl5wcxp"]
 
 [ext_resource type="PackedScene" uid="uid://cjcehqrfoxav3" path="res://addons/hand_pose_detector/hands/LeftHandHumanoid.gltf" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://bdnj2i0rm2ast" path="res://left_tracked_hand.gd" id="1_074og"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://dmhafs8uchvqg" path="res://addons/hand_pose_detector/hand_pose_action.gd" id="7_2cqfq"]
 [ext_resource type="PackedScene" uid="uid://dyf5dcsxy8ejj" path="res://assets/blocks/chen_block.tscn" id="7_d13ii"]
 [ext_resource type="Resource" uid="uid://ceofxcl7q122" path="res://addons/hand_pose_detector/poses/point.tres" id="7_yaehf"]
+[ext_resource type="PackedScene" uid="uid://rddiapoit2ev" path="res://assets/blocks/maguire_block.tscn" id="8_kq58d"]
 [ext_resource type="Script" uid="uid://dyo7xnd4k32ea" path="res://addons/hand_pose_detector/hand_pose_action_map.gd" id="8_yaehf"]
 [ext_resource type="PackedScene" uid="uid://cya6tfp28xtgc" path="res://assets/wrist_ui/wrist_menu.tscn" id="9_d13ii"]
 [ext_resource type="PackedScene" uid="uid://b4ysuy43poobf" path="res://addons/godot-xr-tools/functions/function_pickup.tscn" id="10_074og"]
@@ -23,7 +24,12 @@
 [ext_resource type="Script" uid="uid://61biqm32ug3o" path="res://right_tracked_hand.gd" id="14_cegan"]
 [ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="18_1u8w0"]
 [ext_resource type="PackedScene" uid="uid://do1wif8rpqtwj" path="res://addons/godot-xr-tools/functions/function_gaze_pointer.tscn" id="21_ryguw"]
+[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/cartesian_basis/cartesian_basis.tscn" id="21_xuqvo"]
+[ext_resource type="PackedScene" uid="uid://cwghhmrpcd70f" path="res://scenes/SpatialEntity.tscn" id="22_kq58d"]
 [ext_resource type="PackedScene" uid="uid://btj75wakd5er5" path="res://assets/xy_plot/old/surfaceOld.tscn" id="23_d13ii"]
+[ext_resource type="Script" uid="uid://bnxsl3wkwg686" path="res://scene_capture_controller.gd" id="23_qsp4k"]
+[ext_resource type="PackedScene" uid="uid://bohk3wdw1hnew" path="res://assets/xy_plot/old/pickable_old+function.tscn" id="25_0odxb"]
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="25_lswn8"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -120,6 +126,7 @@ cardozo_cube_scene = ExtResource("12_dg77c")
 bloom_cube_scene = ExtResource("5_getpj")
 hagood_cube_scene = ExtResource("6_ryguw")
 chen_cube_scene = ExtResource("7_d13ii")
+maguire_cube_scene = ExtResource("8_kq58d")
 
 [node name="HandPoseDetector" parent="XROrigin3D/LeftTrackedHand" instance=ExtResource("2_efxa6")]
 hand_pose_set = SubResource("Resource_82xsv")
@@ -166,14 +173,38 @@ grab_distance = 0.1
 
 [node name="FunctionGazePointer" parent="XROrigin3D/RightVirtualController" instance=ExtResource("21_ryguw")]
 
+[node name="XRAnchor3D" type="XRAnchor3D" parent="XROrigin3D"]
+tracker = &"head"
+
+[node name="CartesianBasis" parent="XROrigin3D/XRAnchor3D" instance=ExtResource("21_xuqvo")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="OpenXRFbSceneManager" type="OpenXRFbSceneManager" parent="XROrigin3D"]
+default_scene = ExtResource("22_kq58d")
+auto_create = false
+
+[node name="SceneCaptureController" type="Node" parent="XROrigin3D"]
+script = ExtResource("23_qsp4k")
+
 [node name="StartXR" parent="." instance=ExtResource("11_cegan")]
 enable_passthrough = true
 
 [node name="Blocks" type="Node3D" parent="."]
 
-[node name="xy_plot" parent="." instance=ExtResource("23_d13ii")]
+[node name="Viewport2Din3D" parent="." instance=ExtResource("10_vivmo")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.0445819, 0.00270867, 0.141707)
+scene = ExtResource("9_d13ii")
+unshaded = true
+
+[node name="PickableOld+function" parent="." instance=ExtResource("25_0odxb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16483, 4.91706, -0.709426)
+
+[node name="PickableObject" parent="." instance=ExtResource("25_lswn8")]
+gravity_scale = 0.0
+
+[node name="xy_plot" parent="PickableObject" instance=ExtResource("23_d13ii")]
 transform = Transform3D(-0.1, 8.74228e-09, 0, -8.74228e-09, -0.1, 0, 0, 0, 0.1, -0.652106, -0.198067, -1.81282)
-skeleton = NodePath("../XROrigin3D/RightVirtualController")
+skeleton = NodePath("../../XROrigin3D/RightVirtualController")
 x_min = -5
 x_max = 5
 z_min = -5
@@ -181,11 +212,6 @@ z_max = 5
 resolution = 20
 render_type = 1
 
-[node name="Viewport2Din3D" parent="." instance=ExtResource("10_vivmo")]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.0445819, 0.00270867, 0.141707)
-scene = ExtResource("9_d13ii")
-unshaded = true
-
 [editable path="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2"]
 [editable path="XROrigin3D/RightTrackedHand/RightHandHumanoid2"]
-[editable path="xy_plot"]
+[editable path="PickableObject/xy_plot"]

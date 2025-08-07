@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://cbnh2oam0x1oo"]
 
-[ext_resource type="PackedScene" uid="uid://c8l60rnugru40" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_1avnm"]
+[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_1avnm"]
 [ext_resource type="Texture2D" uid="uid://damwee6ehgd2y" path="res://assets/blocks/hagood.jpeg" id="2_1avnm"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kpoof"]
@@ -14,14 +14,11 @@ material = SubResource("StandardMaterial3D_ambe7")
 size = Vector3(0.1, 0.1, 0.1)
 
 [node name="Block" instance=ExtResource("1_1avnm")]
-freeze = true
+mass = 0.1
 ranged_grab_method = 0
 
 [node name="CollisionShape3D" parent="." index="0"]
 shape = SubResource("BoxShape3D_kpoof")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
-mesh = SubResource("BoxMesh_xon3n")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" index="0"]
 mesh = SubResource("BoxMesh_xon3n")
