@@ -4,6 +4,7 @@ extends Node3D
 var expression
 var exp_string = ""
 var degree = 0
+var hasSlider = false
 
 var expression_x
 var exp_string_x = ""
@@ -53,8 +54,11 @@ func clear():
 	
 func filter_string(original: String):
 	original = original.replace(" ", "")
+	if original == "":
+		original = "0"
 	original = original.replace("pi", "PI")
 	original = original.replace("e", "MATH_CONSTANT_E")
+	original = original.replace("^", "**")
 	var i = 0;
 	while i < original.length() - 1 and i < 100:
 		var c1 = original[i]
@@ -69,9 +73,23 @@ func filter_string(original: String):
 	return original
 	
 func parse():
+	hasSlider = false
 	expression = Expression.new()
 	var parse_string = exp_string
 	parse_string = filter_string(parse_string)
+	for j in parse_string.length():
+		if parse_string.length() == 1:
+			if parse_string == "a":
+				hasSlider = true
+		elif j == 0:
+			if parse_string[j] == "a" and !(parse_string[j + 1] >= "A" and parse_string[j + 1] <= "z"):
+				hasSlider = true
+		elif j == parse_string.length() - 1:
+			if parse_string[j] == "a" and !(parse_string[j - 1] >= "A" and parse_string[j - 1] <= "z"):
+				hasSlider = true
+		else:
+			if parse_string[j] == "a" and !(parse_string[j + 1] >= "A" and parse_string[j + 1] <= "z") and !(parse_string[j - 1] >= "A" and parse_string[j - 1] <= "z"):
+				hasSlider = true
 	if parse_string.substr(0, 4) == "z''=":
 		degree = 2
 		parse_string = parse_string.substr(4)
@@ -92,12 +110,12 @@ func parse():
 			parse_string = string_left + "-(" + string_right + ")"
 	else:
 		degree = 0
-	var error = expression.parse(parse_string, ["x", "y", "z"])
+	var error = expression.parse(parse_string, ["x", "y", "z", "a"])
 	if error == OK:
 		print("Parsed expression: " + parse_string)
 	else:
 		print("Failed to parse expression: " + parse_string)
-		expression.parse("", ["x", "y", "z"])
+		expression.parse("", ["x", "y", "z", "a"])
 
 	expression_x = Expression.new()
 	exp_string_x = filter_string(exp_string_x)
@@ -149,13 +167,38 @@ func parse():
 	print("Parsed expression d2z/dx2: " + exp_string_d2zdx2)
 	print("Parsed expression d2z/dy2: " + exp_string_d2zdy2)
 	print("Parsed expression implicit: " + string_left + "-(" + string_right + ")")'''
-	
+
 func calculate(x: float, y: float, z: float, type: int) -> float:
 	'''var expression = Expression.new()
 	#expression.parse("20 + 10*2 - 5/2.0")
 	expression.parse("(x*x+z*z) / 100")
 	var result = expression.execute()'''
-	return expression.execute([x, y, z])
+	var result = expression.execute([x, y, z, 0])
+	if is_nan(result) or is_inf(result):
+		var left = expression.execute([x - 0.001, y - 0.001, z - 0.001, 0 - 0.001])
+		var right = expression.execute([x + 0.001, y + 0.001, z + 0.001, 0 + 0.001])
+		if abs(left - right) > 1:
+			return NAN
+		else:
+			return (left + right) / 2
+	else:
+		return result
+	
+func calculate_a(x: float, y: float, z: float, a: float, type: int) -> float:
+	'''var expression = Expression.new()
+	#expression.parse("20 + 10*2 - 5/2.0")
+	expression.parse("(x*x+z*z) / 100")
+	var result = expression.execute()'''
+	var result = expression.execute([x, y, z, a])
+	if is_nan(result) or is_inf(result):
+		var left = expression.execute([x - 0.001, y - 0.001, z - 0.001, a - 0.001])
+		var right = expression.execute([x + 0.001, y + 0.001, z + 0.001, a + 0.001])
+		if abs(left - right) > 1:
+			return NAN
+		else:
+			return (left + right) / 2
+	else:
+		return result
 	
 func calculate_para(s: float, t: float, x: float, type: int) -> float:
 	'''var expression = Expression.new()
@@ -173,11 +216,11 @@ func calculate_para(s: float, t: float, x: float, type: int) -> float:
 # Bisection method implementation
 func bisection(x: float, y: float, a: float, b: float, tolerance : float = 0.0001) -> float:
 	var midpoint : float
-	while sign(calculate(x, y, a, 3)) == sign(calculate(x, y, b, 3)):
+	'''while sign(calculate(x, y, a, 3)) == sign(calculate(x, y, b, 3)):
 		if abs(calculate(x, y, a, 3)) > abs(calculate(x, y, b, 3)):
 			b = 2 * b - a
 		else:
-			a = 2 * a - b
+			a = 2 * a - b'''
 	while (b - a) / 2 > tolerance:
 		midpoint = (a + b) / 2
 		if sign(calculate(x, y, midpoint, 3)) == sign(calculate(x, y, a, 3)):
@@ -186,6 +229,41 @@ func bisection(x: float, y: float, a: float, b: float, tolerance : float = 0.000
 			b = midpoint
 
 	return (a + b) / 2
+	
+	
+'''def bisection(f, a, b, tol=1e-7, max_iter=1000):
+	if f(a) * f(b) >= 0:
+		return None  # No sign change, no guarantee of root
+	for _ in range(max_iter):
+		c = (a + b) / 2
+		fc = f(c)
+		if abs(fc) < tol or (b - a) / 2 < tol:
+			return c
+		if f(a) * fc < 0:
+			b = c
+		else:
+			a = c
+	return None  # Did not converge'''
+
+func find_all_roots(x: float, y: float, start=-100, end=100, steps=10, tol : float = 0.01):
+	var roots = PackedFloat32Array()
+	for i in range(steps):
+		var a = start + i * (end - start) / steps
+		var b = start + (i + 1) * (end - start) / steps
+		if calculate(x, y, a, 3) * calculate(x, y, b, 3) <= 0:
+			var root = bisection(x, y, a, b, tol)
+			if true:#root is not None:
+				# Avoid duplicate roots (within tolerance)
+				if len(roots) == 0 or root != roots[len(roots) - 1]:
+					roots.append(root)
+				'''if all(abs(root - r) > tol for r in roots):
+					roots.append(root)'''
+	return roots
+
+'''func solve_equation_all_roots(equation_str, start=-100, end=100):
+	expr = parse_equation(equation_str)
+	f = f_factory(expr)
+	return find_all_roots(f, start, end)'''
 
 func getDegree() -> int:
 	'''if exp_string.contains("z"):
@@ -203,3 +281,4 @@ func getDegree() -> int:
 	elif exp_string_implicit != "":
 		return 3'''
 	return degree
+	
