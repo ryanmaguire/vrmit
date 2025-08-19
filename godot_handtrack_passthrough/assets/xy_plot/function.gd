@@ -119,30 +119,69 @@ func parse():
 
 	expression_x = Expression.new()
 	exp_string_x = filter_string(exp_string_x)
-	error = expression_x.parse(exp_string_x, ["s", "t", "x"])
+	for j in exp_string_x.length():
+		if exp_string_x.length() == 1:
+			if exp_string_x == "a":
+				hasSlider = true
+		elif j == 0:
+			if exp_string_x[j] == "a" and !(exp_string_x[j + 1] >= "A" and exp_string_x[j + 1] <= "z"):
+				hasSlider = true
+		elif j == exp_string_x.length() - 1:
+			if exp_string_x[j] == "a" and !(exp_string_x[j - 1] >= "A" and exp_string_x[j - 1] <= "z"):
+				hasSlider = true
+		else:
+			if exp_string_x[j] == "a" and !(exp_string_x[j + 1] >= "A" and exp_string_x[j + 1] <= "z") and !(exp_string_x[j - 1] >= "A" and exp_string_x[j - 1] <= "z"):
+				hasSlider = true
+	error = expression_x.parse(exp_string_x, ["s", "t", "x", "a"])
 	if error == OK:
 		print("Parsed expression x: " + exp_string_x)
 	else:
 		print("Failed to parse expression: " + exp_string_x)
-		expression_x.parse("", ["s", "t", "x"])
+		expression_x.parse("", ["s", "t", "x", "a"])
 	
 	expression_y = Expression.new()
 	exp_string_y = filter_string(exp_string_y)
-	error = expression_y.parse(exp_string_y, ["s", "t", "y"])
+	for j in exp_string_y.length():
+		if exp_string_y.length() == 1:
+			if exp_string_y == "a":
+				hasSlider = true
+		elif j == 0:
+			if exp_string_y[j] == "a" and !(exp_string_y[j + 1] >= "A" and exp_string_y[j + 1] <= "z"):
+				hasSlider = true
+		elif j == exp_string_y.length() - 1:
+			if exp_string_y[j] == "a" and !(exp_string_y[j - 1] >= "A" and exp_string_y[j - 1] <= "z"):
+				hasSlider = true
+		else:
+			if exp_string_y[j] == "a" and !(exp_string_y[j + 1] >= "A" and exp_string_y[j + 1] <= "z") and !(exp_string_y[j - 1] >= "A" and exp_string_y[j - 1] <= "z"):
+				hasSlider = true
+	error = expression_y.parse(exp_string_y, ["s", "t", "y", "a"])
 	if error == OK:
 		print("Parsed expression y: " + exp_string_y)
 	else:
 		print("Failed to parse expression: " + exp_string_y)
-		expression_y.parse("", ["s", "t", "y"])
+		expression_y.parse("", ["s", "t", "y", "a"])
 	
 	expression_z = Expression.new()
 	exp_string_z = filter_string(exp_string_z)
-	error = expression_z.parse(exp_string_z, ["s", "t", "z"])
+	for j in exp_string_z.length():
+		if exp_string_z.length() == 1:
+			if exp_string_z == "a":
+				hasSlider = true
+		elif j == 0:
+			if exp_string_z[j] == "a" and !(exp_string_z[j + 1] >= "A" and exp_string_z[j + 1] <= "z"):
+				hasSlider = true
+		elif j == exp_string_z.length() - 1:
+			if exp_string_z[j] == "a" and !(exp_string_z[j - 1] >= "A" and exp_string_z[j - 1] <= "z"):
+				hasSlider = true
+		else:
+			if exp_string_z[j] == "a" and !(exp_string_z[j + 1] >= "A" and exp_string_z[j + 1] <= "z") and !(exp_string_z[j - 1] >= "A" and exp_string_z[j - 1] <= "z"):
+				hasSlider = true
+	error = expression_z.parse(exp_string_z, ["s", "t", "z", "a"])
 	if error == OK:
 		print("Parsed expression z: " + exp_string_z)
 	else:
 		print("Failed to parse expression: " + exp_string_z)
-		expression_z.parse("", ["s", "t", "z"])
+		expression_z.parse("", ["s", "t", "z", "a"])
 
 
 	'''expression_z = Expression.new()
@@ -205,16 +244,55 @@ func calculate_para(s: float, t: float, x: float, type: int) -> float:
 	#expression.parse("20 + 10*2 - 5/2.0")
 	expression.parse("(x*x+z*z) / 100")
 	var result = expression.execute()'''
+	var exp : Expression
 	if type == 1:
-		return expression_x.execute([s, t, x])
-	if type == 2:
-		return expression_y.execute([s, t, x])
-	if type == 3:
-		return expression_z.execute([s, t, x])
-	return 0
+		exp = expression_x
+	elif type == 2:
+		exp = expression_y
+	elif type == 3:
+		exp = expression_z
+	else:
+		return 0;
+	
+	var result = exp.execute([s, t, x, 0])
+	if is_nan(result) or is_inf(result):
+		var left = exp.execute([s - 0.001, t - 0.001, x - 0.001, 0 - 0.001])
+		var right = exp.execute([s + 0.001, t + 0.001, x + 0.001, 0 + 0.001])
+		if abs(left - right) > 1:
+			return NAN
+		else:
+			return (left + right) / 2
+	else:
+		return result
+	
+func calculate_para_a(s: float, t: float, x: float, a: float, type: int) -> float:
+	'''var expression = Expression.new()
+	#expression.parse("20 + 10*2 - 5/2.0")
+	expression.parse("(x*x+z*z) / 100")
+	var result = expression.execute()'''
+	var exp : Expression
+	if type == 1:
+		exp = expression_x
+	elif type == 2:
+		exp = expression_y
+	elif type == 3:
+		exp = expression_z
+	else:
+		return -1;
+	
+	var result = exp.execute([s, t, x, a])
+	if is_nan(result) or is_inf(result):
+		var left = exp.execute([s - 0.001, t - 0.001, x - 0.001, a - 0.001])
+		var right = exp.execute([s + 0.001, t + 0.001, x + 0.001, a + 0.001])
+		if abs(left - right) > 1:
+			return NAN
+		else:
+			return (left + right) / 2
+	else:
+		return result
 
 # Bisection method implementation
-func bisection(x: float, y: float, a: float, b: float, tolerance : float = 0.0001) -> float:
+func bisection(x: float, y: float, A: float, a: float, b: float, tolerance : float = 0.0001) -> float:
 	var midpoint : float
 	'''while sign(calculate(x, y, a, 3)) == sign(calculate(x, y, b, 3)):
 		if abs(calculate(x, y, a, 3)) > abs(calculate(x, y, b, 3)):
@@ -223,35 +301,20 @@ func bisection(x: float, y: float, a: float, b: float, tolerance : float = 0.000
 			a = 2 * a - b'''
 	while (b - a) / 2 > tolerance:
 		midpoint = (a + b) / 2
-		if sign(calculate(x, y, midpoint, 3)) == sign(calculate(x, y, a, 3)):
+		if sign(calculate_a(x, y, midpoint, A, 3)) == sign(calculate_a(x, y, a, A, 3)):
 			a = midpoint
 		else:
 			b = midpoint
 
 	return (a + b) / 2
-	
-	
-'''def bisection(f, a, b, tol=1e-7, max_iter=1000):
-	if f(a) * f(b) >= 0:
-		return None  # No sign change, no guarantee of root
-	for _ in range(max_iter):
-		c = (a + b) / 2
-		fc = f(c)
-		if abs(fc) < tol or (b - a) / 2 < tol:
-			return c
-		if f(a) * fc < 0:
-			b = c
-		else:
-			a = c
-	return None  # Did not converge'''
 
-func find_all_roots(x: float, y: float, start=-100, end=100, steps=10, tol : float = 0.01):
+func find_all_roots(x: float, y: float, A: float, start=-100, end=100, steps=10, tol : float = 0.01):
 	var roots = PackedFloat32Array()
 	for i in range(steps):
 		var a = start + i * (end - start) / steps
 		var b = start + (i + 1) * (end - start) / steps
-		if calculate(x, y, a, 3) * calculate(x, y, b, 3) <= 0:
-			var root = bisection(x, y, a, b, tol)
+		if calculate_a(x, y, a, A, 3) * calculate_a(x, y, b, A, 3) <= 0:
+			var root = bisection(x, y, A, a, b, tol)
 			if true:#root is not None:
 				# Avoid duplicate roots (within tolerance)
 				if len(roots) == 0 or root != roots[len(roots) - 1]:
@@ -259,11 +322,6 @@ func find_all_roots(x: float, y: float, start=-100, end=100, steps=10, tol : flo
 				'''if all(abs(root - r) > tol for r in roots):
 					roots.append(root)'''
 	return roots
-
-'''func solve_equation_all_roots(equation_str, start=-100, end=100):
-	expr = parse_equation(equation_str)
-	f = f_factory(expr)
-	return find_all_roots(f, start, end)'''
 
 func getDegree() -> int:
 	'''if exp_string.contains("z"):

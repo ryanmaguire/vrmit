@@ -4,6 +4,9 @@ extends MeshInstance3D
 @export var create = false
 @export var update = false
 @export var parse = false
+const a_min : int = -10
+const a_max : int = 10
+@export_range(a_min, a_max, 0.01) var a: float = 0
 @export var s_min: int
 @export var s_max: int
 @export var t_min: int
@@ -23,10 +26,12 @@ extends MeshInstance3D
 @export var levels_size: float
 @export var arrows_spacing: int
 
+@export var surface_material: Material
 @export var arrow : PackedScene
 
 var function
 var degree: int
+var last_a: float
 
 var vertices : PackedVector3Array
 var indices : PackedInt32Array
@@ -40,6 +45,8 @@ var curvatures : PackedVector2Array
 var c_min: float
 var c_max: float
 
+var vertices_slider = []
+
 var mdt : MeshDataTool
 
 
@@ -47,17 +54,36 @@ var mdt : MeshDataTool
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#arrow = load("res://assets/arrow.tscn")
-	GlobalSignals.connect("expression_entered", _on_expression_entered)
+	GlobalSignals.connect("expression_entered_x", _on_expression_entered_x)
+	GlobalSignals.connect("expression_entered_y", _on_expression_entered_y)
+	GlobalSignals.connect("expression_entered_z", _on_expression_entered_z)
 	function = $Function
 	function.initialize()
 	#gen_mesh(s_min, s_max, t_min, t_max, resolution)
 	
-func _on_expression_entered(expr: String):
+func _on_expression_entered_x(expr: String):
 	#print("New Expression: " + expr)
 	#expression_z = expr
-	function.set_string(expression_x, 1)
-	function.set_string(expression_y, 2)
-	function.set_string(expression_z, 3)
+	if expr != "":
+		function.set_string(expr, 0)
+	else:
+		function.set_string(expression_x, 1)
+		
+func _on_expression_entered_y(expr: String):
+	#print("New Expression: " + expr)
+	#expression_z = expr
+	if expr != "":
+		function.set_string(expr, 0)
+	else:
+		function.set_string(expression_y, 2)
+		
+func _on_expression_entered_z(expr: String):
+	#print("New Expression: " + expr)
+	#expression_z = expr
+	if expr != "":
+		function.set_string(expr, 0)
+	else:
+		function.set_string(expression_z, 3)
 
 func initialize_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	'''vertices = PackedVector3Array([])
@@ -87,21 +113,36 @@ func calculate_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	gradients = PackedVector2Array([])
 	curvatures = PackedVector2Array([])
 	
+	vertices_slider = []
+	
 	var S: float
 	var T: float
 	var X: float
+	var Xs: PackedFloat32Array
 	var Y: float
+	var Ys: PackedFloat32Array
 	var Z: float
+	var Zs: PackedFloat32Array
 	
+	if function.hasSlider:
+		for A in range(a_min, a_max + 1):
+			vertices_slider.append(PackedVector3Array())
 	for s in range(smin * res, smax * res + 1):
 		for t in range(tmin * res, tmax * res + 1):
 			S = float(s) / res
 			T = float(t) / res
 			var G: Vector2
 			if degree == 0:
-				X = function.calculate_para(S, T, 0, 1)
-				Y = function.calculate_para(S, T, 0, 2)
-				Z = function.calculate_para(S, T, 0, 3)
+				if function.hasSlider:
+					X = function.calculate_para_a(S, T, 0, a, 1)
+					Y = function.calculate_para_a(S, T, 0, a, 2)
+					Z = function.calculate_para_a(S, T, 0, a, 3)
+					for A in range(a_min, a_max + 1):
+						vertices_slider[sliderToIndex(A)].append(Vector3(function.calculate_para_a(S, T, 0, A, 1), function.calculate_para_a(S, T, 0, A, 3), function.calculate_para_a(S, T, 0, A, 2)));
+				else:
+					X = function.calculate_para(S, T, 0, 1)
+					Y = function.calculate_para(S, T, 0, 2)
+					Z = function.calculate_para(S, T, 0, 3)
 			elif degree == 1:
 				#print(heights.size())
 				if s == smin * res and t == tmin * res:
@@ -211,6 +252,7 @@ func calculate_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	print("Total vertices: " + str(vertices.size()))
 
 func gen_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
+	mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
 	var offset = (tmax - tmin) * res + 1
 	#print((s_max - s_min) * resolution * offset + (t_max - t_min) * resolution)
@@ -220,7 +262,7 @@ func gen_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 		Vector2(1,0),
 		Vector2(1,1),
 	])'''
-	
+	mdt = MeshDataTool.new()
 	var array = []
 	array.resize(Mesh.ARRAY_MAX)
 	array[Mesh.ARRAY_VERTEX] = vertices
@@ -228,7 +270,7 @@ func gen_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	a_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, array)
 	
 	mesh = a_mesh
-	mdt = MeshDataTool.new()
+	mesh.surface_set_material(0, surface_material)
 	mdt.create_from_surface(mesh, 0)
 
 	for face_i in range(mdt.get_face_count()):
@@ -262,55 +304,6 @@ func gen_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	mesh.clear_surfaces()
 	mdt.commit_to_surface(mesh)
 	#mesh.get_surface_override_material().albedo_color = Color(1, 0, 0, 1)
-
-	if arrow != null and false:
-		print("arrowed")
-		for x in range(0, (smax - smin) * res):
-			for z in range(0, (tmax - tmin) * res):
-				if x % arrows_spacing == 0 && z % arrows_spacing == 0:
-					var new_arrow = arrow.instantiate()
-					add_child(new_arrow)
-					new_arrow.transform.origin = Vector3(float(x) / res + smin, heights[x * (offset - 1) + z] + 0.1, float(z) / res + tmin)
-					var g = gradients[x * (offset - 1) + z]
-					new_arrow.setLength(g.length())
-					new_arrow.setRotation(atan(g.y/g.x) + 0 if g.x > 0 else PI)
-
-	'''var contours = []
-	var threshold = 0
-	for x in range(0, (smax - smin) * res - 1):
-		for z in range(0, (tmax - tmin) * res - 1):
-			var value: int = (1 if heights[x * (offset - 1) + z] > threshold else 0) + (2 if heights[(x + 1) * (offset - 1) + z] > threshold else 0) + (4 if heights[(x + 1) * (offset - 1) + z + 1] > threshold else 0) + (1 if heights[x * (offset - 1) + z + 1] > threshold else 0)
-			if value == 0:
-				pass
-				#contours.append([Vector2((float(x) / res + smin), Vector2()])
-			elif value == 1:
-				contours.append([Vector3(float(x + 0.5) / res + smin, threshold + 10, float(z) / res + tmin), Vector3(float(x) / res + smin, threshold + 10, float(z + 0.5) / res + tmin)])
-
-	# Convert contours to line mesh
-	var st = SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_LINES)
-	var curve := Curve3D.new()
-	for seg in contours:
-		st.add_vertex(seg[0])
-		st.add_vertex(seg[1])
-		curve.add_point(seg[0])
-		curve.add_point(seg[1])
-	$Path3D.set_curve(curve)
-	var mesh = st.commit()
-	var mesh_instance = MeshInstance3D.new()
-	mesh_instance.mesh = mesh
-	add_child(mesh_instance)'''
-	
-	'''var surface_tool = SurfaceTool.new()
-	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for i in range(vertices.size()):
-		surface_tool.set_uv(uvs[i])
-		surface_tool.add_vertex(vertices[i])
-	for i in indices:
-		surface_tool.add_index(i)
-	surface_tool.generate_normals()
-	a_mesh = surface_tool.commit()
-	mesh = a_mesh'''
 	
 func update_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	#var a_mesh = ArrayMesh.new()
@@ -326,8 +319,8 @@ func update_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	for i in range(mdt.get_vertex_count()):
 		# Modify vertex position (e.g., move it along its normal)
 		#vertex += mdt.get_vertex_normal(i) * 0.1
-		var xz := indexToCoordsReal(i, true)
-		mdt.set_vertex(i, Vector3(xz.x / res, heights[i], xz.y / res))
+		#var xz := indexToCoordsReal(i, true)
+		mdt.set_vertex(i, vertices[i])
 		#vertices[i].x = xz.x / res
 		#verts[i].y = heights[i]
 		#vertices[i].z = xz.y / res
@@ -341,6 +334,19 @@ func update_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	mdt.commit_to_surface(mesh)
 
 	#$MeshInstance3D.mesh = mesh
+
+func update_mesh_slider(xmin: int, xmax: int, zmin: int, zmax: int, A: float, res: int):
+	if (A == a_max):
+		for i in range(mdt.get_vertex_count()):
+			#var xz := indexToCoordsReal(j, true)
+			mdt.set_vertex(i, vertices_slider[sliderToIndex(a_max)][i])
+	else:
+		for i in range(mdt.get_vertex_count()):
+			#var xz := indexToCoordsReal(j, true)
+			mdt.set_vertex(i, vertices_slider[sliderToIndex(floor(A))][i] * (floor(A) + 1 - A) + vertices_slider[sliderToIndex(floor(A) + 1)][i] * (A - floor(A)))
+	
+	mesh.clear_surfaces()
+	mdt.commit_to_surface(mesh)
 
 func gen():
 	var start_time = Time.get_ticks_msec()
@@ -357,7 +363,13 @@ func upd():
 	var end_time = Time.get_ticks_msec()
 	update_mesh(s_min, s_max, t_min, t_max, resolution)
 	print("Elapsed time: " + str(end_time - start_time) + " ms")
-	
+
+func upd_slider():
+	var start_time = Time.get_ticks_msec()
+	update_mesh_slider(s_min, s_max, t_min, t_max, a, resolution)
+	var end_time = Time.get_ticks_msec()
+	#print("Elapsed time: " + str(end_time - start_time) + " ms")
+
 func coordsToIndex(x: int, y: int, isBounds: bool) -> int:
 	return x * ((t_max - t_min) * resolution + (1 if isBounds else 0)) + y
 	
@@ -374,6 +386,12 @@ func indexToCoordsReal(index: int, isBounds: bool) -> Vector2:
 	
 func indexToIndex(index: int, isBounds: bool) -> int:
 	return coordsToIndex(indexToCoords(index, isBounds).x, indexToCoords(index, isBounds).y, !isBounds)
+	
+func sliderToIndex(x: int) -> int:
+	return x - a_min
+
+func indexToSlider(x: int) -> int:
+	return x + a_min
 	
 func runge_kutta(type: int, x_0: float, y_0: float, z_0: float, g_0: float, n: int, res: int) -> Vector2:
 	var X: float = x_0
@@ -487,8 +505,14 @@ func _process(delta: float) -> void:
 	if update:
 		upd()
 		update = false
+	if last_a != a:
+		if function.hasSlider:
+			upd_slider()
+		last_a = a
 	if parse:
-		_on_expression_entered("")
+		_on_expression_entered_x("")
+		_on_expression_entered_y("")
+		_on_expression_entered_z("")
 		parse = false
 	if find_root:
 		print(function.bisection(1.5, 1.5, start_left, start_right))

@@ -8,6 +8,12 @@ signal block_button_pressed(person: String)
 
 signal expression_entered(expr: String)
 
+signal expression_entered_x(expr: String)
+
+signal expression_entered_y(expr: String)
+
+signal expression_entered_z(expr: String)
+
 signal regen_mesh()
 
 signal debug_message(expr: String)
