@@ -154,7 +154,7 @@ func _on_hagood_pressed():
 	
 func _on_chen_pressed():
 	debug_label.text = "Chen selected"
-	GlobalSignals.block_button_pressed.emit("chen")
+	GlobalSignals.block_bSSutton_pressed.emit("chen")
 	
 func _on_maguire_pressed():
 	debug_label.text = "Maguire selected"
