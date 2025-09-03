@@ -119,30 +119,69 @@ func parse():
 
 	expression_x = Expression.new()
 	exp_string_x = filter_string(exp_string_x)
-	error = expression_x.parse(exp_string_x, ["s", "t", "x"])
+	for j in exp_string_x.length():
+		if exp_string_x.length() == 1:
+			if exp_string_x == "a":
+				hasSlider = true
+		elif j == 0:
+			if exp_string_x[j] == "a" and !(exp_string_x[j + 1] >= "A" and exp_string_x[j + 1] <= "z"):
+				hasSlider = true
+		elif j == exp_string_x.length() - 1:
+			if exp_string_x[j] == "a" and !(exp_string_x[j - 1] >= "A" and exp_string_x[j - 1] <= "z"):
+				hasSlider = true
+		else:
+			if exp_string_x[j] == "a" and !(exp_string_x[j + 1] >= "A" and exp_string_x[j + 1] <= "z") and !(exp_string_x[j - 1] >= "A" and exp_string_x[j - 1] <= "z"):
+				hasSlider = true
+	error = expression_x.parse(exp_string_x, ["s", "t", "x", "a"])
 	if error == OK:
 		print("Parsed expression x: " + exp_string_x)
 	else:
 		print("Failed to parse expression: " + exp_string_x)
-		expression_x.parse("", ["s", "t", "x"])
+		expression_x.parse("", ["s", "t", "x", "a"])
 	
 	expression_y = Expression.new()
 	exp_string_y = filter_string(exp_string_y)
-	error = expression_y.parse(exp_string_y, ["s", "t", "y"])
+	for j in exp_string_y.length():
+		if exp_string_y.length() == 1:
+			if exp_string_y == "a":
+				hasSlider = true
+		elif j == 0:
+			if exp_string_y[j] == "a" and !(exp_string_y[j + 1] >= "A" and exp_string_y[j + 1] <= "z"):
+				hasSlider = true
+		elif j == exp_string_y.length() - 1:
+			if exp_string_y[j] == "a" and !(exp_string_y[j - 1] >= "A" and exp_string_y[j - 1] <= "z"):
+				hasSlider = true
+		else:
+			if exp_string_y[j] == "a" and !(exp_string_y[j + 1] >= "A" and exp_string_y[j + 1] <= "z") and !(exp_string_y[j - 1] >= "A" and exp_string_y[j - 1] <= "z"):
+				hasSlider = true
+	error = expression_y.parse(exp_string_y, ["s", "t", "y", "a"])
 	if error == OK:
 		print("Parsed expression y: " + exp_string_y)
 	else:
 		print("Failed to parse expression: " + exp_string_y)
-		expression_y.parse("", ["s", "t", "y"])
+		expression_y.parse("", ["s", "t", "y", "a"])
 	
 	expression_z = Expression.new()
 	exp_string_z = filter_string(exp_string_z)
-	error = expression_z.parse(exp_string_z, ["s", "t", "z"])
+	for j in exp_string_z.length():
+		if exp_string_z.length() == 1:
+			if exp_string_z == "a":
+				hasSlider = true
+		elif j == 0:
+			if exp_string_z[j] == "a" and !(exp_string_z[j + 1] >= "A" and exp_string_z[j + 1] <= "z"):
+				hasSlider = true
+		elif j == exp_string_z.length() - 1:
+			if exp_string_z[j] == "a" and !(exp_string_z[j - 1] >= "A" and exp_string_z[j - 1] <= "z"):
+				hasSlider = true
+		else:
+			if exp_string_z[j] == "a" and !(exp_string_z[j + 1] >= "A" and exp_string_z[j + 1] <= "z") and !(exp_string_z[j - 1] >= "A" and exp_string_z[j - 1] <= "z"):
+				hasSlider = true
+	error = expression_z.parse(exp_string_z, ["s", "t", "z", "a"])
 	if error == OK:
 		print("Parsed expression z: " + exp_string_z)
 	else:
 		print("Failed to parse expression: " + exp_string_z)
-		expression_z.parse("", ["s", "t", "z"])
+		expression_z.parse("", ["s", "t", "z", "a"])
 
 
 	'''expression_z = Expression.new()
@@ -169,30 +208,25 @@ func parse():
 	print("Parsed expression implicit: " + string_left + "-(" + string_right + ")")'''
 
 func calculate(x: float, y: float, z: float, type: int) -> float:
-	'''var expression = Expression.new()
-	#expression.parse("20 + 10*2 - 5/2.0")
-	expression.parse("(x*x+z*z) / 100")
-	var result = expression.execute()'''
-	var result = expression.execute([x, y, z, 0])
-	if is_nan(result) or is_inf(result):
-		var left = expression.execute([x - 0.001, y - 0.001, z - 0.001, 0 - 0.001])
-		var right = expression.execute([x + 0.001, y + 0.001, z + 0.001, 0 + 0.001])
-		if abs(left - right) > 1:
-			return NAN
-		else:
-			return (left + right) / 2
-	else:
-		return result
+	return calculate_a(x, y, z, 0, type)
 	
 func calculate_a(x: float, y: float, z: float, a: float, type: int) -> float:
-	'''var expression = Expression.new()
-	#expression.parse("20 + 10*2 - 5/2.0")
-	expression.parse("(x*x+z*z) / 100")
-	var result = expression.execute()'''
-	var result = expression.execute([x, y, z, a])
+	var X = x;
+	var Y = y;
+	var Z = z;
+	if type == 1: # solve for x
+		X = y
+		Y = z
+		Z = x
+	if type == 2: # solve for y
+		X = z
+		Y = x
+		Z = y
+	
+	var result = expression.execute([X, Y, Z, a])
 	if is_nan(result) or is_inf(result):
-		var left = expression.execute([x - 0.001, y - 0.001, z - 0.001, a - 0.001])
-		var right = expression.execute([x + 0.001, y + 0.001, z + 0.001, a + 0.001])
+		var left = expression.execute([X - 0.001, Y - 0.001, Z - 0.001, a - 0.001])
+		var right = expression.execute([X + 0.001, Y + 0.001, Z + 0.001, a + 0.001])
 		if abs(left - right) > 1:
 			return NAN
 		else:
@@ -201,20 +235,50 @@ func calculate_a(x: float, y: float, z: float, a: float, type: int) -> float:
 		return result
 	
 func calculate_para(s: float, t: float, x: float, type: int) -> float:
-	'''var expression = Expression.new()
-	#expression.parse("20 + 10*2 - 5/2.0")
-	expression.parse("(x*x+z*z) / 100")
-	var result = expression.execute()'''
+	return calculate_para_a(s, t, x, 0, type)
+	
+func calculate_para_a(s: float, t: float, x: float, a: float, type: int) -> float:
 	if type == 1:
-		return expression_x.execute([s, t, x])
+		var result = expression_x.execute([s, t, x, a])
+		if is_nan(result) or is_inf(result):
+			var left = expression_x.execute([s - 0.001, t - 0.001, x - 0.001, a - 0.001])
+			var right = expression_x.execute([s + 0.001, t + 0.001, x + 0.001, a + 0.001])
+			if abs(left - right) > 1:
+				return NAN
+			else:
+				return (left + right) / 2
+		else:
+			return result
 	if type == 2:
-		return expression_y.execute([s, t, x])
+		var result = expression_y.execute([s, t, x, a])
+		if is_nan(result) or is_inf(result):
+			var left = expression_y.execute([s - 0.001, t - 0.001, x - 0.001, a - 0.001])
+			var right = expression_y.execute([s + 0.001, t + 0.001, x + 0.001, a + 0.001])
+			if abs(left - right) > 1:
+				return NAN
+			else:
+				return (left + right) / 2
+		else:
+			return result
 	if type == 3:
-		return expression_z.execute([s, t, x])
+		var result = expression_z.execute([s, t, x, a])
+		if is_nan(result) or is_inf(result):
+			var left = expression_z.execute([s - 0.001, t - 0.001, x - 0.001, a - 0.001])
+			var right = expression_z.execute([s + 0.001, t + 0.001, x + 0.001, a + 0.001])
+			if abs(left - right) > 1:
+				return NAN
+			else:
+				return (left + right) / 2
+		else:
+			return result
 	return 0
 
 # Bisection method implementation
-func bisection(x: float, y: float, a: float, b: float, tolerance : float = 0.0001) -> float:
+func bisection(x: float, y: float, A: float, a: float, b: float, type: int = 0, tolerance : float = 0.01) -> float:
+	if calculate_a(x, y, a, A, type) == 0:
+		return a
+	if calculate_a(x, y, b, A, type) == 0:
+		return b
 	var midpoint : float
 	'''while sign(calculate(x, y, a, 3)) == sign(calculate(x, y, b, 3)):
 		if abs(calculate(x, y, a, 3)) > abs(calculate(x, y, b, 3)):
@@ -223,7 +287,7 @@ func bisection(x: float, y: float, a: float, b: float, tolerance : float = 0.000
 			a = 2 * a - b'''
 	while (b - a) / 2 > tolerance:
 		midpoint = (a + b) / 2
-		if sign(calculate(x, y, midpoint, 3)) == sign(calculate(x, y, a, 3)):
+		if sign(calculate_a(x, y, midpoint, A, type)) == sign(calculate_a(x, y, a, A, type)):
 			a = midpoint
 		else:
 			b = midpoint
@@ -245,13 +309,13 @@ func bisection(x: float, y: float, a: float, b: float, tolerance : float = 0.000
 			a = c
 	return None  # Did not converge'''
 
-func find_all_roots(x: float, y: float, start=-100, end=100, steps=10, tol : float = 0.01):
+func find_all_roots(x: float, y: float, A: float, type: int, start=-100, end=100, steps=10, tol : float = 0.01):
 	var roots = PackedFloat32Array()
 	for i in range(steps):
 		var a = start + i * (end - start) / steps
 		var b = start + (i + 1) * (end - start) / steps
-		if calculate(x, y, a, 3) * calculate(x, y, b, 3) <= 0:
-			var root = bisection(x, y, a, b, tol)
+		if calculate_a(x, y, a, A, type) * calculate_a(x, y, b, A, type) <= 0:
+			var root = bisection(x, y, A, a, b, tol)
 			if true:#root is not None:
 				# Avoid duplicate roots (within tolerance)
 				if len(roots) == 0 or root != roots[len(roots) - 1]:

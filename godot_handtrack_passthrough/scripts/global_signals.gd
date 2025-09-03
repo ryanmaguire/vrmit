@@ -14,3 +14,6 @@ signal scan_surroundings()
 
 @warning_ignore("unused_signal")
 signal toggle_mesh_visibility()
+
+@warning_ignore("unused_signal")
+signal expression_entered(String)

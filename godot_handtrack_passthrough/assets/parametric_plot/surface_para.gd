@@ -4,6 +4,9 @@ extends MeshInstance3D
 @export var create = false
 @export var update = false
 @export var parse = false
+const a_min: int = -10
+const a_max: int = 10
+@export_range(a_min, a_max, 0.01) var a: float = 0
 @export var s_min: int
 @export var s_max: int
 @export var t_min: int
@@ -27,6 +30,8 @@ extends MeshInstance3D
 
 var function
 var degree: int
+var last_a: float
+
 
 var vertices : PackedVector3Array
 var indices : PackedInt32Array
@@ -39,6 +44,8 @@ var g_max: float
 var curvatures : PackedVector2Array
 var c_min: float
 var c_max: float
+
+var vertices_slider = []
 
 var mdt : MeshDataTool
 
@@ -87,21 +94,33 @@ func calculate_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	gradients = PackedVector2Array([])
 	curvatures = PackedVector2Array([])
 	
+	vertices_slider = []
+	
 	var S: float
 	var T: float
 	var X: float
 	var Y: float
 	var Z: float
 	
+	if function.hasSlider:
+		for A in range(a_min, a_max + 1):
+			vertices_slider.append(PackedVector3Array())
 	for s in range(smin * res, smax * res + 1):
 		for t in range(tmin * res, tmax * res + 1):
 			S = float(s) / res
 			T = float(t) / res
 			var G: Vector2
 			if degree == 0:
-				X = function.calculate_para(S, T, 0, 1)
-				Y = function.calculate_para(S, T, 0, 2)
-				Z = function.calculate_para(S, T, 0, 3)
+				if function.hasSlider:
+					X = function.calculate_para_a(S, T, 0, a, 1)
+					Y = function.calculate_para_a(S, T, 0, a, 2)
+					Z = function.calculate_para_a(S, T, 0, a, 3)
+					for A in range(a_min, a_max + 1):
+						vertices_slider[sliderToIndex(A)].append(Vector3(function.calculate_para_a(S, T, 0, A, 1), function.calculate_para_a(S, T, 0, A, 3), function.calculate_para_a(S, T, 0, A, 2)));
+				else:
+					X = function.calculate_para(S, T, 0, 1)
+					Y = function.calculate_para(S, T, 0, 2)
+					Z = function.calculate_para(S, T, 0, 3)
 			elif degree == 1:
 				#print(heights.size())
 				if s == smin * res and t == tmin * res:
@@ -327,7 +346,7 @@ func update_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 		# Modify vertex position (e.g., move it along its normal)
 		#vertex += mdt.get_vertex_normal(i) * 0.1
 		var xz := indexToCoordsReal(i, true)
-		mdt.set_vertex(i, Vector3(xz.x / res, heights[i], xz.y / res))
+		mdt.set_vertex(i, vertices[i])
 		#vertices[i].x = xz.x / res
 		#verts[i].y = heights[i]
 		#vertices[i].z = xz.y / res
@@ -341,6 +360,17 @@ func update_mesh(smin: int, smax: int, tmin: int, tmax: int, res: int):
 	mdt.commit_to_surface(mesh)
 
 	#$MeshInstance3D.mesh = mesh
+	
+func update_mesh_slider(smin: int, smax: int, tmin: int, tmax: int, A: float, res: int):
+	for j in range(mdt.get_vertex_count()):
+		var xz := indexToCoordsReal(j, true)
+		if A == a_max:
+			mdt.set_vertex(j, vertices_slider[sliderToIndex(A)][j])
+		else:
+			mdt.set_vertex(j, vertices_slider[sliderToIndex(floor(A))][j] * (floor(A) + 1 - A) + vertices_slider[sliderToIndex(floor(A) + 1)][j] * (A - floor(A)))
+	
+	mesh.clear_surfaces()
+	mdt.commit_to_surface(mesh)
 
 func gen():
 	var start_time = Time.get_ticks_msec()
@@ -357,6 +387,12 @@ func upd():
 	var end_time = Time.get_ticks_msec()
 	update_mesh(s_min, s_max, t_min, t_max, resolution)
 	print("Elapsed time: " + str(end_time - start_time) + " ms")
+
+func upd_slider():
+	var start_time = Time.get_ticks_msec()
+	update_mesh_slider(s_min, s_max, t_min, t_max, a, resolution)
+	var end_time = Time.get_ticks_msec()
+	#print("Elapsed time: " + str(end_time - start_time) + " ms")
 	
 func coordsToIndex(x: int, y: int, isBounds: bool) -> int:
 	return x * ((t_max - t_min) * resolution + (1 if isBounds else 0)) + y
@@ -375,6 +411,12 @@ func indexToCoordsReal(index: int, isBounds: bool) -> Vector2:
 func indexToIndex(index: int, isBounds: bool) -> int:
 	return coordsToIndex(indexToCoords(index, isBounds).x, indexToCoords(index, isBounds).y, !isBounds)
 	
+func sliderToIndex(x: int) -> int:
+	return x - a_min
+
+func indexToSlider(x: int) -> int:
+	return x + a_min
+
 func runge_kutta(type: int, x_0: float, y_0: float, z_0: float, g_0: float, n: int, res: int) -> Vector2:
 	var X: float = x_0
 	var Y: float = y_0
@@ -487,6 +529,10 @@ func _process(delta: float) -> void:
 	if update:
 		upd()
 		update = false
+	if last_a != a:
+		if function.hasSlider:
+			upd_slider()
+		last_a = a
 	if parse:
 		_on_expression_entered("")
 		parse = false
