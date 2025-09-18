@@ -93,7 +93,7 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	gradients = [[], [], []]
 	curvatures = [[], [], []]
 	
-	heights_slider = [[], [], []] # axis, layers, a's, heights
+	heights_slider = [[], [], []] # axis (z, x, y), layers, a's, heights
 	
 	var X: float
 	var Z: float
@@ -105,7 +105,7 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 		for i in 3:
 			heights_slider[i].append([])
 			for A in range(a_min, a_max + 1):
-				heights_slider[i][len(heights_slider) - 1].append(PackedFloat32Array())
+				heights_slider[i][len(heights_slider[i]) - 1].append(PackedFloat32Array())
 	for x in range(xmin * res, xmax * res + 1):
 		for z in range(zmin * res, zmax * res + 1):
 			X = float(x) / res
@@ -115,7 +115,7 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 				if function.hasSlider:
 					H = function.calculate_a(X, Z, 0, a, 0)
 					for A in range(a_min, a_max + 1):
-						heights_slider[0][sliderToIndex(A)].append(function.calculate_a(X, Z, 0, A, 0));
+						heights_slider[0][0][sliderToIndex(A)].append(function.calculate_a(X, Z, 0, A, 0));
 				else:
 					H = function.calculate(X, Z, 0, 0)
 			elif degree == 1:
@@ -197,16 +197,17 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 						for i in len(heights_slider[0][0][0]):
 							heights_slider[0][len(heights_slider[0]) - 1][sliderToIndex(A)].append(NAN)
 				#print(heights_slider)
-				for A in range(a_min, a_max + 1):
-					for i in len(Htemp[sliderToIndex(A)]):
-						#print(len(heights_slider))
-						#print(len(heights_slider[0]))
-						#print(len(heights_slider[0][0]))
-						#print(len(Htemp))
-						#print(len(Htemp[0]))
-						heights_slider[0][i][sliderToIndex(A)].append(Htemp[sliderToIndex(A)][i])
-					for i in range(len(Htemp[sliderToIndex(A)]), layerz[0]):
-						heights_slider[0][i][sliderToIndex(A)].append(NAN)
+				if degree == 3:
+					for A in range(a_min, a_max + 1):
+						for i in len(Htemp[sliderToIndex(A)]):
+							#print(len(heights_slider))
+							#print(len(heights_slider[0]))
+							#print(len(heights_slider[0][0]))
+							#print(len(Htemp))
+							#print(len(Htemp[0]))
+							heights_slider[0][i][sliderToIndex(A)].append(Htemp[sliderToIndex(A)][i])
+						for i in range(len(Htemp[sliderToIndex(A)]), layerz[0]):
+							heights_slider[0][i][sliderToIndex(A)].append(NAN)
 			if degree == 3:
 				for i in len(Hs):
 					H = Hs[i]
@@ -431,10 +432,10 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 				indices[2][i].append(coordsToIndexX(x + 1, z + 1, true))
 				indices[2][i].append(coordsToIndexX(x, z + 1, true))
 
-	for i in 3:
+	'''for i in 3:
 		print(layerz[i])
 		for j in layerz[i]:
-			print("Total vertices: " + str(vertices[i][j].size()))
+			print("Total vertices: " + str(vertices[i][j].size()))'''
 
 func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	mesh.clear_surfaces()
@@ -451,8 +452,8 @@ func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	
 	mdt = MeshDataTool.new()
 	var n = 0
-	for i in (2 if degree == 3 else 1):
-		for j in len(heights[0]):
+	for i in (3 if degree == 3 else 1):
+		for j in len(heights[i]):
 			var array = []
 			array.resize(Mesh.ARRAY_MAX)
 			array[Mesh.ARRAY_VERTEX] = vertices[i][j]
@@ -561,17 +562,18 @@ func update_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 
 	#var surface_data = mesh.surface_get_arrays(0) # Assuming surface 0
 	#var verts = surface_data[Mesh.ARRAY_VERTEX] as PackedVector3Array
-	for i in len(heights):
-		mdt.create_from_surface(mesh, 0)
+	for n in (3 if degree == 3 else 1):
+		for i in len(heights[n]):
+			mdt.create_from_surface(mesh, 0)
 
-		for j in range(mdt.get_vertex_count()):
-			# Modify vertex position (e.g., move it along its normal)
-			#vertex += mdt.get_vertex_normal(i) * 0.1
-			var xz := indexToCoordsReal(j, true)
-			mdt.set_vertex(j, Vector3(xz.x / res, heights[i][j], xz.y / res))
-			#vertices[i].x = xz.x / res
-			#verts[i].y = heights[i]
-			#vertices[i].z = xz.y / res
+			for j in range(mdt.get_vertex_count()):
+				# Modify vertex position (e.g., move it along its normal)
+				#vertex += mdt.get_vertex_normal(i) * 0.1
+				var xz := indexToCoordsReal(j, true)
+				mdt.set_vertex(j, Vector3(xz.x / res, heights[n][i][j], xz.y / res))
+				#vertices[i].x = xz.x / res
+				#verts[i].y = heights[i]
+				#vertices[i].z = xz.y / res
 
 
 		#mesh = ArrayMesh.new()
@@ -585,18 +587,34 @@ func update_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	#$MeshInstance3D.mesh = mesh
 
 func update_mesh_slider(xmin: int, xmax: int, zmin: int, zmax: int, A: float, res: int):
-	for i in len(heights):
-		mdt.create_from_surface(mesh, 0)
+	for n in (3 if degree == 3 else 1):
+		for i in len(heights[n]):
+			mdt.create_from_surface(mesh, 0)
 
-		for j in range(mdt.get_vertex_count()):
-			var xz := indexToCoordsReal(j, true)
-			if A == a_max:
-				mdt.set_vertex(j, Vector3(xz.x / res, heights_slider[i][sliderToIndex(A)][j], xz.y / res))
-			else:
-				mdt.set_vertex(j, Vector3(xz.x / res, heights_slider[i][sliderToIndex(floor(A))][j] * (floor(A) + 1 - A) + heights_slider[i][sliderToIndex(floor(A) + 1)][j] * (A - floor(A)), xz.y / res))
-		
-		mesh.surface_remove(0)
-		mdt.commit_to_surface(mesh)
+			for j in range(mdt.get_vertex_count()):
+				if A == a_max:
+					if n == 0:
+						var xz := indexToCoordsReal(j, true)
+						mdt.set_vertex(j, Vector3(xz.x / res, heights_slider[n][i][sliderToIndex(A)][j], xz.y / res))
+					elif n == 1:
+						var xz := indexToCoordsRealH(j, true)
+						mdt.set_vertex(j, Vector3(heights_slider[n][i][sliderToIndex(A)][j], xz.y / res, xz.x / res))
+					elif n == 2:
+						var xz := indexToCoordsRealX(j, true)
+						mdt.set_vertex(j, Vector3(xz.y / res, xz.x / res, heights_slider[n][i][sliderToIndex(A)][j]))
+				else:
+					if n == 0:
+						var xz := indexToCoordsReal(j, true)
+						mdt.set_vertex(j, Vector3(xz.x / res, heights_slider[n][i][sliderToIndex(floor(A))][j] * (floor(A) + 1 - A) + heights_slider[n][i][sliderToIndex(floor(A) + 1)][j] * (A - floor(A)), xz.y / res))
+					elif n == 1:
+						var xz := indexToCoordsRealH(j, true)
+						mdt.set_vertex(j, Vector3(heights_slider[n][i][sliderToIndex(floor(A))][j] * (floor(A) + 1 - A) + heights_slider[n][i][sliderToIndex(floor(A) + 1)][j] * (A - floor(A)), xz.y / res, xz.x / res))
+					elif n == 2:
+						var xz := indexToCoordsRealX(j, true)
+						mdt.set_vertex(j, Vector3(xz.y / res, xz.x / res, heights_slider[n][i][sliderToIndex(floor(A))][j] * (floor(A) + 1 - A) + heights_slider[n][i][sliderToIndex(floor(A) + 1)][j] * (A - floor(A))))
+			
+			mesh.surface_remove(0)
+			mdt.commit_to_surface(mesh)
 
 func gen():
 	var start_time = Time.get_ticks_msec()
@@ -644,7 +662,7 @@ func indexToCoordsH(index: int, isBounds: bool) -> Vector2:
 	return Vector2(index / offset, index % offset)
 
 func indexToCoordsRealH(index: int, isBounds: bool) -> Vector2:
-	var offset = (ceil(h_max) - floor(h_min)) * resolution + (1 if isBounds else 0)
+	var offset = (int(ceil(h_max)) - int(floor(h_min))) * resolution + (1 if isBounds else 0)
 	return Vector2(index / offset + x_min * resolution, index % offset + z_min * resolution)
 
 func coordsToIndexX(x: int, y: int, isBounds: bool) -> int:
