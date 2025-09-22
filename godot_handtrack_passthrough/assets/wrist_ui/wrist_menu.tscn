@@ -16,23 +16,22 @@ surface = ExtResource("2_gg2i3")
 
 [node name="ColorRect" type="ColorRect" parent="Control"]
 layout_mode = 0
-offset_right = 300.0
+offset_right = 335.0
 offset_bottom = 200.0
 color = Color(0, 1, 1, 0.415686)
 
 [node name="TabContainer" type="TabContainer" parent="Control/ColorRect"]
 layout_mode = 0
-offset_right = 300.0
+offset_right = 335.0
 offset_bottom = 170.0
 tab_alignment = 1
-current_tab = 2
+current_tab = 0
 all_tabs_in_front = true
 
 [node name="XZ Plot" type="GridContainer" parent="Control/ColorRect/TabContainer"]
-visible = false
 layout_mode = 2
 size_flags_stretch_ratio = 0.0
-columns = 8
+columns = 9
 metadata/_tab_index = 0
 
 [node name="x" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
@@ -50,6 +49,12 @@ text = "y
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 text = "z
+"
+
+[node name="a" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "a
 "
 
 [node name="7" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
@@ -98,6 +103,11 @@ layout_mode = 2
 text = "^
 "
 
+[node name="sqrt" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "√ "
+
 [node name="4" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
@@ -143,6 +153,12 @@ text = "cos
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 text = "tan"
+
+[node name="abs" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "abs
+"
 
 [node name="1" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
 custom_minimum_size = Vector2(30, 30)
@@ -190,6 +206,11 @@ layout_mode = 2
 text = "e
 "
 
+[node name="clear" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "AC"
+
 [node name="0" type="Button" parent="Control/ColorRect/TabContainer/XZ Plot"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
@@ -230,6 +251,7 @@ layout_mode = 2
 text = "Place"
 
 [node name="Cube" type="VBoxContainer" parent="Control/ColorRect/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 

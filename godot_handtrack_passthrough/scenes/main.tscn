@@ -192,11 +192,12 @@ enable_passthrough = true
 [node name="Viewport2Din3D" parent="." instance=ExtResource("26_bu4jf")]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.0445819, 0.00270867, 0.141707)
 scene = ExtResource("27_o7ddy")
+viewport_size = Vector2(335, 200)
 unshaded = true
 scene_properties_keys = PackedStringArray()
 
 [node name="Surface" parent="." instance=ExtResource("28_2f3dj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.740504, 0.959801, 0.737863)
+transform = Transform3D(-0.206304, 0, 0.980345, 0, 1, 0, -0.980345, 0, -0.206304, 0.740504, 0.959801, 0.737863)
 
 [editable path="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2"]
 [editable path="XROrigin3D/RightTrackedHand/RightHandHumanoid2"]

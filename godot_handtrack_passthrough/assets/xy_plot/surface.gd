@@ -23,6 +23,7 @@ const a_max: int = 10
 @export var checkers_size: int
 @export var levels_size: float
 @export var arrows_spacing: int
+@export var is_rotating: bool = true
 
 @export var surface_material: Material
 @export var arrow : PackedScene
@@ -54,15 +55,28 @@ var mdt : MeshDataTool
 func _ready() -> void:
 	#arrow = load("res://assets/arrow.tscn")
 	GlobalSignals.connect("expression_entered", _on_expression_entered)
+	GlobalSignals.connect("update_slider", _on_update_slider)
+	GlobalSignals.connect("set_rotating", _on_set_rotating)
 	function = $Function
 	function.initialize()
+	rotation_degrees = Vector3(0, 0, 0)
 	#gen_mesh(x_min, x_max, z_min, z_max, resolution)
 	
 func _on_expression_entered(expr: String):
 	#print("New Expression: " + expr)
 	#expression_z = expr
-	function.set_string(expression, 0)
+	if (expr == ""): 
+		function.set_string(expression, 0)
+	else:
+		function.set_string(expr, 0)
 	gen()
+	
+func _on_update_slider(aye: float):
+	a = aye
+	upd_slider()
+	
+func _on_set_rotating(rotating: bool):
+	is_rotating = rotating
 
 func initialize_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	'''vertices = PackedVector3Array([])
@@ -228,7 +242,7 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 				h_max = H
 	
 	# solve for x
-	if degree == 3:
+	if degree == 3 and false:
 		for x in range(zmin * res, zmax * res + 1):
 			for z in range(floor(h_min) * res, ceil(h_max) * res + 1):
 				X = float(x) / res
@@ -404,6 +418,7 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 				indices.append(x * offset + z + 1)
 				indices.append((x + 1) * offset + z + 1)'''
 				
+	return
 	for i in len(heights[1]):
 		for x in range(0, (zmax - zmin) * res):
 			for z in range(0, (ceil(h_max) - floor(h_min)) * res):
@@ -452,7 +467,7 @@ func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	
 	mdt = MeshDataTool.new()
 	var n = 0
-	for i in (3 if degree == 3 else 1):
+	for i in (1 if degree == 3 else 1):
 		for j in len(heights[i]):
 			var array = []
 			array.resize(Mesh.ARRAY_MAX)
@@ -562,7 +577,7 @@ func update_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 
 	#var surface_data = mesh.surface_get_arrays(0) # Assuming surface 0
 	#var verts = surface_data[Mesh.ARRAY_VERTEX] as PackedVector3Array
-	for n in (3 if degree == 3 else 1):
+	for n in (1 if degree == 3 else 1):
 		for i in len(heights[n]):
 			mdt.create_from_surface(mesh, 0)
 
@@ -587,7 +602,7 @@ func update_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	#$MeshInstance3D.mesh = mesh
 
 func update_mesh_slider(xmin: int, xmax: int, zmin: int, zmax: int, A: float, res: int):
-	for n in (3 if degree == 3 else 1):
+	for n in (1 if degree == 3 else 1):
 		for i in len(heights[n]):
 			mdt.create_from_surface(mesh, 0)
 
@@ -810,3 +825,8 @@ func _process(delta: float) -> void:
 	'''if find_root:
 		print(function.bisection(1.5, 1.5, start_left, start_right))
 		find_root = false'''
+		
+func _physics_process(delta: float) -> void:
+	# Rotate around the Y-axis (upwards)
+	if is_rotating:
+		rotate_y(1 * delta)
