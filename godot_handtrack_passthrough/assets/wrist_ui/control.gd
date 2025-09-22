@@ -133,9 +133,9 @@ func _on_function_pressed(s: String):
 	'''
 	Here are some functions for Tuesday
 	(x^2+y^2)/20
-	a*(x^2-y^2)
+	a*(x^2-y^2)/10
 	sin(x)+sin(y)
-	e^(-a*(x^2+y^2))
+	5*e^(-a*(x^2+y^2))
 	z^2=x^2+y^2+a^2
 	'''
 	expr = s
