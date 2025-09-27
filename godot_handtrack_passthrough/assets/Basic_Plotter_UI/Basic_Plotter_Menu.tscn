@@ -1,0 +1,446 @@
+[gd_scene load_steps=2 format=3 uid="uid://c54n2c5nolvnx"]
+
+[ext_resource type="Script" uid="uid://5rrst6pm0wvv" path="res://assets/Basic_Plotter_UI/wrist_menu.gd" id="1_d7qq6"]
+
+[node name="Wrist Menu" type="Node2D"]
+
+[node name="wrist menu" type="MarginContainer" parent="."]
+offset_right = 511.0
+offset_bottom = 300.0
+script = ExtResource("1_d7qq6")
+
+[node name="ColorRect" type="ColorRect" parent="wrist menu"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 2
+color = Color(0, 1, 1, 0.415686)
+
+[node name="TabContainer" type="TabContainer" parent="wrist menu/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+tab_alignment = 1
+current_tab = 0
+all_tabs_in_front = true
+drag_to_rearrange_enabled = true
+
+[node name="Plot Options" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options"]
+layout_mode = 2
+
+[node name="function label" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/function label"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Function Selection"
+
+[node name="Function Buttons" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+
+[node name="GridContainer" type="GridContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons"]
+layout_mode = 2
+columns = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer"]
+layout_mode = 2
+text = "x+y"
+
+[node name="MarginContainer2" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer2"]
+layout_mode = 2
+text = "x*y"
+
+[node name="MarginContainer3" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer3"]
+layout_mode = 2
+text = "1/(x*y)"
+
+[node name="MarginContainer4" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer4"]
+layout_mode = 2
+text = "x^2 + y^2"
+
+[node name="MarginContainer5" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer5"]
+layout_mode = 2
+text = "x^2 - y^2"
+
+[node name="MarginContainer6" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer6"]
+layout_mode = 2
+text = "sin(x)*sin(y)"
+
+[node name="MarginContainer8" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer8"]
+layout_mode = 2
+text = "sqrt(x^2 + y^2)"
+
+[node name="MarginContainer7" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer7"]
+layout_mode = 2
+text = "exp(-x^2-y^2)"
+
+[node name="MarginContainer9" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer9"]
+layout_mode = 2
+text = "(sin(x)+1)^(sin(y)+4)"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer3" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(1, 26)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/margin_bottom = -18
+
+[node name="Label" type="Label" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/VBoxContainer/MarginContainer3"]
+layout_mode = 2
+text = "Plot Scale"
+
+[node name="Plot Scale" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(408, 30)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+
+[node name="Plot Scale" type="HSlider" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/VBoxContainer/Plot Scale"]
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 0.5
+step = 0.01
+value = 0.1
+
+[node name="Rotate Toggle" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+
+[node name="Rotate" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Rotate Toggle"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Rotate Toggle/Rotate"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Rotation Toggle" type="CheckButton" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer/Rotate Toggle/Rotate/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Rotate Plot"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options"]
+visible = false
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer2"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_right = 10
+
+[node name="Label" type="Label" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer2/MarginContainer"]
+layout_mode = 2
+text = "Function
+Scale"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Function Scale" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer2"]
+custom_minimum_size = Vector2(55, 212)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Function Scale" type="VSlider" parent="wrist menu/ColorRect/TabContainer/Plot Options/VBoxContainer2/Function Scale"]
+layout_mode = 2
+size_flags_horizontal = 1
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="Equation Input" type="VBoxContainer" parent="wrist menu/ColorRect/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 3
+metadata/_tab_index = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer/Equation Input"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="fxy" type="Label" parent="wrist menu/ColorRect/TabContainer/Equation Input/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+text = " f(x,y)= "
+
+[node name="equation_input" type="Label" parent="wrist menu/ColorRect/TabContainer/Equation Input/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 21
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Equation Input"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+
+[node name="XZ Plot" type="GridContainer" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer"]
+custom_minimum_size = Vector2(500, 227)
+layout_mode = 2
+size_flags_stretch_ratio = 2.8
+columns = 9
+
+[node name="x" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "x"
+
+[node name="y" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "y
+"
+
+[node name="z" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "z
+"
+
+[node name="a" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "a
+"
+
+[node name="7" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "7
+"
+
+[node name="8" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "8
+"
+
+[node name="9" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "9
+"
+
+[node name="divide" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "/
+"
+
+[node name="back" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(50, 30)
+layout_mode = 2
+text = "<--- X
+"
+
+[node name="(" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "("
+
+[node name=")" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = ")"
+
+[node name="power" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "^
+"
+
+[node name="sqrt" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "√ "
+
+[node name="4" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "4"
+
+[node name="5" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "5
+"
+
+[node name="6" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "6
+"
+
+[node name="times" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "*
+"
+
+[node name="left" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "<-
+"
+
+[node name="sin" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "sin
+"
+
+[node name="cos" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "cos
+"
+
+[node name="tan" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "tan"
+
+[node name="abs" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "abs
+"
+
+[node name="1" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "1
+"
+
+[node name="2" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "2
+"
+
+[node name="3" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "3
+"
+
+[node name="minus" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "-"
+
+[node name="right" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "->"
+
+[node name="ln" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "ln
+"
+
+[node name="pi" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "pi
+"
+
+[node name="e" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "e
+"
+
+[node name="clear" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "AC"
+
+[node name="0" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "0
+"
+
+[node name="dot" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = ".
+"
+
+[node name="equals" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "=
+"
+
+[node name="plus" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "+
+"
+
+[node name="enter" type="Button" parent="wrist menu/ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "enter
+"

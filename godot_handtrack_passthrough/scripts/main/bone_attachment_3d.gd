@@ -68,18 +68,31 @@ func show_menu():
 	if not has_positioned:
 		has_positioned = true
 
-		# Set position slightly above palm
+		# Position slightly above palm
 		var palm_pos = global_transform.origin
 		var offset = global_transform.basis.y.normalized() * 0.1
 		menu_node.global_transform.origin = palm_pos + offset
 
-		# Rotate to face the head
-		var to_camera = (head.global_transform.origin - menu_node.global_transform.origin).normalized()
-		var basis = Basis().looking_at(to_camera, Vector3.UP)
-		basis = basis.rotated(Vector3.UP, PI)  # ✅ Turn 180° around Y to face the camera
-		var tilt_angle = deg_to_rad(menu_tilt_degrees)
-		basis = basis.rotated(basis.x, -tilt_angle)
-		menu_node.global_transform.basis = basis
+		# Compute direction to camera and yaw only (project onto XZ)
+		var to_camera = (head.global_transform.origin - menu_node.global_transform.origin)
+		var to_camera_xz = Vector3(to_camera.x, 0.0, to_camera.z)
+		if to_camera_xz.length_squared() < 1e-6:
+			to_camera_xz = Vector3(0, 0, -1) # fallback
+
+		to_camera_xz = to_camera_xz.normalized()
+		# yaw that faces the camera. atan2 arguments: x then z gives yaw around Y.
+		var yaw := atan2(to_camera_xz.x, to_camera_xz.z)
+
+		# fixed pitch (tilt) in radians. Negative tilts 'up' toward world +Y.
+		var pitch := -deg_to_rad(menu_tilt_degrees)
+		var roll := 0.0
+
+		# Build basis from (pitch, yaw + PI, roll) so the textured face faces camera.
+		var rot_basis := Basis.from_euler(Vector3(pitch, yaw, roll)).orthonormalized()
+
+		# Preserve any existing scale
+		var cur_scale := menu_node.global_transform.basis.get_scale()
+		menu_node.global_transform.basis = rot_basis.scaled(cur_scale)
 
 		menu_node.scale = Vector3.ONE * menu_scale
 

@@ -16,7 +16,3 @@ func _ready():
 	var poke = "res://addons/godot-xr-tools/player/poke/poke.tscn"
 	var poke_scn = load(poke)
 	poke_attach.add_child(poke_scn.instantiate())
-
-	var laser = "res://addons/godot-xr-tools/functions/function_pointer.tscn"
-	var laser_scn = load(laser)
-	laser_attach.add_child(laser_scn.instanciate())

@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://dl36n1hl5wcxp"]
+[gd_scene load_steps=39 format=3 uid="uid://dl36n1hl5wcxp"]
 
 [ext_resource type="Script" uid="uid://o0lcqith2uhm" path="res://scripts/main/left_tracked_hand.gd" id="1_vxglm"]
 [ext_resource type="PackedScene" uid="uid://cjcehqrfoxav3" path="res://addons/hand_pose_detector/hands/LeftHandHumanoid.gltf" id="2_2f3dj"]
@@ -21,13 +21,12 @@
 [ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="19_vchkt"]
 [ext_resource type="PackedScene" uid="uid://b4ysuy43poobf" path="res://addons/godot-xr-tools/functions/function_pickup.tscn" id="20_txyw0"]
 [ext_resource type="PackedScene" uid="uid://do1wif8rpqtwj" path="res://addons/godot-xr-tools/functions/function_gaze_pointer.tscn" id="21_vc5cj"]
-[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/cartesian_basis/cartesian_basis.tscn" id="22_nvyfr"]
 [ext_resource type="PackedScene" uid="uid://cwghhmrpcd70f" path="res://scenes/SpatialEntity.tscn" id="23_ty1g6"]
 [ext_resource type="Script" uid="uid://bnxsl3wkwg686" path="res://scripts/main/scene_capture_controller.gd" id="24_j2jfr"]
 [ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="25_bjg73"]
+[ext_resource type="PackedScene" uid="uid://c54n2c5nolvnx" path="res://assets/Basic_Plotter_UI/Basic_Plotter_Menu.tscn" id="26_2f3dj"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="26_bu4jf"]
-[ext_resource type="PackedScene" uid="uid://cya6tfp28xtgc" path="res://assets/wrist_ui/wrist_menu.tscn" id="27_o7ddy"]
-[ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/xy_plot/surface.tscn" id="28_2f3dj"]
+[ext_resource type="PackedScene" uid="uid://bn8f0jxig4gyh" path="res://assets/xy_plot/pickable_plot.tscn" id="27_vxglm"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -171,12 +170,6 @@ grab_distance = 0.1
 
 [node name="FunctionGazePointer" parent="XROrigin3D/RightVirtualController" instance=ExtResource("21_vc5cj")]
 
-[node name="XRAnchor3D" type="XRAnchor3D" parent="XROrigin3D"]
-tracker = &"head"
-
-[node name="CartesianBasis" parent="XROrigin3D/XRAnchor3D" instance=ExtResource("22_nvyfr")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
-
 [node name="OpenXRFbSceneManager" type="OpenXRFbSceneManager" parent="XROrigin3D"]
 default_scene = ExtResource("23_ty1g6")
 auto_create = false
@@ -190,14 +183,15 @@ enable_passthrough = true
 [node name="Blocks" type="Node3D" parent="."]
 
 [node name="Viewport2Din3D" parent="." instance=ExtResource("26_bu4jf")]
-transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.0445819, 0.00270867, 0.141707)
-scene = ExtResource("27_o7ddy")
-viewport_size = Vector2(335, 200)
+transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, -0.0445819, 0.00270867, 0.141707)
+visible = false
+scene = ExtResource("26_2f3dj")
+viewport_size = Vector2(511, 300)
 unshaded = true
 scene_properties_keys = PackedStringArray()
 
-[node name="Surface" parent="." instance=ExtResource("28_2f3dj")]
-transform = Transform3D(0.863153, 0, -0.508573, 0, 1, 0, 0.508573, 0, 0.863153, 0, -1, 0)
+[node name="Plot" parent="." instance=ExtResource("27_vxglm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.661729, 0.00497097, -2.21318)
 
 [editable path="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2"]
 [editable path="XROrigin3D/RightTrackedHand/RightHandHumanoid2"]

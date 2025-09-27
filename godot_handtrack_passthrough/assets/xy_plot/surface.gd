@@ -24,6 +24,7 @@ const a_max: int = 10
 @export var levels_size: float
 @export var arrows_spacing: int
 @export var is_rotating: bool = true
+@export var locked_spatial_rotation: bool = true
 
 @export var surface_material: Material
 @export var arrow : PackedScene
@@ -49,19 +50,25 @@ var heights_slider = []
 
 var mdt : MeshDataTool
 
+var _locked_basis: Basis
+
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#arrow = load("res://assets/arrow.tscn")
+	_locked_basis = global_transform.basis
 	GlobalSignals.connect("expression_entered", _on_expression_entered)
 	GlobalSignals.connect("update_slider", _on_update_slider)
+	GlobalSignals.connect("update_function_scale", _on_update_slider)
 	GlobalSignals.connect("set_rotating", _on_set_rotating)
+	GlobalSignals.connect("update_plot_scale", _on_update_plot_scale)
 	function = $Function
 	function.initialize()
 	rotation_degrees = Vector3(0, 0, 0)
 	#gen_mesh(x_min, x_max, z_min, z_max, resolution)
-	
+
+
 func _on_expression_entered(expr: String):
 	#print("New Expression: " + expr)
 	#expression_z = expr
@@ -826,7 +833,37 @@ func _process(delta: float) -> void:
 		print(function.bisection(1.5, 1.5, start_left, start_right))
 		find_root = false'''
 		
+# call every physics frame to enforce lock
+var _locked_euler := Vector3.ZERO
+
+@export var yaw_speed: float = 1.0  # radians per second
+
 func _physics_process(delta: float) -> void:
-	# Rotate around the Y-axis (upwards)
-	if is_rotating:
-		rotate_y(1 * delta)
+	# If not locked just rotate in local space (unchanged behavior).
+	if not locked_spatial_rotation:
+		if is_rotating:
+			rotate_y(yaw_speed * delta)
+		return
+
+	# Locked: apply yaw in WORLD Y and keep pitch/roll locked.
+	# Read current global yaw, add consistent yaw increment,
+	# then build a world basis from (locked_pitch, new_yaw, locked_roll).
+	if locked_spatial_rotation:
+		var t := global_transform
+		var cur_scale := t.basis.get_scale()
+		var cur_e := t.basis.get_euler()
+		var new_yaw := cur_e.y
+		if is_rotating:
+			new_yaw += yaw_speed * delta
+		var new_e := Vector3(_locked_euler.x, new_yaw, _locked_euler.z)
+		var rot_basis := Basis.from_euler(new_e).orthonormalized()
+		t.basis = rot_basis.scaled(cur_scale)
+		global_transform = t
+		
+func _on_update_plot_scale(value: float) -> void:
+	# Apply scale to the mesh itself
+	scale = Vector3(value, value, value)
+	
+	# Apply scale to the sibling CollisionShape3D
+	if $"../CollisionShape3D":
+		$"../CollisionShape3D".scale = Vector3(value, value, value)
