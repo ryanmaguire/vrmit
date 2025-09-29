@@ -26,10 +26,27 @@ const a_max: int = 10
 @export var is_rotating: bool = true
 @export var locked_spatial_rotation: bool = true
 
+@export_range(-20, 20, 0.01) var cursorX: float = 0
+@export_range(-20, 20, 0.01) var cursorZ: float = 0
+var last_cursorX: float
+var last_cursorZ: float
+@export var show_tangent_plane: bool
+@export var show_gradient_arrow: bool
+@export var show_level_curves: bool
+@export var hide_surface: bool
+var last_hide_surface: bool
+
+
 @export var surface_material: Material
+@export var surface_material_empty: Material
 @export var arrow : PackedScene
 
 var function
+var tangent_plane
+var gradient_arrow
+var level_curves
+
+
 var degree: int
 var layerz: PackedInt32Array
 var last_a: float
@@ -65,6 +82,14 @@ func _ready() -> void:
 	GlobalSignals.connect("update_plot_scale", _on_update_plot_scale)
 	function = $Function
 	function.initialize()
+	tangent_plane = $TangentPlane
+	tangent_plane.visible = false
+	gradient_arrow = $GradientArrow
+	level_curves = $LevelCurves
+	show_tangent_plane = false
+	show_gradient_arrow = false
+	show_level_curves = false
+	hide_surface = false
 	rotation_degrees = Vector3(0, 0, 0)
 	#gen_mesh(x_min, x_max, z_min, z_max, resolution)
 
@@ -366,10 +391,35 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	
 	var offset = (zmax - zmin) * res + 1
 	
-	var hxl := 0
-	var hxr := 0
-	var hzl := 0
-	var hzr := 0
+	var hxl : float = 0
+	var hxr : float = 0
+	var hzl : float = 0
+	var hzr : float = 0
+	
+	for x in range(0, (xmax - xmin) * res + 1):
+		for z in range(0, (zmax - zmin) * res + 1):
+			H = heights[0][0][coordsToIndex(x, z, true)]
+			hxl = 0
+			hxr = 0
+			hzl = 0
+			hzr = 0
+			if (x > 0):
+				hxl = heights[0][0][coordsToIndex(x - 1, z, true)]
+			if (x < (xmax - xmin) * res):
+				hxr = heights[0][0][coordsToIndex(x + 1, z, true)]
+			if (z > 0): 
+				hzl = heights[0][0][coordsToIndex(x, z - 1, true)]
+			if (z < (zmax - zmin) * res):
+				hzr = heights[0][0][coordsToIndex(x, z + 1, true)]
+			var G : Vector2
+			G = Vector2((hxr-H)*res if x == 0 else (H-hxl)*res if x == (x_max - x_min) * res else (hxr-hxl)*res/2, (hzr-H)*res if z == 0 else (H-hzl)*res if z == (z_max - z_min) * res else (hzr-hzl)*res/2)	
+			#elif degree == 1:
+				#G = Vector2(function.calculate(float(x) / res + xmin, float(z) / res + zmin, heights[coordsToIndex(x, z, true)], 1), function.calculate(float(x) / res + xmin, float(z) / res + zmin, heights[coordsToIndex(x, z, true)], -1))
+			gradients[0].append(G)
+			if (G.length() < g_min):
+				g_min = G.length()
+			if (G.length() > g_max):
+				g_max = G.length()
 	
 	if (render_type == 3 || render_type == 4):
 		for x in range(0, (xmax - xmin) * res + 1):
@@ -500,9 +550,9 @@ func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 						row = vertices[i][j][vrd].x
 						column = vertices[i][j][vrd].z
 					if ((row / checkers_size + column / checkers_size) % 2 == 0):
-						c = Color(1, 1, 1)
+						c = Color(0.4, 1, 0.4, 0.5)
 					else:
-						c = Color(0, 0, 0)
+						c = Color(0.2, 0.8, 0.2, 0.5)
 				elif (render_type == 2):
 					var fraction = (heights[i][j][indexToIndex(face_i / 2, false)] - h_min) / (h_max - h_min);
 					c = Color(fraction, fraction, fraction)
@@ -645,6 +695,7 @@ func gen():
 	gen_mesh(x_min, x_max, z_min, z_max, resolution)
 	var end_time = Time.get_ticks_msec()
 	#print("Elapsed time: " + str(end_time - start_time) + " ms")
+	#place_tangent_plane(5, -5);
 
 func upd():
 	calculate_mesh(x_min, x_max, z_min, z_max, resolution)
@@ -826,6 +877,56 @@ func _process(delta: float) -> void:
 		if function.hasSlider:
 			upd_slider()
 		last_a = a
+	if cursorX <= x_min:
+		cursorX = x_min
+	if cursorX >= x_max:
+		cursorX = x_max
+	if cursorZ <= z_min:
+		cursorZ = z_min
+	if cursorZ >= z_max:
+		cursorZ = z_max
+	if last_cursorX != cursorX:
+		if tangent_plane.visible:
+			place_tangent_plane(cursorX, cursorZ)
+		if gradient_arrow.visible:
+			place_gradient_arrow(cursorX, cursorZ)
+		last_cursorX = cursorX
+	if last_cursorZ != cursorZ:
+		if tangent_plane.visible:
+			place_tangent_plane(cursorX, cursorZ)
+		if gradient_arrow.visible:
+			place_gradient_arrow(cursorX, cursorZ)
+		last_cursorZ = cursorZ
+	if show_tangent_plane:
+		if !tangent_plane.visible:
+			place_tangent_plane(cursorX, cursorZ)
+			tangent_plane.visible = true
+	else:
+		if tangent_plane.visible:
+			tangent_plane.visible = false
+	if show_gradient_arrow:
+		if !gradient_arrow.visible:
+			place_gradient_arrow(cursorX, cursorZ)
+			gradient_arrow.visible = true
+	else:
+		if gradient_arrow.visible:
+			gradient_arrow.visible = false
+	if show_level_curves:
+		if !level_curves.visible:
+			if !level_curves.hasGenerated:
+				level_curves.generate_level_mesh_layers()
+			level_curves.visible = true
+	else:
+		if level_curves.visible:
+			level_curves.visible = false
+	if hide_surface != last_hide_surface:
+		if hide_surface:
+			for i in mesh.get_surface_count():
+				mesh.surface_set_material(i, surface_material_empty)
+		else:
+			for i in mesh.get_surface_count():
+				mesh.surface_set_material(i, surface_material)
+		last_hide_surface = hide_surface
 	if parse:
 		_on_expression_entered("")
 		parse = false
@@ -867,3 +968,25 @@ func _on_update_plot_scale(value: float) -> void:
 	# Apply scale to the sibling CollisionShape3D
 	if $"../CollisionShape3D":
 		$"../CollisionShape3D".scale = Vector3(value, value, value)
+		
+func place_tangent_plane(x, y):
+	var xx = round(x * resolution)
+	var yy = round(y * resolution)
+	tangent_plane.position = Vector3(xx / resolution, heights[0][0][coordsToIndexReal(xx, yy, true)], yy / resolution)
+	#print(len(gradients))
+	#print(gradients[0])
+	#print(Vector3(1, gradients[0][coordsToIndexReal(xx, yy, true)].x, 0))
+	#print(Vector3(0, gradients[0][coordsToIndexReal(xx, yy, true)].y, 1))
+	#print(Vector3(1, gradients[0][coordsToIndexReal(xx, yy, true)].x, 0).cross(Vector3(0, gradients[0][coordsToIndexReal(xx, yy, true)].y, 1)))
+	tangent_plane.look_at(tangent_plane.global_position + Basis(Vector3.UP, rotation.y) * Vector3(1, gradients[0][coordsToIndexReal(xx, yy, true)].x, 0).cross(Vector3(0, gradients[0][coordsToIndexReal(xx, yy, true)].y, 1)), Vector3.UP)
+	#tangent_plane.visible = true
+	
+func place_gradient_arrow(x, y):
+	var xx = round(x * resolution)
+	var yy = round(y * resolution)
+	#gradient_arrow.create_arrow(Vector3.ZERO, Vector3(0, 0, 1))
+	gradient_arrow.create_arrow(Vector3.ZERO, Vector3(gradients[0][coordsToIndexReal(xx, yy, true)].x, -1, gradients[0][coordsToIndexReal(xx, yy, true)].y))
+	print(Vector3(gradients[0][coordsToIndexReal(xx, yy, true)].x, 1, gradients[0][coordsToIndexReal(xx, yy, true)].y))
+	gradient_arrow.position = Vector3(xx / resolution, heights[0][0][coordsToIndexReal(xx, yy, true)], yy / resolution)
+
+#

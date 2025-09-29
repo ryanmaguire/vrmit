@@ -57,6 +57,7 @@ func filter_string(original: String):
 	if original == "":
 		original = "0"
 	original = original.replace("pi", "PI")
+	original = original.replace("e^(", "exp(")
 	original = original.replace("e^", "exp(")
 	#original = original.replace("e", "exp(1)")
 	original = original.replace("^", "**")
