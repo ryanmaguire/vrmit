@@ -22,9 +22,9 @@
 [ext_resource type="PackedScene" uid="uid://cwghhmrpcd70f" path="res://scenes/SpatialEntity.tscn" id="23_ty1g6"]
 [ext_resource type="Script" uid="uid://bnxsl3wkwg686" path="res://scripts/main/scene_capture_controller.gd" id="24_j2jfr"]
 [ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="25_bjg73"]
+[ext_resource type="PackedScene" uid="uid://erhmok480xny" path="res://assets/pickable/plots/xy-plot/XY-Plot Base.tscn" id="25_og1vs"]
 [ext_resource type="PackedScene" uid="uid://c54n2c5nolvnx" path="res://assets/Basic_Plotter_UI/Basic_Plotter_Menu.tscn" id="26_2f3dj"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="26_bu4jf"]
-[ext_resource type="PackedScene" uid="uid://bn8f0jxig4gyh" path="res://assets/xy_plot/pickable_plot.tscn" id="27_vxglm"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -177,8 +177,8 @@ viewport_size = Vector2(511, 300)
 unshaded = true
 scene_properties_keys = PackedStringArray()
 
-[node name="Plot" parent="." instance=ExtResource("27_vxglm")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.661729, 0.00497097, -2.21318)
+[node name="XY-Plot" parent="." instance=ExtResource("25_og1vs")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.12131, 0, -0.800948)
 
 [editable path="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2"]
 [editable path="XROrigin3D/RightTrackedHand/RightHandHumanoid2"]

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://emfq3woye0n1"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_d1hh3"]
+
+[node name="GradientVector" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_d1hh3")

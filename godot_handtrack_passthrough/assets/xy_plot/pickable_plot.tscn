@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/xy_plot/surface.tscn" id="2_w6hed"]
 [ext_resource type="Script" uid="uid://ddpbfqvggaw26" path="res://assets/xy_plot/function.gd" id="3_1k5s5"]
 [ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://assets/xy_plot/surface_material.tres" id="3_e1i8y"]
-[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/cartesian_basis/cartesian_basis.tscn" id="4_e1i8y"]
+[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/_resources/cartesian_basis/cartesian_basis.tscn" id="4_e1i8y"]
 [ext_resource type="Script" uid="uid://dxqruk253fkna" path="res://assets/xy_plot/level_curves.gd" id="6_bsuvx"]
 [ext_resource type="Material" uid="uid://cojbf2eiolnei" path="res://assets/xy_plot/tangent_plane_material.tres" id="7_rcay0"]
 [ext_resource type="Script" uid="uid://bm7l3c60fmhls" path="res://assets/xy_plot/gradient_arrow.gd" id="8_a8lp6"]

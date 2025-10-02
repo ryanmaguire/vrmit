@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5p2qt5x72drj"]
+
+[ext_resource type="PackedScene" uid="uid://qlgu7rmir3fa" path="res://assets/pickable/pickable_base.tscn" id="1_rsl66"]
+[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/_resources/cartesian_basis/cartesian_basis.tscn" id="2_c1gel"]
+
+[node name="Pickable Base" instance=ExtResource("1_rsl66")]
+
+[node name="Plot Base" type="Node" parent="." index="2"]
+
+[node name="CartesianBasis" parent="Plot Base" index="0" instance=ExtResource("2_c1gel")]

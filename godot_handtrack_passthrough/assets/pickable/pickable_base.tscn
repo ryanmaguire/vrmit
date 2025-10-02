@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://qlgu7rmir3fa"]
+
+[ext_resource type="PackedScene" uid="uid://c8l60rnugru40" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_10nqd"]
+
+[node name="Pickable Base" instance=ExtResource("1_10nqd")]
+
+[node name="Node3D" type="Node3D" parent="." index="1"]
