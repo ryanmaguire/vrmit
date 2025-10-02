@@ -1,10 +1,10 @@
 extends Node
 
 @warning_ignore("unused_signal")
-signal debug_message(String)
+signal debug_message(message:String)
 
 @warning_ignore("unused_signal")
-signal block_button_pressed(String)
+signal block_button_pressed(person:String)
 
 @warning_ignore("unused_signal")
 signal set_origin()
@@ -16,16 +16,35 @@ signal scan_surroundings()
 signal toggle_mesh_visibility()
 
 @warning_ignore("unused_signal")
-signal expression_entered(String)
+signal expression_entered(message:String)
 
 @warning_ignore("unused_signal")
-signal update_slider(float)
+signal update_slider(value:float)
 
 @warning_ignore("unused_signal")
-signal set_rotating(bool)
+signal set_rotating(is_on:bool)
 
 @warning_ignore("unused_signal")
-signal update_plot_scale(float)
+signal set_axis_visibility(is_visible:bool)
 
 @warning_ignore("unused_signal")
-signal update_function_scale(float)
+signal update_plot_scale(scale:float)
+
+@warning_ignore("unused_signal")
+signal update_function_scale(scale:float)
+
+###  CALCULUS OPTIONS MENU  ###
+@warning_ignore("unused_signal")
+signal set_level_curves(is_on:bool)
+
+@warning_ignore("unused_signal")
+signal set_tangent_plane(is_on:bool)
+
+@warning_ignore("unused_signal")
+signal set_grad_vector(is_on:bool)
+
+@warning_ignore("unused_signal")
+signal set_plane_grad_location(x:float, y:float)
+
+@warning_ignore("unused_signal")
+signal set_plot_alpha(alpha:float)

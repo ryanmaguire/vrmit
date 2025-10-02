@@ -80,7 +80,6 @@ func _ready() -> void:
 	GlobalSignals.connect("update_function_scale", _on_update_slider)
 	GlobalSignals.connect("set_rotating", _on_set_rotating)
 	GlobalSignals.connect("update_plot_scale", _on_update_plot_scale)
-	
 	# NEW: UI → surface controls
 	if GlobalSignals.has_signal("set_level_curves"):
 		GlobalSignals.connect("set_level_curves", _on_set_level_curves)
@@ -95,10 +94,10 @@ func _ready() -> void:
 		
 	function = $Function
 	function.initialize()
-	tangent_plane = $TangentPlane2
+	tangent_plane = $Pickable_TangentPlane
 	tangent_plane.visible = false
-	gradient_arrow = $GradientArrow2
-	level_curves = $LevelCurves2
+	gradient_arrow = $Pickable_GradientArrow
+	level_curves = $Pickable_LevelCurves
 	show_tangent_plane = false
 	show_gradient_arrow = false
 	show_level_curves = false
@@ -998,10 +997,9 @@ func place_gradient_arrow(x, y):
 	var xx = round(x * resolution)
 	var yy = round(y * resolution)
 	#gradient_arrow.create_arrow(Vector3.ZERO, Vector3(0, 0, 1))
-	gradient_arrow.create_arrow(Vector3.ZERO, Vector3(-gradients[0][coordsToIndexReal(xx, yy, true)].x, -gradients[0][coordsToIndexReal(xx, yy, true)].y, 1))
+	gradient_arrow.create_arrow(Vector3.ZERO, Vector3(gradients[0][coordsToIndexReal(xx, yy, true)].x, -1, gradients[0][coordsToIndexReal(xx, yy, true)].y))
 	print(Vector3(gradients[0][coordsToIndexReal(xx, yy, true)].x, 1, gradients[0][coordsToIndexReal(xx, yy, true)].y))
 	gradient_arrow.position = Vector3(xx / resolution, heights[0][0][coordsToIndexReal(xx, yy, true)], yy / resolution)
-
 
 # --- Signal handlers ---
 

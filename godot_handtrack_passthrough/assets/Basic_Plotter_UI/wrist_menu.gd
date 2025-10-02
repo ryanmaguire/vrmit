@@ -1,67 +1,78 @@
 @tool
 extends MarginContainer
 
-@onready var btn_x = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/x"
-@onready var btn_y = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/y"
-@onready var btn_z = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/z"
-@onready var btn_a = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/a"
-@onready var btn_7 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/7"
-@onready var btn_8 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/8"
-@onready var btn_9 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/9"
-@onready var btn_divide = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/divide"
-@onready var btn_back = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/back"
+# --- Keypad buttons (assign in Inspector) ---
+@export var btn_x: Button
+@export var btn_y: Button
+@export var btn_z: Button
+@export var btn_a: Button
+@export var btn_7: Button
+@export var btn_8: Button
+@export var btn_9: Button
+@export var btn_divide: Button
+@export var btn_back: Button
 
-@onready var btn_par_l = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/("
-@onready var btn_par_r = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/)"
-@onready var btn_power = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/power"
-@onready var btn_sqrt = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/sqrt"
-@onready var btn_4 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/4"
-@onready var btn_5 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/5"
-@onready var btn_6 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/6"
-@onready var btn_times = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/times"
-@onready var btn_left = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/left"
+@export var btn_par_l: Button
+@export var btn_par_r: Button
+@export var btn_power: Button
+@export var btn_sqrt: Button
+@export var btn_4: Button
+@export var btn_5: Button
+@export var btn_6: Button
+@export var btn_times: Button
+@export var btn_left: Button
 
-@onready var btn_sin = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/sin"
-@onready var btn_cos = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/cos"
-@onready var btn_tan = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/tan"
-@onready var btn_abs = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/abs"
-@onready var btn_1 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/1"
-@onready var btn_2 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/2"
-@onready var btn_3 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/3"
-@onready var btn_minus = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/minus"
-@onready var btn_right = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/right"
+@export var btn_sin: Button
+@export var btn_cos: Button
+@export var btn_tan: Button
+@export var btn_abs: Button
+@export var btn_1: Button
+@export var btn_2: Button
+@export var btn_3: Button
+@export var btn_minus: Button
+@export var btn_right: Button
 
-@onready var btn_ln = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/ln"
-@onready var btn_pi = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/pi"
-@onready var btn_e = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/e"
-@onready var btn_clear = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/clear"
-@onready var btn_0 = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/0"
-@onready var btn_dot = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/dot"
-@onready var btn_equals = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/equals"
-@onready var btn_plus = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/plus"
-@onready var btn_enter = $"ColorRect/TabContainer/Equation Input/MarginContainer/XZ Plot/enter"
+@export var btn_ln: Button
+@export var btn_pi: Button
+@export var btn_e: Button
+@export var btn_clear: Button
+@export var btn_0: Button
+@export var btn_dot: Button
+@export var btn_equals: Button
+@export var btn_plus: Button
+@export var btn_enter: Button
 
-@onready var debug_label = $"ColorRect/TabContainer/Equation Input/HBoxContainer/equation_input"
+# --- Display / controls ---
+@export var debug_label: Label
+@export var plot_scale: HSlider          # "Plot Scale" slider
+@export var function_scale: VSlider      # "Function Scale" slider
+@export var rotate_toggle: CheckButton   # rotation toggle
+@export var axis_toggle: CheckButton   # rotation toggle
 
+# --- Preset function buttons ---
+@export var preset_func_1: Button
+@export var preset_func_2: Button
+@export var preset_func_3: Button
+@export var preset_func_4: Button
+@export var preset_func_5: Button
+@export var preset_func_6: Button
+@export var preset_func_7: Button
+@export var preset_func_8: Button
+@export var preset_func_9: Button
 
-#buttons
-@onready var preset_func_1 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer/Button"
-@onready var preset_func_2 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer2/Button"
-@onready var preset_func_3 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer3/Button"
-@onready var preset_func_4 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer4/Button"
-@onready var preset_func_5 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer5/Button"
-@onready var preset_func_6 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer6/Button"
-@onready var preset_func_7 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer8/Button"
-@onready var preset_func_8 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer7/Button"
-@onready var preset_func_9 = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer9/Button"
+# --- Cal Functions ---
+@export var gradient_toggle: CheckButton 
+@export var level_curves_toggle: CheckButton 
+@export var tangent_plane_toggle: CheckButton 
 
-@onready var plot_scale = $"ColorRect/TabContainer/Plot Options/VBoxContainer/VBoxContainer/Plot Scale/Plot Scale" # h slider
-@onready var function_scale = $"ColorRect/TabContainer/Plot Options/VBoxContainer2/Function Scale/Function Scale" #v slider
+@export var tangent_plane_x_slider: HSlider 
+@export var tangent_plane_y_slider: HSlider
 
-@onready var rotate_toggle = $"ColorRect/TabContainer/Plot Options/VBoxContainer/Rotate Toggle/Rotate/MarginContainer/Rotation Toggle" #check button
+@export var plot_alpha_slider: HSlider
 
-@onready var expr = ""
-@onready var cursor_index : int = 0
+# --- State ---
+var expr: String = ""
+var cursor_index: int = 0
 
 var preset_exprs := [
 	"x+y",
@@ -75,155 +86,218 @@ var preset_exprs := [
 	"(sin(x)+1)^(sin(y)+4)"
 ]
 
-func _ready():
-	GlobalSignals.connect("debug_message", _on_debug_message)
-	debug_label.text = expr_display()
-	
-	btn_x.pressed.connect(_on_text_pressed.bind("x"))
-	btn_y.pressed.connect(_on_text_pressed.bind("y"))
-	btn_z.pressed.connect(_on_text_pressed.bind("z"))
-	btn_a.pressed.connect(_on_text_pressed.bind("a"))
-	btn_7.pressed.connect(_on_text_pressed.bind("7"))
-	btn_8.pressed.connect(_on_text_pressed.bind("8"))
-	btn_9.pressed.connect(_on_text_pressed.bind("9"))
-	btn_divide.pressed.connect(_on_text_pressed.bind("/"))
-	btn_back.pressed.connect(_on_back_pressed)
-	
-	btn_par_l.pressed.connect(_on_text_pressed.bind("("))
-	btn_par_r.pressed.connect(_on_text_pressed.bind(")"))
-	btn_power.pressed.connect(_on_text_pressed.bind("^"))
-	btn_sqrt.pressed.connect(_on_text_pressed.bind("sqrt()"))
-	btn_4.pressed.connect(_on_text_pressed.bind("4"))
-	btn_5.pressed.connect(_on_text_pressed.bind("5"))
-	btn_6.pressed.connect(_on_text_pressed.bind("6"))
-	btn_times.pressed.connect(_on_text_pressed.bind("*"))
-	btn_left.pressed.connect(_on_left_pressed)
-	
-	btn_sin.pressed.connect(_on_text_pressed.bind("sin()"))
-	btn_cos.pressed.connect(_on_text_pressed.bind("cos()"))
-	btn_tan.pressed.connect(_on_text_pressed.bind("tan()"))
-	btn_abs.pressed.connect(_on_text_pressed.bind("abs()"))
-	btn_1.pressed.connect(_on_text_pressed.bind("1"))
-	btn_2.pressed.connect(_on_text_pressed.bind("2"))
-	btn_3.pressed.connect(_on_text_pressed.bind("3"))
-	btn_minus.pressed.connect(_on_text_pressed.bind("-"))
-	btn_right.pressed.connect(_on_right_pressed)
-	
-	btn_ln.pressed.connect(_on_text_pressed.bind("log("))
-	btn_pi.pressed.connect(_on_text_pressed.bind("PI"))
-	btn_e.pressed.connect(_on_text_pressed.bind("exp(1)"))
-	btn_clear.pressed.connect(_on_clear_pressed)
-	btn_0.pressed.connect(_on_text_pressed.bind("0"))
-	btn_dot.pressed.connect(_on_text_pressed.bind("."))
-	btn_equals.pressed.connect(_on_text_pressed.bind("="))
-	btn_plus	.pressed.connect(_on_text_pressed.bind("+"))
-	btn_enter.pressed.connect(_on_enter_pressed)
-	
-	# preset buttons
-	preset_func_1.pressed.connect(_on_preset_pressed.bind(preset_exprs[0]))
-	preset_func_2.pressed.connect(_on_preset_pressed.bind(preset_exprs[1]))
-	preset_func_3.pressed.connect(_on_preset_pressed.bind(preset_exprs[2]))
-	preset_func_4.pressed.connect(_on_preset_pressed.bind(preset_exprs[3]))
-	preset_func_5.pressed.connect(_on_preset_pressed.bind(preset_exprs[4]))
-	preset_func_6.pressed.connect(_on_preset_pressed.bind(preset_exprs[5]))
-	preset_func_7.pressed.connect(_on_preset_pressed.bind(preset_exprs[6]))
-	preset_func_8.pressed.connect(_on_preset_pressed.bind(preset_exprs[7]))
-	preset_func_9.pressed.connect(_on_preset_pressed.bind(preset_exprs[8]))
-	
+func _ready() -> void:
+	_connect_global()
+	_update_display()
+
+	# Keypad text buttons
+	_connect_text(btn_x, "x")
+	_connect_text(btn_y, "y")
+	_connect_text(btn_z, "z")
+	_connect_text(btn_a, "a")
+	_connect_text(btn_7, "7")
+	_connect_text(btn_8, "8")
+	_connect_text(btn_9, "9")
+	_connect_text(btn_divide, "/")
+
+	_connect(btn_back, _on_back_pressed)
+
+	_connect_text(btn_par_l, "(")
+	_connect_text(btn_par_r, ")")
+	_connect_text(btn_power, "^")
+	_connect_text(btn_sqrt, "sqrt()")
+	_connect_text(btn_4, "4")
+	_connect_text(btn_5, "5")
+	_connect_text(btn_6, "6")
+	_connect_text(btn_times, "*")
+	_connect(btn_left, _on_left_pressed)
+
+	_connect_text(btn_sin, "sin()")
+	_connect_text(btn_cos, "cos()")
+	_connect_text(btn_tan, "tan()")
+	_connect_text(btn_abs, "abs()")
+	_connect_text(btn_1, "1")
+	_connect_text(btn_2, "2")
+	_connect_text(btn_3, "3")
+	_connect_text(btn_minus, "-")
+	_connect(btn_right, _on_right_pressed)
+
+	_connect_text(btn_ln, "log(")
+	_connect_text(btn_pi, "PI")
+	_connect_text(btn_e, "exp(1)")
+	_connect(btn_clear, _on_clear_pressed)
+	_connect_text(btn_0, "0")
+	_connect_text(btn_dot, ".")
+	_connect_text(btn_equals, "=")
+	_connect_text(btn_plus, "+")
+	_connect(btn_enter, _on_enter_pressed)
+
+	# Presets
+	_connect_preset(preset_func_1, 0)
+	_connect_preset(preset_func_2, 1)
+	_connect_preset(preset_func_3, 2)
+	_connect_preset(preset_func_4, 3)
+	_connect_preset(preset_func_5, 4)
+	_connect_preset(preset_func_6, 5)
+	_connect_preset(preset_func_7, 6)
+	_connect_preset(preset_func_8, 7)
+	_connect_preset(preset_func_9, 8)
+
+	# Sliders and toggle
 	if plot_scale:
 		plot_scale.value_changed.connect(_on_plot_scale_changed)
 	if function_scale:
 		function_scale.value_changed.connect(_on_function_scale_changed)
 	if rotate_toggle:
-		# CheckBox/CheckButton typically emit "toggled(bool)"
 		rotate_toggle.toggled.connect(_on_rotate_toggled)
-
-
-
-#func _process(delta: float) -> void:
-	#pass
+	if axis_toggle:
+		axis_toggle.toggled.connect(_on_show_axis_toggled)
+		
 	
-func _on_function_pressed(s: String):
-	'''
-	Here are some functions for Tuesday
-	(x^2+y^2)/20
-	a*(x^2-y^2)/10
-	sin(x)+sin(y)
-	5*e^(-a*(x^2+y^2))
-	z^2=x^2+y^2+a^2
-	'''
+	# Calculus UI → GlobalSignals
+	if gradient_toggle:
+		gradient_toggle.toggled.connect(_on_gradient_toggled)
+	if level_curves_toggle:
+		level_curves_toggle.toggled.connect(_on_level_curves_toggled)
+	if tangent_plane_toggle:
+		tangent_plane_toggle.toggled.connect(_on_tangent_plane_toggled)
+
+	if tangent_plane_x_slider:
+		tangent_plane_x_slider.value_changed.connect(_on_tp_x_changed)
+	if tangent_plane_y_slider:
+		tangent_plane_y_slider.value_changed.connect(_on_tp_y_changed)
+
+	if plot_alpha_slider:
+		plot_alpha_slider.value_changed.connect(_on_plot_alpha_changed)
+
+	# initialize downstream state once
+	_emit_plane_grad_location()
+	if gradient_toggle:
+		_on_gradient_toggled(gradient_toggle.button_pressed)
+	if level_curves_toggle:
+		_on_level_curves_toggled(level_curves_toggle.button_pressed)
+	if tangent_plane_toggle:
+		_on_tangent_plane_toggled(tangent_plane_toggle.button_pressed)
+	if plot_alpha_slider:
+		_on_plot_alpha_changed(plot_alpha_slider.value)
+
+# ---------- Connection helpers ----------
+func _connect_global() -> void:
+	if GlobalSignals.has_signal("debug_message"):
+		GlobalSignals.connect("debug_message", _on_debug_message)
+
+func _connect(btn: BaseButton, fn: Callable) -> void:
+	if btn:
+		btn.pressed.connect(fn)
+
+func _connect_text(btn: BaseButton, s: String) -> void:
+	if btn:
+		btn.pressed.connect(_on_text_pressed.bind(s))
+
+func _connect_preset(btn: BaseButton, idx: int) -> void:
+	if btn and idx >= 0 and idx < preset_exprs.size():
+		btn.pressed.connect(_on_preset_pressed.bind(preset_exprs[idx]))
+
+# ---------- UI actions ----------
+func _on_function_pressed(s: String) -> void:
 	expr = s
-	cursor_index = len(s)
+	cursor_index = s.length()
 	_on_enter_pressed()
 
-func _on_text_pressed(s: String):
+func _on_text_pressed(s: String) -> void:
 	if cursor_index == 0:
 		expr = s + expr
-	elif cursor_index == len(expr):
-		expr = expr + s
+	elif cursor_index == expr.length():
+		expr += s
 	else:
 		expr = expr.left(cursor_index) + s + expr.right(-cursor_index)
-	cursor_index += len(s)
-	if s[len(s) - 1] == ")" && len(s) > 1:
+	cursor_index += s.length()
+	if s.length() > 1 and s[s.length() - 1] == ")":
 		cursor_index -= 1
-	debug_label.text = expr_display()
+	_update_display()
 
-func _on_back_pressed():
+func _on_back_pressed() -> void:
 	if cursor_index > 0:
 		expr = expr.left(cursor_index - 1) + expr.right(-cursor_index)
 		cursor_index -= 1
-	debug_label.text = expr_display()
+	_update_display()
 
-func _on_left_pressed():
-	cursor_index -= 1
-	if cursor_index < 0:
-		cursor_index = 0
-	debug_label.text = expr_display()
-	
-func _on_right_pressed():
-	cursor_index += 1
-	if cursor_index > len(expr):
-		cursor_index = len(expr)
-	debug_label.text = expr_display()
-	
-func _on_enter_pressed():
+func _on_left_pressed() -> void:
+	cursor_index = max(cursor_index - 1, 0)
+	_update_display()
+
+func _on_right_pressed() -> void:
+	cursor_index = min(cursor_index + 1, expr.length())
+	_update_display()
+
+func _on_enter_pressed() -> void:
 	GlobalSignals.expression_entered.emit(expr)
-	debug_label.text = ""
-	
-func _on_clear_pressed():
+	if debug_label:
+		debug_label.text = ""
+
+func _on_clear_pressed() -> void:
 	expr = ""
 	cursor_index = 0
-	debug_label.text = expr_display()
-	
+	_update_display()
+
 func expr_display() -> String:
 	if cursor_index == 0:
 		return "|" + expr
-	elif cursor_index == len(expr):
+	if cursor_index == expr.length():
 		return expr + "|"
-	else:
-		return expr.left(cursor_index) + "|" + expr.right(-cursor_index)
+	return expr.left(cursor_index) + "|" + expr.right(-cursor_index)
 
-func _on_debug_message(message):
-	debug_label.text = message
+func _on_debug_message(message: String) -> void:
+	if debug_label:
+		debug_label.text = message
 
-
-
-
-
+# ---------- Presets and options ----------
 func _on_preset_pressed(s: String) -> void:
-	# set expression and trigger plotting
 	_on_function_pressed(s)
 
 func _on_plot_scale_changed(value: float) -> void:
-	# emit a global signal other systems can connect to
-	# signal name: "plot_scale_changed"
 	GlobalSignals.update_plot_scale.emit(value)
 
 func _on_function_scale_changed(value: float) -> void:
-	# vertical scaling of function values
 	GlobalSignals.update_function_scale.emit(value)
 
 func _on_rotate_toggled(pressed: bool) -> void:
-	# toggle rotation on surfaces and related nodes
-	# surface expects signal "set_rotating" as used elsewhere
 	GlobalSignals.set_rotating.emit(pressed)
+
+func _on_show_axis_toggled(pressed: bool) -> void:
+	GlobalSignals.set_axis_visibility.emit(pressed)
+	
+ 
+
+# --------------  CAL FUNCTIONS ----------------------
+func _on_gradient_toggled(on: bool) -> void:
+	GlobalSignals.set_grad_vector.emit(on)
+
+func _on_level_curves_toggled(on: bool) -> void:
+	GlobalSignals.set_level_curves.emit(on)
+
+func _on_tangent_plane_toggled(on: bool) -> void:
+	GlobalSignals.set_tangent_plane.emit(on)
+
+func _on_tp_x_changed(_v: float) -> void:
+	_emit_plane_grad_location()
+
+func _on_tp_y_changed(_v: float) -> void:
+	_emit_plane_grad_location()
+
+func _emit_plane_grad_location() -> void:
+	var x = 0.0
+	var y = 0.0
+	if tangent_plane_x_slider:
+		x = float(tangent_plane_x_slider.value)
+	if tangent_plane_y_slider:
+		y = float(tangent_plane_y_slider.value)
+	GlobalSignals.set_plane_grad_location.emit(x, y)
+
+func _on_plot_alpha_changed(alpha: float) -> void:
+	GlobalSignals.set_plot_alpha.emit(clamp(alpha, 0.0, 1.0))
+
+# ---------- Internal ----------
+func _update_display() -> void:
+	if debug_label:
+		debug_label.text = expr_display()
