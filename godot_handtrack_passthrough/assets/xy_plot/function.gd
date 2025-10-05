@@ -62,24 +62,41 @@ func filter_string(original: String):
 	#original = original.replace("e", "exp(1)")
 	original = original.replace("^", "**")
 	var i = 0;
-	var par_count = 0;
 	while original[len(original) - 1] == "(":
 		original = original.left(original.length() - 1)
-	while i < original.length() - 1 and i < 100:
+	while i < original.length() - 1 and i < 1000:
 		var c1 = original[i]
 		var c2 = original[i + 1]
-		if c1 == "(":
-			par_count += 1
-		if c1 == ")":
-			par_count -= 1
-		if c1.is_valid_int() and (c2 == "(" or c2 >= "A" and c2 <= "z"):
+		if (c1 >= "a" and c1 <= "z") and (c2 >= "A" and c2 <= "z"):
 			original = original.insert(i + 1, "*")
-		elif (c1 == ")" or c1 >= "A" and c1 <= "z") and c2.is_valid_int():
+		elif c1.is_valid_int() and (c2 == "(" or c2 >= "A" and c2 <= "z"):
+			original = original.insert(i + 1, "*")
+		elif (c1 == ")" or c1 >= "a" and c1 <= "z") and c2.is_valid_int():
 			original = original.insert(i + 1, "*")
 		elif c1 == ")" and (c2 == "(" or c2 >= "A" and c2 <= "z"):
 			original = original.insert(i + 1, "*")
-		elif (i == 0 or i >= 1 and !(original[i-1] >= "A" and original[i-1] <= "z")) && (c1 == "(" or c1 >= "A" and c1 <= "z") and c2 == "(":
+		elif (c2 >= "a" and c2 <= "z") and c2 == "(":
 			original = original.insert(i + 1, "*")
+		#elif (i == 0 or i >= 1 and !(original[i-1] >= "A" and original[i-1] <= "z")) && (c1 == ")" or c1 >= "A" and c1 <= "z") and c2 == "(":
+		#	original = original.insert(i + 1, "*")
+		i += 1
+	original = original.replace("R", "sqrt(")
+	original = original.replace("S", "sin(")
+	original = original.replace("C", "cos(")
+	original = original.replace("T", "tan(")
+	original = original.replace("A", "abs(")
+	original = original.replace("L", "ln(")
+	original = original.replace("P", "PI")
+	original = original.replace("E", "exp(1)")
+	i = 0
+	var par_count = 0;
+	while i < original.length() - 1 and i < 1000:
+		if original[i] == "(":
+			if i < original.length() - 1 && original[i + 1] == ")":
+				original = original.insert(i + 1, "0")
+			par_count += 1
+		if original[i] == ")":
+			par_count -= 1
 		i += 1
 	if original[len(original) - 1] == ")":
 		par_count -= 1

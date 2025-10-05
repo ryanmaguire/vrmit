@@ -1,0 +1,52 @@
+[gd_scene load_steps=10 format=3 uid="uid://bntjhs7rr2his"]
+
+[ext_resource type="Script" uid="uid://cjxc6bsomy7co" path="res://assets/xy_plot/surface.gd" id="1_exuij"]
+[ext_resource type="Script" uid="uid://ddpbfqvggaw26" path="res://assets/xy_plot/function.gd" id="2_aisq3"]
+[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://assets/xy_plot/surface_material.tres" id="2_cgxtg"]
+[ext_resource type="Material" uid="uid://bbspaiih0uc8j" path="res://assets/xy_plot/surface_material_empty.tres" id="3_26yfa"]
+[ext_resource type="PackedScene" uid="uid://cpj1jhr6lqmom" path="res://assets/pickable/plots/_resources/tangent_plane/tangent_plane.tscn" id="4_061ke"]
+[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/_resources/cartesian_basis/cartesian_basis.tscn" id="4_tx4ly"]
+[ext_resource type="PackedScene" uid="uid://ok4n8ynsdcvi" path="res://assets/pickable/plots/_resources/gradient_arrow/gradient_arrow.tscn" id="5_064cm"]
+[ext_resource type="PackedScene" uid="uid://c4cbjp1r7xdqu" path="res://assets/pickable/plots/_resources/level_curves/level_curves.tscn" id="6_8t5q5"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_26yfa"]
+
+[node name="XYPlot" type="MeshInstance3D" node_paths=PackedStringArray("function", "tangent_plane", "gradient_arrow", "level_curves")]
+transform = Transform3D(1.00016, 0, 0, 0, 1, 0, 0, 0, 1.00016, 0, 0, 0)
+mesh = SubResource("ArrayMesh_26yfa")
+script = ExtResource("1_exuij")
+a = 0.76
+x_min = -10
+x_max = 10
+z_min = -10
+z_max = 10
+z_init = 50
+g_init = Vector2(-2, -2)
+runge_kutta_steps = 1
+expression = "-(x^2+y^2)/10"
+resolution = 11
+render_type = 1
+checkers_size = 1
+levels_size = 1.0
+arrows_spacing = 100
+is_rotating = false
+locked_spatial_rotation = false
+surface_material = ExtResource("2_cgxtg")
+surface_material_empty = ExtResource("3_26yfa")
+function = NodePath("Function")
+tangent_plane = NodePath("TangentPlane")
+gradient_arrow = NodePath("GradientArrow")
+level_curves = NodePath("LevelCurves")
+
+[node name="Function" type="Node3D" parent="."]
+script = ExtResource("2_aisq3")
+
+[node name="CartesianBasis" parent="." instance=ExtResource("4_tx4ly")]
+
+[node name="TangentPlane" parent="." instance=ExtResource("4_061ke")]
+visible = false
+
+[node name="GradientArrow" parent="." instance=ExtResource("5_064cm")]
+visible = false
+
+[node name="LevelCurves" parent="." instance=ExtResource("6_8t5q5")]

@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://c4cbjp1r7xdqu"]
+
+[ext_resource type="Script" uid="uid://dxqruk253fkna" path="res://assets/xy_plot/level_curves.gd" id="1_5p13a"]
+[ext_resource type="Material" uid="uid://cojbf2eiolnei" path="res://assets/xy_plot/tangent_plane_material.tres" id="2_rf0hd"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_jv6ek"]
+
+[node name="LevelCurves" type="MeshInstance3D"]
+transform = Transform3D(0.999999, 0, 0, 0, 1, 0, 0, 0, 0.999998, 0, 0, 0)
+visible = false
+mesh = SubResource("ArrayMesh_jv6ek")
+skeleton = NodePath("../TangentPlane")
+script = ExtResource("1_5p13a")
+fill_material = ExtResource("2_rf0hd")
+outline_material = ExtResource("2_rf0hd")
+outline_offset = 0.0

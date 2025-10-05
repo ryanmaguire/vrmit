@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://100a1doosak6"]
 
-[ext_resource type="PackedScene" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_xv5y6"]
-[ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/xy_plot/surface.tscn" id="2_6illx"]
+[ext_resource type="PackedScene" uid="uid://c8l60rnugru40" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_xv5y6"]
+[ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/pickable/plots/xy-plot/xy_plot.tscn" id="2_6illx"]
 
 [node name="Node3D" type="Node3D"]
 

@@ -300,6 +300,6 @@ offset_left = 14.0
 offset_top = 170.0
 offset_right = 52.0
 offset_bottom = 193.0
-text = "|"
+text = "sqrt(x)x|"
 
 [connection signal="pressed" from="Control/ColorRect/TabContainer/Cube/Cardozo" to="Control" method="_on_button_pressed"]

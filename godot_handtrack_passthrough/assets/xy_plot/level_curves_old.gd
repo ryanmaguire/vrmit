@@ -69,7 +69,11 @@ func extract_level_loops(y_threshold: float) -> Array:
 
 	# --- Sample scalar field ---
 	var values: Array = []
+	var edge_points: Array = []
+	var used: Array = []
 	values.resize((width + 1) * (depth + 1))
+	edge_points.resize((width + 1) * (depth + 1))
+	used.resize((width + 1) * (depth + 1))
 	for gz in range(depth + 1):
 		for gx in range(width + 1):
 			var x = x_min + gx / float(res)
@@ -79,47 +83,64 @@ func extract_level_loops(y_threshold: float) -> Array:
 				continue
 			var y_val = surface.heights[0][0][idx]
 			values[gz * (width + 1) + gx] = y_val > y_threshold
-
-	# --- Marching squares edge table ---
-	var edge_table = {
-		1:  [[Vector2(0,0.5), Vector2(0.5,0)]],
-		2:  [[Vector2(0.5,0), Vector2(1,0.5)]],
-		3:  [[Vector2(0,0.5), Vector2(1,0.5)]],
-		4:  [[Vector2(1,0.5), Vector2(0.5,1)]],
-		5:  [[Vector2(0,0.5), Vector2(0.5,0)], [Vector2(1,0.5), Vector2(0.5,1)]],
-		6:  [[Vector2(0.5,0), Vector2(0.5,1)]],
-		7:  [[Vector2(0,0.5), Vector2(0.5,1)]],
-		8:  [[Vector2(0.5,1), Vector2(0,0.5)]],
-		9:  [[Vector2(0.5,0), Vector2(0.5,1)]],
-		10: [[Vector2(0.5,0), Vector2(1,0.5)], [Vector2(0.5,1), Vector2(0,0.5)]],
-		11: [[Vector2(1,0.5), Vector2(0.5,1)]],
-		12: [[Vector2(0,0.5), Vector2(1,0.5)]],
-		13: [[Vector2(0.5,0), Vector2(1,0.5)]],
-		14: [[Vector2(0,0.5), Vector2(0.5,0)]],
-	}
-	
-	'''var edge_table = {
-		1:  [[Vector2(0,0.5), Vector2(0.5,0)]],
-		2:  [[Vector2(0.5,0), Vector2(1,0.5)]],
-		3:  [[Vector2(0,0.5), Vector2(1,0.5)]],
-		4:  [[Vector2(1,0.5), Vector2(0.5,1)]],
-		5:  [[Vector2(0,0.5), Vector2(0.5,0)], [Vector2(1,0.5), Vector2(0.5,1)]],
-		6:  [[Vector2(0.5,0), Vector2(0.5,1)]],
-		7:  [[Vector2(0,0.5), Vector2(0.5,1)]],
-		8:  [[Vector2(0.5,1), Vector2(0,0.5)]],
-		9:  [[Vector2(0.5,0), Vector2(0.5,1)]],
-		10: [[Vector2(0.5,0), Vector2(1,0.5)], [Vector2(0.5,1), Vector2(0,0.5)]],
-		11: [[Vector2(1,0.5), Vector2(0.5,1)]],
-		12: [[Vector2(0,0.5), Vector2(1,0.5)]],
-		13: [[Vector2(0.5,0), Vector2(1,0.5)]],
-		14: [[Vector2(0,0.5), Vector2(0.5,0)]],
-	}'''
+			edge_points[gz * (width + 1) + gx] = gx != 0 && gx != width && gz != 0 && gz != depth && y_val > y_threshold
+			used[gz * (width + 1) + gx] = false
+			
+	for gz in range(1, depth):
+		for gx in range(1, width):
+			if !values[gz * (width + 1) + gx]:
+				if (!values[(gz - 1) * (width + 1) + gx - 1] && !values[(gz) * (width + 1) + gx - 1]
+					&& !values[(gz + 1) * (width + 1) + gx - 1] && !values[(gz - 1) * (width + 1) + gx]
+					&& !values[(gz + 1) * (width + 1) + gx] && !values[(gz - 1) * (width + 1) + gx + 1]
+					&& !values[(gz) * (width + 1) + gx + 1] && !values[(gz + 1) * (width + 1) + gx + 1]):
+						edge_points[gz * (width + 1) + gx] = true
 
 	var segments: Array = []
 
 	for gz in range(depth):
 		for gx in range(width):
-			var v0 = values[gz * (width + 1) + gx]
+			if !edge_points[gz * (width + 1) + gx]:# && (values[gz * (width + 1) + gx - 1] || values[gz * (width + 1) + gx + 1] || values[(gz - 1) * (width + 1) + gx] || values[(gz + 1) * (width + 1) + gx]):
+				var px = gx
+				var pz = gz
+				while !edge_points[gz * (width + 1) + gx]:
+					print(str(px) + "," + str(pz))
+					edge_points[pz * (width + 1) + px] = true
+					if pz > 0 && !edge_points[(pz - 1) * (width + 1) + px]:
+						pz -= 1
+						segments.append([Vector2(x_min + px / res, z_min + (pz + 1) / res), Vector2(x_min + px / res, z_min + (pz + 1) / res)])
+					elif pz < depth - 1 && !edge_points[(pz + 1) * (width + 1) + px]:
+						pz += 1
+						segments.append([Vector2(x_min + px / res, z_min + (pz - 1) / res), Vector2(x_min + px / res, z_min + pz / res)])
+					elif px > 0 && !edge_points[(pz) * (width + 1) + px - 1]:
+						px -= 1
+						segments.append([Vector2(x_min + (px + 1) / res, z_min + pz / res), Vector2(x_min + px / res, z_min + pz / res)])
+					elif px < width - 1 && !edge_points[(pz) * (width + 1) + px + 1]:
+						px += 1
+						segments.append([Vector2(x_min + (px - 1) / res, z_min + pz / res), Vector2(x_min + px / res, z_min + pz / res)])
+					else:
+						segments.append([Vector2(x_min + px / res, z_min + pz / res), Vector2(x_min + gx / res, z_min + gz / res)])
+						break
+					'''var xn = values[gz * (width + 1) + gx - 1]
+					var xp = values[gz * (width + 1) + gx + 1]
+					var zn = values[(gz - 1) * (width + 1) + gx]
+					var zp = values[(gz + 1) * (width + 1) + gx]
+					var p = Vector2(x_min + gx / res, z_min + gz / res)
+					if (xn or xp) and !zn and !zp:
+						segments.append([p + Vector2.DOWN, p + Vector2.UP])
+					if (zn or zp) and !xn and !xp:
+						segments.append([p + Vector2.LEFT, p + Vector2.RIGHT])
+					if !xn and xp and !zn and zp:
+						segments.append([p + Vector2.LEFT, p + Vector2.DOWN])
+					if !xn and xp and zn and !zp:
+						segments.append([p + Vector2.LEFT, p + Vector2.UP])
+					if xn and !xp and !zn and zp:
+						segments.append([p + Vector2.RIGHT, p + Vector2.DOWN])
+					if xn and !xp and zn and !zp:
+						segments.append([p + Vector2.RIGHT, p + Vector2.UP])
+						#segments.append([p, p + Vector2.RIGHT])'''
+			
+			
+			'''var v0 = values[gz * (width + 1) + gx]
 			var v1 = values[gz * (width + 1) + gx + 1]
 			var v2 = values[(gz + 1) * (width + 1) + gx + 1]
 			var v3 = values[(gz + 1) * (width + 1) + gx]
@@ -156,7 +177,7 @@ func extract_level_loops(y_threshold: float) -> Array:
 					segments.append([
 						Vector2(x_min + (gx - 0.5) / res, z_max),
 						Vector2(x_min + (gx + 0.5) / res, z_max)
-					])
+					])'''
 
 	# --- Chain into loops ---
 	loops = _chain_segments_to_loops(segments)

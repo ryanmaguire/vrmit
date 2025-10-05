@@ -7,31 +7,34 @@ extends MeshInstance3D
 	var arrow_node = create_arrow(Vector3.ZERO, vec, Color.GREEN)
 	add_child(arrow_node)'''
 
-func create_arrow(origin: Vector3, direction: Vector3, color: Color = Color.RED):
+func create_arrow(direction: Vector3, color: Color = Color.RED):
+	rotation = Vector3.ZERO
+	transform.basis = Basis(Quaternion(transform.basis.y, direction))
+	
 	for c in get_children():
 		c.queue_free()
-		
-	var arrow = Node3D.new()
+				
+	'''var arrow = Node3D.new()
 	arrow.position = origin
 
 	var length = direction.length()
 	if length == 0:
 		return arrow
 
-	var dir_norm = direction.normalized()
+	#var dir_norm = direction.normalized()
 
 	# Construct a basis where Y points along dir_norm
 	var up = Vector3.UP
 	if abs(dir_norm.dot(up)) > 0.999:  # parallel, pick different up
 		up = Vector3.RIGHT
-	var basis = Basis().looking_at(global_position+dir_norm, up)
+	var basis = Basis().looking_at(global_position+dir_norm, up)'''
 
 	# Shaft
 	var shaft = MeshInstance3D.new()
 	var cylinder = CylinderMesh.new()
 	cylinder.bottom_radius = 0.05
 	cylinder.top_radius = 0.05
-	cylinder.height = length * 0.8
+	cylinder.height = direction.length() * 0.8
 	shaft.mesh = cylinder
 	var mat_shaft = StandardMaterial3D.new()
 	mat_shaft.albedo_color = color
@@ -41,14 +44,14 @@ func create_arrow(origin: Vector3, direction: Vector3, color: Color = Color.RED)
 	var shaft_transform = Transform3D()
 	shaft_transform.origin = Vector3(0, cylinder.height/2, 0)
 	shaft.transform = shaft_transform
-	arrow.add_child(shaft)
+	add_child(shaft)
 
 	# Head
 	var head = MeshInstance3D.new()
 	var cone = CylinderMesh.new()
 	cone.bottom_radius = 0.1
 	cone.top_radius = 0.0
-	cone.height = length * 0.2
+	cone.height = direction.length() * 0.2
 	head.mesh = cone
 	var mat_head = StandardMaterial3D.new()
 	mat_head.albedo_color = color
@@ -57,11 +60,11 @@ func create_arrow(origin: Vector3, direction: Vector3, color: Color = Color.RED)
 	var head_transform = Transform3D()
 	head_transform.origin = Vector3(0, cylinder.height + cone.height/2, 0)
 	head.transform = head_transform
-	arrow.add_child(head)
+	add_child(head)
 
 	# Apply transform so Y-axis aligns with vector
-	arrow.transform = Transform3D(basis, origin)
+	#arrow.transform = Transform3D(basis, origin)
 
-	add_child(arrow)
+	#add_child(arrow)
 	#return arrow
 	

@@ -3,6 +3,7 @@
 [resource]
 transparency = 1
 cull_mode = 2
+depth_draw_mode = 1
 shading_mode = 0
 vertex_color_use_as_albedo = true
 albedo_color = Color(1.49205e-06, 0.671528, 0.478854, 1)

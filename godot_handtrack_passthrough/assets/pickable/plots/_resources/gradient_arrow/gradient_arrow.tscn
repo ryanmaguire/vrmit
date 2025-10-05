@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://ok4n8ynsdcvi"]
+
+[ext_resource type="Script" uid="uid://bm7l3c60fmhls" path="res://assets/xy_plot/gradient_arrow.gd" id="1_ah4so"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cwj1n"]
+
+[node name="GradientArrow" type="MeshInstance3D"]
+mesh = SubResource("ArrayMesh_cwj1n")
+script = ExtResource("1_ah4so")
