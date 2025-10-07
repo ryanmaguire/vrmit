@@ -97,6 +97,7 @@ func _ready() -> void:
 		function.initialize()
 	if tangent_plane:
 		tangent_plane.visible = false
+	_on_expression_entered("0")
 	show_tangent_plane = false
 	show_gradient_arrow = false
 	show_level_curves = false
@@ -112,7 +113,7 @@ func _on_expression_entered(expr: String):
 		function.set_string(expression, 0)
 	else:
 		function.set_string(expr, 0)
-	#gen()
+	gen()
 	
 func _on_update_slider(aye: float):
 	a = aye

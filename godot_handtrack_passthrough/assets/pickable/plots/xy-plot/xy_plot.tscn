@@ -4,10 +4,10 @@
 [ext_resource type="Script" uid="uid://ddpbfqvggaw26" path="res://assets/xy_plot/function.gd" id="2_aisq3"]
 [ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://assets/xy_plot/surface_material.tres" id="2_cgxtg"]
 [ext_resource type="Material" uid="uid://bbspaiih0uc8j" path="res://assets/xy_plot/surface_material_empty.tres" id="3_26yfa"]
-[ext_resource type="PackedScene" uid="uid://cpj1jhr6lqmom" path="res://assets/pickable/plots/_resources/tangent_plane/tangent_plane.tscn" id="4_061ke"]
-[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/_resources/cartesian_basis/cartesian_basis.tscn" id="4_tx4ly"]
-[ext_resource type="PackedScene" uid="uid://ok4n8ynsdcvi" path="res://assets/pickable/plots/_resources/gradient_arrow/gradient_arrow.tscn" id="5_064cm"]
-[ext_resource type="PackedScene" uid="uid://c4cbjp1r7xdqu" path="res://assets/pickable/plots/_resources/level_curves/level_curves.tscn" id="6_8t5q5"]
+[ext_resource type="PackedScene" uid="uid://cpj1jhr6lqmom" path="res://assets/pickable/plots/resources/tangent_plane/tangent_plane.tscn" id="4_061ke"]
+[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/resources/cartesian_basis/cartesian_basis.tscn" id="4_tx4ly"]
+[ext_resource type="PackedScene" uid="uid://ok4n8ynsdcvi" path="res://assets/pickable/plots/resources/gradient_arrow/gradient_arrow.tscn" id="5_064cm"]
+[ext_resource type="PackedScene" uid="uid://c4cbjp1r7xdqu" path="res://assets/pickable/plots/resources/level_curves/level_curves.tscn" id="6_8t5q5"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_26yfa"]
 

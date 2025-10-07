@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://erhmok480xny"]
 
 [ext_resource type="PackedScene" uid="uid://c5p2qt5x72drj" path="res://assets/pickable/plots/pickable_base.tscn" id="1_rleye"]
-[ext_resource type="PackedScene" uid="uid://emfq3woye0n1" path="res://assets/pickable/plots/xy-plot/_resources/gradient_vector.tscn" id="2_8x1ek"]
+[ext_resource type="PackedScene" uid="uid://emfq3woye0n1" path="res://assets/pickable/plots/xy-plot/resources/gradient_vector.tscn" id="2_8x1ek"]
 
 [node name="Pickable Base" instance=ExtResource("1_rleye")]
 

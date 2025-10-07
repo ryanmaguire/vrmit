@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c5p2qt5x72drj"]
 
 [ext_resource type="PackedScene" uid="uid://qlgu7rmir3fa" path="res://assets/pickable/pickable_base.tscn" id="1_rsl66"]
-[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/_resources/cartesian_basis/cartesian_basis.tscn" id="2_c1gel"]
+[ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/resources/cartesian_basis/cartesian_basis.tscn" id="2_c1gel"]
 
 [node name="Pickable Base" instance=ExtResource("1_rsl66")]
 

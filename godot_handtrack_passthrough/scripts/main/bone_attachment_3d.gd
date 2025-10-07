@@ -44,7 +44,7 @@ func _process(_dt):
 	var head_forward = -head.global_transform.basis.z.normalized()
 	var head_dot = head_forward.dot(dir_head_to_palm)
 
-	GlobalSignals.emit_signal("dot_products_updated", palm_dot, head_dot)
+	# GlobalSignals.emit_signal("dot_products_updated", palm_dot, head_dot)
 
 	# If menu is not shown, use palm visibility logic
 	if not menu_visible:

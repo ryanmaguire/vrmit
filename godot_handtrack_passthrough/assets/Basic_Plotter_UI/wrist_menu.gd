@@ -105,26 +105,26 @@ func _ready() -> void:
 	_connect_text(btn_par_l, "(")
 	_connect_text(btn_par_r, ")")
 	_connect_text(btn_power, "^")
-	_connect_text(btn_sqrt, "sqrt()")
+	_connect_text(btn_sqrt, "R)")
 	_connect_text(btn_4, "4")
 	_connect_text(btn_5, "5")
 	_connect_text(btn_6, "6")
 	_connect_text(btn_times, "*")
 	_connect(btn_left, _on_left_pressed)
 
-	_connect_text(btn_sin, "sin()")
-	_connect_text(btn_cos, "cos()")
-	_connect_text(btn_tan, "tan()")
-	_connect_text(btn_abs, "abs()")
+	_connect_text(btn_sin, "S)")
+	_connect_text(btn_cos, "C)")
+	_connect_text(btn_tan, "T)")
+	_connect_text(btn_abs, "A)")
 	_connect_text(btn_1, "1")
 	_connect_text(btn_2, "2")
 	_connect_text(btn_3, "3")
 	_connect_text(btn_minus, "-")
 	_connect(btn_right, _on_right_pressed)
 
-	_connect_text(btn_ln, "log(")
-	_connect_text(btn_pi, "PI")
-	_connect_text(btn_e, "exp(1)")
+	_connect_text(btn_ln, "L)")
+	_connect_text(btn_pi, "P")
+	_connect_text(btn_e, "E")
 	_connect(btn_clear, _on_clear_pressed)
 	_connect_text(btn_0, "0")
 	_connect_text(btn_dot, ".")
@@ -241,11 +241,22 @@ func _on_clear_pressed() -> void:
 	_update_display()
 
 func expr_display() -> String:
+	var display
 	if cursor_index == 0:
-		return "|" + expr
-	if cursor_index == expr.length():
-		return expr + "|"
-	return expr.left(cursor_index) + "|" + expr.right(-cursor_index)
+		display = "|" + expr
+	elif cursor_index == len(expr):
+		display = expr + "|"
+	else:
+		display = expr.left(cursor_index) + "|" + expr.right(-cursor_index)
+	display = display.replace("R", "sqrt(")
+	display = display.replace("S", "sin(")
+	display = display.replace("C", "cos(")
+	display = display.replace("T", "tan(")
+	display = display.replace("A", "abs(")
+	display = display.replace("L", "ln(")
+	display = display.replace("P", "PI")
+	display = display.replace("E", "exp(1)")
+	return display
 
 func _on_debug_message(message: String) -> void:
 	if debug_label:
@@ -301,3 +312,116 @@ func _on_plot_alpha_changed(alpha: float) -> void:
 func _update_display() -> void:
 	if debug_label:
 		debug_label.text = expr_display()
+
+func _process(delta: float) -> void:
+	if !btn_x.visible:
+		_on_text_pressed("x")
+		btn_x.visible = true
+	if !btn_y.visible:
+		_on_text_pressed("y")
+		btn_y.visible = true
+	if !btn_z.visible:
+		_on_text_pressed("z")
+		btn_z.visible = true
+	if !btn_a.visible:
+		_on_text_pressed("a")
+		btn_a.visible = true
+	if !btn_7.visible:
+		_on_text_pressed("7")
+		btn_7.visible = true
+	if !btn_8.visible:
+		_on_text_pressed("8")
+		btn_8.visible = true
+	if !btn_9.visible:
+		_on_text_pressed("9")
+		btn_9.visible = true
+	if !btn_divide.visible:
+		_on_text_pressed("/")
+		btn_divide.visible = true
+	if !btn_back.visible:
+		_on_back_pressed()
+		btn_back.visible = true
+	
+	if !btn_par_l.visible:
+		_on_text_pressed("(")
+		btn_par_l.visible = true
+	if !btn_par_r.visible:
+		_on_text_pressed(")")
+		btn_par_r.visible = true
+	if !btn_power.visible:
+		_on_text_pressed("^")
+		btn_power.visible = true
+	if !btn_sqrt.visible:
+		_on_text_pressed("R)")
+		btn_sqrt.visible = true
+	if !btn_4.visible:
+		_on_text_pressed("4")
+		btn_4.visible = true
+	if !btn_5.visible:
+		_on_text_pressed("5")
+		btn_5.visible = true
+	if !btn_6.visible:
+		_on_text_pressed("6")
+		btn_6.visible = true
+	if !btn_times.visible:
+		_on_text_pressed("*")
+		btn_times.visible = true
+	if !btn_left.visible:
+		_on_left_pressed()
+		btn_left.visible = true
+		
+	if !btn_sin.visible:
+		_on_text_pressed("S)")
+		btn_sin.visible = true
+	if !btn_cos.visible:
+		_on_text_pressed("C)")
+		btn_cos.visible = true
+	if !btn_tan.visible:
+		_on_text_pressed("T)")
+		btn_tan.visible = true
+	if !btn_abs.visible:
+		_on_text_pressed("A)")
+		btn_abs.visible = true
+	if !btn_1.visible:
+		_on_text_pressed("1")
+		btn_1.visible = true
+	if !btn_2.visible:
+		_on_text_pressed("2")
+		btn_2.visible = true
+	if !btn_3.visible:
+		_on_text_pressed("3")
+		btn_3.visible = true
+	if !btn_minus.visible:
+		_on_text_pressed("-")
+		btn_minus.visible = true
+	if !btn_right.visible:
+		_on_right_pressed()
+		btn_right.visible = true
+		
+	if !btn_ln.visible:
+		_on_text_pressed("L)")
+		btn_ln.visible = true
+	if !btn_pi.visible:
+		_on_text_pressed("P")
+		btn_pi.visible = true
+	if !btn_e.visible:
+		_on_text_pressed("E")
+		btn_e.visible = true
+	if !btn_clear.visible:
+		_on_clear_pressed()
+		btn_clear.visible = true
+	if !btn_0.visible:
+		_on_text_pressed("0")
+		btn_0.visible = true
+	if !btn_dot.visible:
+		_on_text_pressed(".")
+		btn_dot.visible = true
+	if !btn_equals.visible:
+		_on_text_pressed("=")
+		btn_equals.visible = true
+	if !btn_plus.visible:
+		_on_text_pressed("+")
+		btn_plus.visible = true
+	if !btn_enter.visible:
+		_on_enter_pressed()
+		btn_enter.visible = true

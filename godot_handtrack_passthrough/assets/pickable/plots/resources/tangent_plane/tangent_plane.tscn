@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cpj1jhr6lqmom"]
 
 [ext_resource type="Material" uid="uid://cojbf2eiolnei" path="res://assets/xy_plot/tangent_plane_material.tres" id="1_smkkq"]
-[ext_resource type="Script" uid="uid://d0x0y8snlc8mc" path="res://assets/pickable/plots/_resources/tangent_plane/tangent_plane.gd" id="2_smvgv"]
+[ext_resource type="Script" uid="uid://d0x0y8snlc8mc" path="res://assets/pickable/plots/resources/tangent_plane/tangent_plane.gd" id="2_smvgv"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_smvgv"]
 size = Vector2(10, 10)
