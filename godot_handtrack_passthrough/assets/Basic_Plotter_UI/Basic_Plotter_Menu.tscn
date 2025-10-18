@@ -78,11 +78,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 tab_alignment = 1
-current_tab = 0
+current_tab = 2
 all_tabs_in_front = true
 drag_to_rearrange_enabled = true
 
 [node name="Basic Plot Options" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
@@ -119,7 +120,7 @@ layout_mode = 2
 
 [node name="preset_func_2" type="Button" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer2"]
 layout_mode = 2
-text = "x*y"
+text = "x*y/10"
 
 [node name="MarginContainer3" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer"]
 custom_minimum_size = Vector2(130, 38)
@@ -135,7 +136,7 @@ layout_mode = 2
 
 [node name="preset_func_4" type="Button" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer4"]
 layout_mode = 2
-text = "x^2 + y^2"
+text = "(x^2+y^2)/20"
 
 [node name="MarginContainer5" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer"]
 custom_minimum_size = Vector2(130, 38)
@@ -143,7 +144,7 @@ layout_mode = 2
 
 [node name="preset_func_5" type="Button" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer5"]
 layout_mode = 2
-text = "x^2 - y^2"
+text = "(x^2-y^2)/10"
 
 [node name="MarginContainer6" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer"]
 custom_minimum_size = Vector2(130, 38)
@@ -159,7 +160,7 @@ layout_mode = 2
 
 [node name="preset_func_7" type="Button" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer8"]
 layout_mode = 2
-text = "sqrt(x^2 + y^2)"
+text = "sqrt(x^2+y^2)"
 
 [node name="MarginContainer7" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer"]
 custom_minimum_size = Vector2(130, 38)
@@ -167,7 +168,7 @@ layout_mode = 2
 
 [node name="preset_func_8" type="Button" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer/MarginContainer7"]
 layout_mode = 2
-text = "exp(-x^2-y^2)"
+text = "10*exp(-(x^2+y^2)/10)"
 
 [node name="MarginContainer9" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/Function Buttons/GridContainer"]
 custom_minimum_size = Vector2(130, 38)
@@ -376,11 +377,10 @@ layout_mode = 2
 size_flags_vertical = 4
 max_value = 1.0
 step = 0.01
-value = 1.0
+value = 0.8
 tick_count = 20
 
 [node name="Equation Input" type="VBoxContainer" parent="wrist menu/ColorRect/TabContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/separation = 3
 metadata/_tab_index = 2

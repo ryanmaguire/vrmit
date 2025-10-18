@@ -76,14 +76,14 @@ var cursor_index: int = 0
 
 var preset_exprs := [
 	"x+y",
-	"x*y",
+	"x*y/10",
 	"1/(x*y)",
-	"x^2+y^2",
-	"x^2-y^2",
-	"sin(x)*sin(y)",
-	"sqrt(x^2+y^2)",
-	"exp(-x^2-y^2)",
-	"(sin(x)+1)^(sin(y)+4)"
+	"(x^2+y^2)/20",
+	"(x^2-y^2)/10",
+	"Sx)*Sy)",
+	"Rx^2+y^2)",
+	"10*E-(x^2+y^2)/10)",
+	"(Sx)+1)^(Sy)+4)"
 ]
 
 func _ready() -> void:
@@ -232,16 +232,20 @@ func _on_right_pressed() -> void:
 
 func _on_enter_pressed() -> void:
 	GlobalSignals.expression_entered.emit(expr)
-	if debug_label:
-		debug_label.text = ""
+	GlobalSignals.update_plot_scale.emit(plot_scale.value)
+	GlobalSignals.set_plot_alpha.emit(clamp(plot_alpha_slider.value, 0.0, 1.0))
+	#if debug_label:
+	#	debug_label.text = ""
 
 func _on_clear_pressed() -> void:
 	expr = ""
 	cursor_index = 0
 	_update_display()
 
-func expr_display() -> String:
+func expr_display(original: String = "") -> String:
 	var display
+	if original != "":
+		display = original
 	if cursor_index == 0:
 		display = "|" + expr
 	elif cursor_index == len(expr):

@@ -42,6 +42,7 @@ var last_hide_surface: bool
 #@export var arrow : PackedScene
 
 @export var function : Node3D
+@export var cursor_dot : Node3D
 @export var tangent_plane : Node3D
 @export var gradient_arrow : Node3D
 @export var level_curves : Node3D
@@ -988,6 +989,8 @@ func _on_update_plot_scale(value: float) -> void:
 		$"../CollisionShape3D".scale = Vector3(value, value, value)
 		
 func update_extensions():
+	if cursor_dot:
+		place_cursor_dot(cursorX, cursorZ)
 	if tangent_plane:
 		place_tangent_plane(cursorX, cursorZ)
 	if gradient_arrow:
@@ -996,6 +999,11 @@ func update_extensions():
 		level_curves.hasGenerated = false
 		if show_level_curves:
 			level_curves.generate_level_mesh_layers()
+	
+func place_cursor_dot(x, y):
+	var xx = round(x * resolution)
+	var yy = round(y * resolution)
+	tangent_plane.position = Vector3(xx / resolution, heights[0][0][coordsToIndexReal(xx, yy, true)], yy / resolution)
 	
 func place_tangent_plane(x, y):
 	var xx = round(x * resolution)

@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://wb5ulc01y2cn"]
+
+[ext_resource type="Script" uid="uid://bm7l3c60fmhls" path="res://assets/xy_plot/gradient_arrow.gd" id="1_ean0s"]
+[ext_resource type="Material" path="res://addons/godot-xr-tools/materials/pointer.tres" id="1_fw7ch"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_8avdn"]
+material = ExtResource("1_fw7ch")
+radius = 0.2
+height = 0.4
+
+[node name="CursorDot" type="MeshInstance3D"]
+mesh = SubResource("SphereMesh_8avdn")
+script = ExtResource("1_ean0s")
