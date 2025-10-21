@@ -82,7 +82,7 @@ var preset_exprs := [
 	"(x^2-y^2)/10",
 	"Sx)*Sy)",
 	"Rx^2+y^2)",
-	"10*E-(x^2+y^2)/10)",
+	"5*E^(-(x^2+y^2)/10)",
 	"(Sx)+1)^(Sy)+4)"
 ]
 
@@ -234,6 +234,7 @@ func _on_enter_pressed() -> void:
 	GlobalSignals.expression_entered.emit(expr)
 	GlobalSignals.update_plot_scale.emit(plot_scale.value)
 	GlobalSignals.set_plot_alpha.emit(clamp(plot_alpha_slider.value, 0.0, 1.0))
+	_update_display()
 	#if debug_label:
 	#	debug_label.text = ""
 

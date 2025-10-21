@@ -75,6 +75,7 @@ var _locked_basis: Basis
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#arrow = load("res://assets/arrow.tscn")
+	#_on_update_plot_scale(0.2)
 	_locked_basis = global_transform.basis
 	GlobalSignals.connect("expression_entered", _on_expression_entered)
 	GlobalSignals.connect("update_slider", _on_update_slider)
@@ -96,6 +97,9 @@ func _ready() -> void:
 		
 	if function:
 		function.initialize()
+	if cursor_dot:
+		place_cursor_dot(0, 0)
+		#place_cursor_dot(cursorX, cursorZ)
 	if tangent_plane:
 		tangent_plane.visible = false
 	_on_expression_entered("0")
@@ -902,12 +906,14 @@ func _process(delta: float) -> void:
 	if cursorZ >= z_max:
 		cursorZ = z_max
 	if last_cursorX != cursorX:
+		place_cursor_dot(cursorX, cursorZ)
 		if tangent_plane && tangent_plane.visible:
 			place_tangent_plane(cursorX, cursorZ)
 		if gradient_arrow && gradient_arrow.visible:
 			place_gradient_arrow(cursorX, cursorZ)
 		last_cursorX = cursorX
 	if last_cursorZ != cursorZ:
+		place_cursor_dot(cursorX, cursorZ)
 		if tangent_plane && tangent_plane.visible:
 			place_tangent_plane(cursorX, cursorZ)
 		if gradient_arrow && gradient_arrow.visible:
@@ -1003,7 +1009,7 @@ func update_extensions():
 func place_cursor_dot(x, y):
 	var xx = round(x * resolution)
 	var yy = round(y * resolution)
-	tangent_plane.position = Vector3(xx / resolution, heights[0][0][coordsToIndexReal(xx, yy, true)], yy / resolution)
+	cursor_dot.position = Vector3(xx / resolution, heights[0][0][coordsToIndexReal(xx, yy, true)], yy / resolution)
 	
 func place_tangent_plane(x, y):
 	var xx = round(x * resolution)
