@@ -46,5 +46,9 @@ signal set_grad_vector(is_on:bool)
 @warning_ignore("unused_signal")
 signal set_plane_grad_location(x:float, y:float)
 
+###  VECTOR FIELD  ###
 @warning_ignore("unused_signal")
-signal set_plot_alpha(alpha:float)
+signal expressions_entered(messageX:String, messageY:String, messageZ:String)
+
+@warning_ignore("unused_signal")
+signal set_field_render(type:int)

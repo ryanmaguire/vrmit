@@ -1,6 +1,8 @@
 @tool
 extends Node3D
 
+@export var type : int # 0 for xy plot, 1 for vector field
+
 var expression
 var exp_string = ""
 var degree = 0
@@ -168,12 +170,12 @@ func parse():
 		else:
 			if exp_string_x[j] == "a" and !(exp_string_x[j + 1] >= "A" and exp_string_x[j + 1] <= "z") and !(exp_string_x[j - 1] >= "A" and exp_string_x[j - 1] <= "z"):
 				hasSlider = true
-	error = expression_x.parse(exp_string_x, ["s", "t", "x", "a"])
+	error = expression_x.parse(exp_string_x, ["x", "y", "z", "a"] if type == 1 else ["s", "t", "x", "a"])
 	if error == OK:
 		print("Parsed expression x: " + exp_string_x)
 	else:
 		print("Failed to parse expression: " + exp_string_x)
-		expression_x.parse("", ["s", "t", "x", "a"])
+		expression_x.parse("", ["x", "y", "z", "a"] if type == 1 else ["s", "t", "x", "a"])
 	
 	expression_y = Expression.new()
 	exp_string_y = filter_string(exp_string_y)
@@ -190,12 +192,12 @@ func parse():
 		else:
 			if exp_string_y[j] == "a" and !(exp_string_y[j + 1] >= "A" and exp_string_y[j + 1] <= "z") and !(exp_string_y[j - 1] >= "A" and exp_string_y[j - 1] <= "z"):
 				hasSlider = true
-	error = expression_y.parse(exp_string_y, ["s", "t", "y", "a"])
+	error = expression_y.parse(exp_string_y, ["x", "y", "z", "a"] if type == 1 else ["s", "t", "y", "a"])
 	if error == OK:
 		print("Parsed expression y: " + exp_string_y)
 	else:
 		print("Failed to parse expression: " + exp_string_y)
-		expression_y.parse("", ["s", "t", "y", "a"])
+		expression_y.parse("", ["x", "y", "z", "a"] if type == 1 else ["s", "t", "y", "a"])
 	
 	expression_z = Expression.new()
 	exp_string_z = filter_string(exp_string_z)
@@ -212,12 +214,12 @@ func parse():
 		else:
 			if exp_string_z[j] == "a" and !(exp_string_z[j + 1] >= "A" and exp_string_z[j + 1] <= "z") and !(exp_string_z[j - 1] >= "A" and exp_string_z[j - 1] <= "z"):
 				hasSlider = true
-	error = expression_z.parse(exp_string_z, ["s", "t", "z", "a"])
+	error = expression_z.parse(exp_string_z, ["x", "y", "z", "a"] if type == 1 else ["s", "t", "z", "a"])
 	if error == OK:
 		print("Parsed expression z: " + exp_string_z)
 	else:
 		print("Failed to parse expression: " + exp_string_z)
-		expression_z.parse("", ["s", "t", "z", "a"])
+		expression_z.parse("", ["x", "y", "z", "a"] if type == 1 else ["s", "t", "z", "a"])
 
 
 	'''expression_z = Expression.new()

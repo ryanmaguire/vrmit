@@ -53,6 +53,7 @@ level_curves = NodePath("LevelCurves")
 
 [node name="Function" type="Node3D" parent="."]
 script = ExtResource("2_aisq3")
+type = null
 
 [node name="CartesianBasis" parent="." instance=ExtResource("4_tx4ly")]
 
