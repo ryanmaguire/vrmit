@@ -5,16 +5,10 @@
 
 [sub_resource type="Resource" id="Resource_ab0ld"]
 script = ExtResource("1_xi57t")
-type = 0
-min = 0.0
 from = 15.0
 to = 10.0
-max = 0.0
 
 [resource]
 script = ExtResource("2_kocur")
 pose_name = "Index Pinch"
-threshold = 0.5
-hold_time = 0.2
-release_time = 0.2
 distance_thumb_index = SubResource("Resource_ab0ld")
