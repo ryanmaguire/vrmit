@@ -287,7 +287,7 @@ func _on_show_axis_toggled(pressed: bool) -> void:
 
 # --------------  CAL FUNCTIONS ----------------------
 func _on_gradient_toggled(on: bool) -> void:
-	GlobalSignals.set_field_render.emit(1)
+	#GlobalSignals.set_field_render.emit(1)
 	GlobalSignals.expressions_entered.emit("x", "y", "z")
 	#GlobalSignals.set_grad_vector.emit(on)
 

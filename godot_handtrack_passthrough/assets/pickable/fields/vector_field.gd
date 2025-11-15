@@ -19,12 +19,17 @@ const a_max: int = 10
 #@export var start_left: float
 #@export var start_right: float
 #@export var find_root = false
-@export var resolution: int
+@export var resolution: float
 @export var render_type: int # 0 for nothing, 1 for color, 2 for alpha
+
+@export var show_cartesian_basis: bool
 
 @export var arrow_material: Material
 
 @export var function : Node3D
+@export var cartesian_basis : Node3D
+
+var last_a: float
 
 var vectors = []
 var vertices = []
@@ -38,10 +43,15 @@ var mdt : MeshDataTool
 func _ready() -> void:
 	GlobalSignals.connect("expressions_entered", _on_expressions_entered)
 	GlobalSignals.connect("set_field_render", _on_set_field_render)
+	GlobalSignals.connect("set_field_resolution", _on_set_field_resolution)
+	GlobalSignals.connect("set_field_alpha", _on_set_field_alpha)
 	#GlobalSignals.connect("update_slider", _on_update_slider)
 	#GlobalSignals.connect("update_function_scale", _on_update_slider)
 	#GlobalSignals.connect("set_rotating", _on_set_rotating)
 	#GlobalSignals.connect("update_plot_scale", _on_update_plot_scale)
+	
+	if GlobalSignals.has_signal("set_axis_visibility"):
+		GlobalSignals.connect("set_axis_visibility", _on_set_cartesian_basis)
 		
 	if function:
 		function.initialize()
@@ -51,6 +61,45 @@ func _ready() -> void:
 func _on_set_field_render(type : int):
 	render_type = type
 	upd()
+	
+func _on_set_field_resolution(res : float):
+	resolution = res
+	#upd()
+	
+func _on_set_field_alpha(alpha: float) -> void:
+	_apply_field_alpha(clamp(alpha, 0.0, 1.0))
+
+func _on_set_cartesian_basis(is_on: bool) -> void:
+	show_cartesian_basis = is_on
+	cartesian_basis.visible = is_on
+	
+# --- Material alpha application ---
+
+func _apply_field_alpha(alpha: float) -> void:
+	# update the stored materials so future surface toggles keep the alpha
+	for mat_var in ["arrow_material"]:
+		#var mat: Material = get(mat_var)
+		var shader_material: ShaderMaterial = get(mat_var)#get_surface_override_material(0)
+		shader_material.set_shader_parameter("alpha_scale", alpha)
+		'''if mat and mat is BaseMaterial3D:
+			var dup := mat.duplicate() as BaseMaterial3D
+			dup.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			var c := dup.albedo_color
+			c.a = alpha
+			dup.albedo_color = c
+			set(mat_var, dup)
+
+	# apply to current mesh surfaces
+	if mesh:
+		for i in range(mesh.get_surface_count()):
+			var m := mesh.surface_get_material(i)
+			if m and m is BaseMaterial3D:
+				var d := m.duplicate() as BaseMaterial3D
+				d.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				var cc := d.albedo_color
+				cc.a = alpha
+				d.albedo_color = cc
+				mesh.surface_set_material(i, d)'''
 
 func _on_expressions_entered(exprX: String, exprY: String, exprZ: String):
 	#print("New Expression: " + expr)
@@ -65,7 +114,7 @@ func _on_expressions_entered(exprX: String, exprY: String, exprZ: String):
 		function.set_string(exprZ, 3)
 	gen()
 	
-func calculate_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: int) -> void:
+func calculate_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: float) -> void:
 	vectors = []
 	v_max = 0
 
@@ -77,18 +126,18 @@ func calculate_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax
 	for x in range(xmin * res, xmax * res + 1):
 		vectors.append([])
 		for y in range(ymin * res, ymax * res + 1):
-			vectors[x - x_min].append([])
+			vectors[x - x_min * res].append([])
 			for z in range(zmin * res, zmax * res + 1):
 				X = float(x) / res
 				Y = float(y) / res
 				Z = float(z) / res
-				V = Vector3(function.calculate_para(X, Z, Y, 1), function.calculate_para(X, Z, Y, 2), function.calculate_para(X, Z, Y, 3))
+				V = Vector3(function.calculate_para(X, Z, Y, 1), function.calculate_para(X, Z, Y, 3), function.calculate_para(X, Z, Y, 2))
 				#V = Vector3(function.calculate(X, Z, Y, 1), function.calculate(X, Z, Y, 2), function.calculate(X, Z, Y, 3))
-				vectors[x - x_min][y - y_min].append(V)
+				vectors[x - x_min * res][y - y_min * res].append(V)
 				if V.length() > v_max:
 					v_max = V.length()
 				
-func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: int) -> void:
+func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: float) -> void:
 	mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
 	
@@ -112,7 +161,7 @@ func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 				X = float(x) / res
 				Y = float(y) / res
 				Z = float(z) / res
-				create_arrow(Vector3(X, Z, Y), vectors[x - x_min][y - y_min][z - z_min], n)
+				create_arrow(Vector3(X, Y, Z), vectors[x - x_min * res][y - y_min * res][z - z_min * res], n)
 				n += 1
 	
 	array[Mesh.ARRAY_VERTEX] = vertices
@@ -133,10 +182,10 @@ func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 				if (render_type == 0):
 					c = Color(1, 1, 1)
 				elif (render_type == 1):
-					var fraction = vectors[x - x_min][y - y_min][z - z_min].length() / v_max
+					var fraction = vectors[x - x_min * res][y - y_min * res][z - z_min * res].length() / v_max
 					c = Color.from_hsv(1 - fraction, 1, 1)
 				elif (render_type == 2):
-					var fraction = vectors[x - x_min][y - y_min][z - z_min].length() / v_max
+					var fraction = vectors[x - x_min * res][y - y_min * res][z - z_min * res].length() / v_max
 					c = Color(1, 0.2, 0.2, fraction)
 				else:
 					c = Color(1, 1, 1)
@@ -149,7 +198,7 @@ func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 	#mesh.clear_surfaces()
 	mdt.commit_to_surface(mesh)
 
-func update_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: int) -> void:
+func update_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: float) -> void:
 	mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
 	
@@ -173,7 +222,7 @@ func update_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 				X = float(x) / res
 				Y = float(y) / res
 				Z = float(z) / res
-				create_arrow(Vector3(X, Z, Y), vectors[x - x_min][y - y_min][z - z_min], n)
+				create_arrow(Vector3(X, Y, Z), vectors[x - x_min * res][y - y_min * res][z - z_min * res], n)
 				n += 1
 	
 	array[Mesh.ARRAY_VERTEX] = vertices
@@ -194,10 +243,10 @@ func update_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 				if (render_type == 0):
 					c = Color(1, 1, 1)
 				elif (render_type == 1):
-					var fraction = vectors[x - x_min][y - y_min][z - z_min].length() / v_max
+					var fraction = vectors[x - x_min * res][y - y_min * res][z - z_min * res].length() / v_max
 					c = Color.from_hsv(1 - fraction, 1, 1)
 				elif (render_type == 2):
-					var fraction = vectors[x - x_min][y - y_min][z - z_min].length() / v_max
+					var fraction = vectors[x - x_min * res][y - y_min * res][z - z_min * res].length() / v_max
 					c = Color(1, 0.2, 0.2, fraction)
 				else:
 					c = Color(1, 1, 1)
@@ -212,12 +261,12 @@ func update_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 
 				
 func create_arrow(origin : Vector3, direction : Vector3, index : int) -> void:
-	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.RIGHT * 0.1))
-	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.RIGHT * -0.1))
+	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.RIGHT * 0.05))
+	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.RIGHT * -0.05))
 	vertices.append(origin + direction.normalized() * atan(direction.length()) / PI / resolution * 2)
 	
-	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.FORWARD * 0.1))
-	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.FORWARD * -0.1))
+	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.FORWARD * 0.05))
+	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.FORWARD * -0.05))
 	vertices.append(origin + direction.normalized() * atan(direction.length()) / PI / resolution * 2)
 	
 	'''vertices.append(Vector3(0, -0.1, 0))
@@ -273,3 +322,8 @@ func _process(delta: float) -> void:
 	if parse:
 		_on_expressions_entered("", "", "")
 		parse = false
+	if last_a != a:
+		#if function.hasSlider:
+		#	upd_slider()
+		_apply_field_alpha(a)
+		last_a = a

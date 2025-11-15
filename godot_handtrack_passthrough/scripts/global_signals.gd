@@ -52,3 +52,9 @@ signal expressions_entered(messageX:String, messageY:String, messageZ:String)
 
 @warning_ignore("unused_signal")
 signal set_field_render(type:int)
+
+@warning_ignore("unused_signal")
+signal set_field_resolution(res:float)
+
+@warning_ignore("unused_signal")
+signal set_field_alpha(alpha:float)

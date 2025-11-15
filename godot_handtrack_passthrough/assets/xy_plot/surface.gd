@@ -30,6 +30,7 @@ const a_max: int = 10
 @export_range(-20, 20, 0.01) var cursorZ: float = 0
 var last_cursorX: float
 var last_cursorZ: float
+@export var show_cartesian_basis: bool
 @export var show_tangent_plane: bool
 @export var show_gradient_arrow: bool
 @export var show_level_curves: bool
@@ -42,6 +43,7 @@ var last_hide_surface: bool
 #@export var arrow : PackedScene
 
 @export var function : Node3D
+@export var cartesian_basis : Node3D
 @export var cursor_dot : Node3D
 @export var tangent_plane : Node3D
 @export var gradient_arrow : Node3D
@@ -84,6 +86,8 @@ func _ready() -> void:
 	GlobalSignals.connect("update_plot_scale", _on_update_plot_scale)
 	
 	# NEW: UI → surface controls
+	if GlobalSignals.has_signal("set_axis_visibility"):
+		GlobalSignals.connect("set_axis_visibility", _on_set_cartesian_basis)
 	if GlobalSignals.has_signal("set_level_curves"):
 		GlobalSignals.connect("set_level_curves", _on_set_level_curves)
 	if GlobalSignals.has_signal("set_tangent_plane"):
@@ -1028,6 +1032,10 @@ func place_gradient_arrow(x, y):
 
 # --- Signal handlers ---
 
+func _on_set_cartesian_basis(is_on: bool) -> void:
+	show_cartesian_basis = is_on
+	cartesian_basis.visible = is_on
+		
 func _on_set_level_curves(is_on: bool) -> void:
 	show_level_curves = is_on
 	if is_on:
