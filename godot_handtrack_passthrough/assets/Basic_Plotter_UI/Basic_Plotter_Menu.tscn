@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c54n2c5nolvnx"]
+[gd_scene load_steps=4 format=3 uid="uid://c54n2c5nolvnx"]
 
 [ext_resource type="Script" uid="uid://5rrst6pm0wvv" path="res://assets/Basic_Plotter_UI/wrist_menu.gd" id="1_d7qq6"]
 [ext_resource type="Script" uid="uid://xmhwi1vrxcaw" path="res://assets/Basic_Plotter_UI/vector_eq_input.gd" id="2_0le4w"]
+[ext_resource type="Script" uid="uid://csuhdub375tlq" path="res://assets/Basic_Plotter_UI/vector_field_options.gd" id="3_c240p"]
 
 [node name="Wrist Menu" type="Node2D"]
 
@@ -79,7 +80,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 tab_alignment = 1
-current_tab = 3
+current_tab = 4
 all_tabs_in_front = true
 drag_to_rearrange_enabled = true
 
@@ -635,6 +636,7 @@ text = "enter
 "
 
 [node name="Vector Eq Input" type="VBoxContainer" parent="wrist menu/ColorRect/TabContainer" node_paths=PackedStringArray("debug_label", "btn_x", "btn_y", "btn_z", "btn_7", "btn_8", "btn_9", "btn_divide", "btn_back", "btn_par_l", "btn_par_r", "btn_power", "btn_sqrt", "btn_4", "btn_5", "btn_6", "btn_times", "btn_left", "btn_sin", "btn_cos", "btn_tan", "btn_abs", "btn_1", "btn_2", "btn_3", "btn_minus", "btn_right", "btn_ln", "btn_pi", "btn_e", "btn_clear", "btn_0", "btn_dot", "btn_equals", "btn_plus", "btn_comma", "btn_enter")]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 3
 script = ExtResource("2_0le4w")
@@ -922,3 +924,174 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "enter
 "
+
+[node name="Vector Field Options" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer" node_paths=PackedStringArray("btn_preset_1", "btn_preset_2", "btn_preset_3", "btn_preset_4", "btn_preset_5", "btn_preset_6", "slider_alpha", "slider_resolution", "btn_render_arrows", "btn_render_streamlines", "btn_render_slices")]
+layout_mode = 2
+script = ExtResource("3_c240p")
+btn_preset_1 = NodePath("VBoxContainer/Preset Fields/GridContainer/MarginContainer/preset_func_1")
+btn_preset_2 = NodePath("VBoxContainer/Preset Fields/GridContainer/MarginContainer5/preset_func_5")
+btn_preset_3 = NodePath("VBoxContainer/Preset Fields/GridContainer/MarginContainer6/preset_func_6")
+btn_preset_4 = NodePath("VBoxContainer/Preset Fields/GridContainer/MarginContainer8/preset_func_7")
+btn_preset_5 = NodePath("VBoxContainer/Preset Fields/GridContainer/MarginContainer7/preset_func_8")
+btn_preset_6 = NodePath("VBoxContainer/Preset Fields/GridContainer/MarginContainer9/preset_func_9")
+slider_alpha = NodePath("VBoxContainer/HBoxContainer2/MarginContainer2/Field Alpha")
+slider_resolution = NodePath("VBoxContainer/VBoxContainer/HBoxContainer/MarginContainer2/Field Resolution")
+btn_render_arrows = NodePath("VBoxContainer/HBoxContainer/HBoxContainer/MarginContainer/Button")
+btn_render_streamlines = NodePath("VBoxContainer/HBoxContainer/HBoxContainer/MarginContainer2/Button")
+btn_render_slices = NodePath("VBoxContainer/HBoxContainer/HBoxContainer/MarginContainer3/Button")
+metadata/_tab_index = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options"]
+layout_mode = 2
+
+[node name="presets label" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/presets label"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Preset Fields"
+
+[node name="Preset Fields" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+
+[node name="GridContainer" type="GridContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+columns = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="preset_func_1" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer/MarginContainer"]
+layout_mode = 2
+text = "(x, y, z)"
+
+[node name="MarginContainer5" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="preset_func_5" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer/MarginContainer5"]
+layout_mode = 2
+text = "(-y, x, 0)"
+
+[node name="MarginContainer6" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="preset_func_6" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer/MarginContainer6"]
+layout_mode = 2
+text = "(x-y, x+y, 0)"
+
+[node name="MarginContainer8" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="preset_func_7" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer/MarginContainer8"]
+layout_mode = 2
+text = "(cos(x), sin(y), cos(z))"
+
+[node name="MarginContainer7" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="preset_func_8" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer/MarginContainer7"]
+layout_mode = 2
+text = "-(x, y, z)/(sqrt(x^2+y^2+z^2)^3)"
+
+[node name="MarginContainer9" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer"]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="preset_func_9" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/Preset Fields/GridContainer/MarginContainer9"]
+layout_mode = 2
+text = "(z, x, y)"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/VBoxContainer/HBoxContainer/MarginContainer"]
+layout_mode = 2
+text = "Field Resolution"
+
+[node name="MarginContainer2" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(370, 0)
+layout_mode = 2
+
+[node name="Field Resolution" type="HSlider" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/VBoxContainer/HBoxContainer/MarginContainer2"]
+layout_mode = 2
+size_flags_vertical = 4
+min_value = 0.1
+max_value = 5.0
+step = 0.01
+value = 0.2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer2/MarginContainer"]
+layout_mode = 2
+text = "Field Alpha         "
+
+[node name="MarginContainer2" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(370, 0)
+layout_mode = 2
+
+[node name="Field Alpha" type="HSlider" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer2/MarginContainer2"]
+layout_mode = 2
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.01
+value = 0.2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(132, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer/MarginContainer"]
+layout_mode = 2
+text = "Render Type        "
+
+[node name="HBoxContainer" type="HBoxContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer/HBoxContainer/MarginContainer"]
+layout_mode = 2
+text = "  1  "
+
+[node name="MarginContainer2" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer/HBoxContainer/MarginContainer2"]
+layout_mode = 2
+text = "  2  "
+
+[node name="MarginContainer3" type="MarginContainer" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="wrist menu/ColorRect/TabContainer/Vector Field Options/VBoxContainer/HBoxContainer/HBoxContainer/MarginContainer3"]
+layout_mode = 2
+text = "  3  "
