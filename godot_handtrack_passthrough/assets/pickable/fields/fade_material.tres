@@ -5,3 +5,9 @@
 [resource]
 render_priority = 0
 shader = ExtResource("1_13wx5")
+shader_parameter/fade_start_distance = 1.0
+shader_parameter/fade_end_distance = 3.0
+shader_parameter/fade_surface_distance = 1.0
+shader_parameter/alpha_scale = 1.0
+shader_parameter/surface_size = 0
+shader_parameter/surface_vertices = PackedVector3Array()

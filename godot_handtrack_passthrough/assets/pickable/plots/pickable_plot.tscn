@@ -36,6 +36,6 @@ debug_color = Color(2.21401e-06, 0.5981, 0.710811, 0.42)
 [node name="XYPlot" parent="." index="1" instance=ExtResource("2_wy18o")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
 mesh = SubResource("ArrayMesh_kscv6")
-expression = "xAAA)))x"
+expression = "x+y"
 cursorX = 10.0
 cursorZ = 6.06

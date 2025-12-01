@@ -45,6 +45,7 @@ func _ready() -> void:
 	GlobalSignals.connect("set_field_render", _on_set_field_render)
 	GlobalSignals.connect("set_field_resolution", _on_set_field_resolution)
 	GlobalSignals.connect("set_field_alpha", _on_set_field_alpha)
+	GlobalSignals.connect("set_field_surface_vertices", _apply_surface_vertices)
 	#GlobalSignals.connect("update_slider", _on_update_slider)
 	#GlobalSignals.connect("update_function_scale", _on_update_slider)
 	#GlobalSignals.connect("set_rotating", _on_set_rotating)
@@ -68,7 +69,7 @@ func _on_set_field_resolution(res : float):
 	
 func _on_set_field_alpha(alpha: float) -> void:
 	_apply_field_alpha(clamp(alpha, 0.0, 1.0))
-
+	
 func _on_set_cartesian_basis(is_on: bool) -> void:
 	show_cartesian_basis = is_on
 	cartesian_basis.visible = is_on
@@ -101,6 +102,14 @@ func _apply_field_alpha(alpha: float) -> void:
 				d.albedo_color = cc
 				mesh.surface_set_material(i, d)'''
 
+func _apply_surface_vertices(vertices: PackedVector3Array) -> void:
+	# update the stored materials so future surface toggles keep the alpha
+	for mat_var in ["arrow_material"]:
+		#var mat: Material = get(mat_var)
+		var shader_material: ShaderMaterial = get(mat_var)#get_surface_override_material(0)
+		shader_material.set_shader_parameter("surface_size", len(vertices))
+		shader_material.set_shader_parameter("surface_vertices", vertices)
+		
 func _on_expressions_entered(exprX: String, exprY: String, exprZ: String):
 	#print("New Expression: " + expr)
 	#expression_z = expr
@@ -296,6 +305,10 @@ func gen():
 	#initialize_mesh(x_min, x_max, z_min, z_max, resolution)
 	calculate_field(x_min, x_max, y_min, y_max, z_min, z_max, resolution)
 	create_field(x_min, x_max, y_min, y_max, z_min, z_max, resolution)
+	#var array : PackedVector3Array = PackedVector3Array();
+	#array.append(Vector3(0, 0, 0))
+	#array.append(Vector3(0, 0, 5))
+	#_apply_surface_vertices(array)
 	var end_time = Time.get_ticks_msec()
 	#update_extensions()
 	#print("Elapsed time: " + str(end_time - start_time) + " ms")

@@ -49,12 +49,15 @@ var last_hide_surface: bool
 @export var gradient_arrow : Node3D
 @export var level_curves : Node3D
 
+@export var field : Node3D
+
 
 var degree: int
 var layerz: PackedInt32Array
 var last_a: float
 
 var vertices = []
+var shader_vertices : PackedVector3Array
 var indices = []
 var heights = []
 var h_min: float
@@ -155,6 +158,7 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	c_max = -1.79769e308
 	
 	vertices = [[], [], []]
+	shader_vertices = PackedVector3Array()
 	indices = [[], [], []]
 	heights = [[], [], []]
 	gradients = [[], [], []]
@@ -288,6 +292,15 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 					heights[0][i].append(H);
 			else:
 				vertices[0][0].append(Vector3(X, H, Z))
+				
+				var is_far = true
+				for vert in shader_vertices:
+					if (Vector3(X, H, Z) - vert).length() < 0.5:
+						is_far = false
+				if is_far:
+					shader_vertices.append(Vector3(X, H, Z))
+					#print(Vector3(X, H, Z))
+				
 				heights[0][0].append(H);
 			if H < h_min:
 				h_min = H
@@ -716,6 +729,10 @@ func gen():
 	gen_mesh(x_min, x_max, z_min, z_max, resolution)
 	var end_time = Time.get_ticks_msec()
 	update_extensions()
+	#GlobalSignals.set_field_surface_vertices.emit(shader_vertices)
+	#GlobalSignals.set_field_surface_vertices.emit(shader_vertices)
+	if field != null:
+		field._apply_surface_vertices(shader_vertices)
 	#print("Elapsed time: " + str(end_time - start_time) + " ms")
 	#place_tangent_plane(5, -5);
 

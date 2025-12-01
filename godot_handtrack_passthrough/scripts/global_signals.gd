@@ -1,3 +1,4 @@
+@tool
 extends Node
 
 @warning_ignore("unused_signal")
@@ -58,3 +59,6 @@ signal set_field_resolution(res:float)
 
 @warning_ignore("unused_signal")
 signal set_field_alpha(alpha:float)
+
+@warning_ignore("unused_signal")
+signal set_field_surface_vertices(vertices:PackedVector3Array)
