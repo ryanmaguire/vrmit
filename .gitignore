@@ -1,3 +1,4 @@
+*.uid
 */.godot/*
 *.DS_Store
 
