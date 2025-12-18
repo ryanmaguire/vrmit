@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://mw2kl4tdrere" path="res://assets/pickable/plots/xy-plot/xy_plot.gd" id="2_26yfa"]
 [ext_resource type="Script" uid="uid://ddpbfqvggaw26" path="res://assets/xy_plot/function.gd" id="2_aisq3"]
-[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://assets/xy_plot/surface_material.tres" id="2_cgxtg"]
-[ext_resource type="Material" uid="uid://bbspaiih0uc8j" path="res://assets/xy_plot/surface_material_empty.tres" id="3_26yfa"]
+[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://materials/surface_material.tres" id="2_cgxtg"]
+[ext_resource type="Material" uid="uid://bbspaiih0uc8j" path="res://materials/surface_material_empty.tres" id="3_26yfa"]
 [ext_resource type="PackedScene" uid="uid://cpj1jhr6lqmom" path="res://assets/pickable/plots/resources/tangent_plane/tangent_plane.tscn" id="4_061ke"]
 [ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/resources/cartesian_basis/cartesian_basis.tscn" id="4_tx4ly"]
 [ext_resource type="PackedScene" uid="uid://ok4n8ynsdcvi" path="res://assets/pickable/plots/resources/gradient_arrow/gradient_arrow.tscn" id="5_064cm"]

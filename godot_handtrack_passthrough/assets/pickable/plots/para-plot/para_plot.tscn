@@ -1,8 +1,8 @@
 [gd_scene load_steps=11 format=4 uid="uid://c0c1e0ibq8djj"]
 
 [ext_resource type="Script" uid="uid://bfbs4pjs1uoho" path="res://assets/pickable/plots/para-plot/para_plot.gd" id="1_wtgof"]
-[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://assets/xy_plot/surface_material.tres" id="2_xxgmb"]
-[ext_resource type="Material" uid="uid://bbspaiih0uc8j" path="res://assets/xy_plot/surface_material_empty.tres" id="3_angch"]
+[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://materials/surface_material.tres" id="2_xxgmb"]
+[ext_resource type="Material" uid="uid://bbspaiih0uc8j" path="res://materials/surface_material_empty.tres" id="3_angch"]
 [ext_resource type="Script" uid="uid://ddpbfqvggaw26" path="res://assets/xy_plot/function.gd" id="4_b3q3r"]
 [ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/resources/cartesian_basis/cartesian_basis.tscn" id="5_cqggu"]
 [ext_resource type="PackedScene" uid="uid://wb5ulc01y2cn" path="res://assets/pickable/plots/resources/cursor_dot/cursor_dot.tscn" id="6_uxj0o"]
