@@ -24,7 +24,7 @@
 [ext_resource type="PackedScene" uid="uid://dihrpquchc05y" path="res://assets/pickable/fields/vector_field.tscn" id="25_2f3dj"]
 [ext_resource type="PackedScene" uid="uid://clc5dre31iskm" path="res://addons/godot-xr-tools/xr/start_xr.tscn" id="25_bjg73"]
 [ext_resource type="PackedScene" uid="uid://bn8f0jxig4gyh" path="res://assets/pickable/plots/pickable_plot.tscn" id="25_og1vs"]
-[ext_resource type="PackedScene" uid="uid://c54n2c5nolvnx" path="res://assets/Basic_Plotter_UI/Basic_Plotter_Menu.tscn" id="26_2f3dj"]
+[ext_resource type="PackedScene" uid="uid://c54n2c5nolvnx" path="res://assets/basic_plotter_ui/Basic_Plotter_Menu.tscn" id="26_2f3dj"]
 [ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://assets/xy_plot/surface_material.tres" id="26_2wyq8"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="26_bu4jf"]
 [ext_resource type="Material" uid="uid://dwtxdo863u4kf" path="res://assets/pickable/fields/fade_material.tres" id="26_yq6so"]

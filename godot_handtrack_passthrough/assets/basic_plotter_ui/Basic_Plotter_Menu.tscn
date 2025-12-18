@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://c54n2c5nolvnx"]
 
-[ext_resource type="Script" uid="uid://5rrst6pm0wvv" path="res://assets/Basic_Plotter_UI/wrist_menu.gd" id="1_d7qq6"]
-[ext_resource type="Script" uid="uid://xmhwi1vrxcaw" path="res://assets/Basic_Plotter_UI/vector_eq_input.gd" id="2_0le4w"]
-[ext_resource type="Script" uid="uid://csuhdub375tlq" path="res://assets/Basic_Plotter_UI/vector_field_options.gd" id="3_c240p"]
+[ext_resource type="Script" uid="uid://5rrst6pm0wvv" path="res://assets/basic_plotter_ui/wrist_menu.gd" id="1_d7qq6"]
+[ext_resource type="Script" uid="uid://xmhwi1vrxcaw" path="res://assets/basic_plotter_ui/vector_eq_input.gd" id="2_0le4w"]
+[ext_resource type="Script" uid="uid://csuhdub375tlq" path="res://assets/basic_plotter_ui/vector_field_options.gd" id="3_c240p"]
 
 [node name="Wrist Menu" type="Node2D"]
 
