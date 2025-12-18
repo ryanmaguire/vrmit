@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://c8l60rnugru40" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_gmhtc"]
 [ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/pickable/plots/xy-plot/xy_plot.tscn" id="2_wy18o"]
-[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://assets/xy_plot/surface_material.tres" id="3_kscv6"]
+[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://materials/surface_material.tres" id="3_kscv6"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1k5s5"]
 size = Vector3(10, 10, 10)
