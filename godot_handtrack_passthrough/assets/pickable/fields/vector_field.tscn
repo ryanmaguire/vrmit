@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=4 uid="uid://dihrpquchc05y"]
 
 [ext_resource type="Script" uid="uid://10wlf872ssgj" path="res://assets/pickable/fields/vector_field.gd" id="1_1wo5f"]
-[ext_resource type="Material" uid="uid://dwtxdo863u4kf" path="res://assets/pickable/fields/fade_material.tres" id="1_aer2r"]
+[ext_resource type="Material" uid="uid://dwtxdo863u4kf" path="res://materials/fade_material.tres" id="1_aer2r"]
 [ext_resource type="Script" uid="uid://ddpbfqvggaw26" path="res://assets/xy_plot/function.gd" id="3_aer2r"]
 [ext_resource type="PackedScene" uid="uid://b3up8t6f46ehq" path="res://assets/pickable/plots/resources/cartesian_basis/cartesian_basis.tscn" id="4_aer2r"]
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=4 uid="uid://ctmx4mg5umf0x"]
 
-[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://assets/xy_plot/surface_material.tres" id="1_ts62c"]
+[ext_resource type="Material" uid="uid://csf3dnt10tubq" path="res://materials/surface_material.tres" id="1_ts62c"]
 [ext_resource type="Script" uid="uid://btqc6we310trw" path="res://assets/parametric_plot/surface_para.gd" id="2_lral7"]
 [ext_resource type="Script" uid="uid://ddpbfqvggaw26" path="res://assets/xy_plot/function.gd" id="4_myfxx"]
 
