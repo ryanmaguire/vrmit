@@ -25,5 +25,5 @@ func _on_capture_done(success: bool) -> void:
 	# Remove old anchors if any
 	if scene_mgr.are_scene_anchors_created():
 		scene_mgr.remove_scene_anchors()
-	# This will instance SpatialEntity.tscn for each piece of mesh
+	# This will instance spatial_entity.tscn for each piece of mesh
 	scene_mgr.create_scene_anchors()
