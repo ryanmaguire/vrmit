@@ -102,13 +102,14 @@ func _apply_field_alpha(alpha: float) -> void:
 				d.albedo_color = cc
 				mesh.surface_set_material(i, d)'''
 
-func _apply_surface_vertices(vertices: PackedVector3Array) -> void:
+func _apply_surface_vertices(vertices: PackedVector3Array, trans: Transform3D) -> void:
 	# update the stored materials so future surface toggles keep the alpha
 	for mat_var in ["arrow_material"]:
 		#var mat: Material = get(mat_var)
 		var shader_material: ShaderMaterial = get(mat_var)#get_surface_override_material(0)
 		shader_material.set_shader_parameter("surface_size", len(vertices))
 		shader_material.set_shader_parameter("surface_vertices", vertices)
+		shader_material.set_shader_parameter("transform", trans)
 		
 func _on_expressions_entered(exprX: String, exprY: String, exprZ: String):
 	#print("New Expression: " + expr)

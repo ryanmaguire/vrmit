@@ -25,6 +25,7 @@ const a_max: int = 10
 @export var arrows_spacing: int
 @export var is_rotating: bool = true
 @export var locked_spatial_rotation: bool = true
+@export var isParametric: bool
 
 @export_range(-20, 20, 0.01) var cursorX: float = 0
 @export_range(-20, 20, 0.01) var cursorZ: float = 0
@@ -70,6 +71,7 @@ var c_min: float
 var c_max: float
 
 var heights_slider = []
+var vertices_slider = []
 
 var mdt : MeshDataTool
 
@@ -82,7 +84,7 @@ func _ready() -> void:
 	#arrow = load("res://assets/arrow.tscn")
 	#_on_update_plot_scale(0.2)
 	_locked_basis = global_transform.basis
-	GlobalSignals.connect("expression_entered", _on_expression_entered)
+	#GlobalSignals.connect("expression_entered", _on_expression_entered)
 	GlobalSignals.connect("update_slider", _on_update_slider)
 	GlobalSignals.connect("update_function_scale", _on_update_slider)
 	GlobalSignals.connect("set_rotating", _on_set_rotating)
@@ -109,7 +111,7 @@ func _ready() -> void:
 		#place_cursor_dot(cursorX, cursorZ)
 	if tangent_plane:
 		tangent_plane.visible = false
-	_on_expression_entered("0")
+	#_on_expression_entered("0")
 	show_tangent_plane = false
 	show_gradient_arrow = false
 	show_level_curves = false
@@ -121,7 +123,7 @@ func _ready() -> void:
 func _on_expression_entered(expr: String):
 	#print("New Expression: " + expr)
 	#expression_z = expr
-	if (expr == ""): 
+	if (expr == ""):
 		function.set_string(expression, 0)
 	else:
 		function.set_string(expr, 0)
@@ -134,7 +136,7 @@ func _on_update_slider(aye: float):
 func _on_set_rotating(rotating: bool):
 	is_rotating = rotating
 
-func initialize_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
+#func initialize_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	'''vertices = PackedVector3Array([])
 	indices = PackedInt32Array([])
 	heights = PackedFloat32Array([])
@@ -172,6 +174,9 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	var Hs: PackedFloat32Array
 	var Htemp = []
 	
+	var S: float
+	var T: float
+	
 	if function.hasSlider:
 		for i in 3:
 			heights_slider[i].append([])
@@ -183,12 +188,26 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 			Z = float(z) / res
 			var G: Vector2
 			if degree == 0:
-				if function.hasSlider:
-					H = function.calculate_a(X, Z, 0, a, 0)
-					for A in range(a_min, a_max + 1):
-						heights_slider[0][0][sliderToIndex(A)].append(function.calculate_a(X, Z, 0, A, 0));
+				if isParametric:
+					S = X
+					T = Z
+					if function.hasSlider:
+						X = function.calculate_para_a(S, T, 0, a, 1)
+						Z = function.calculate_para_a(S, T, 0, a, 2)
+						H = function.calculate_para_a(S, T, 0, a, 3)
+						for A in range(a_min, a_max + 1):
+							vertices_slider[sliderToIndex(A)].append(Vector3(function.calculate_para_a(S, T, 0, A, 1), function.calculate_para_a(S, T, 0, A, 3), function.calculate_para_a(S, T, 0, A, 2)));
+					else:
+						X = function.calculate_para(S, T, 0, 1)
+						Z = function.calculate_para(S, T, 0, 2)
+						H = function.calculate_para(S, T, 0, 3)
 				else:
-					H = function.calculate(X, Z, 0, 0)
+					if function.hasSlider:
+						H = function.calculate_a(X, Z, 0, a, 0)
+						for A in range(a_min, a_max + 1):
+							heights_slider[0][0][sliderToIndex(A)].append(function.calculate_a(X, Z, 0, A, 0));
+					else:
+						H = function.calculate(X, Z, 0, 0)
 			elif degree == 1:
 				#print(heights.size())
 				if x == xmin * res and z == zmin * res:
@@ -295,7 +314,7 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 				
 				var is_far = true
 				for vert in shader_vertices:
-					if (Vector3(X, H, Z) - vert).length() < 0.5:
+					if (Vector3(X, H, Z) - vert).length() < 1:
 						is_far = false
 				if is_far:
 					shader_vertices.append(Vector3(X, H, Z))
@@ -559,7 +578,7 @@ func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	mdt = MeshDataTool.new()
 	var n = 0
 	for i in (1 if degree == 3 else 1):
-		for j in len(heights[i]):
+		for j in len(vertices[i]):
 			var array = []
 			array.resize(Mesh.ARRAY_MAX)
 			array[Mesh.ARRAY_VERTEX] = vertices[i][j]
@@ -669,14 +688,17 @@ func update_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	#var surface_data = mesh.surface_get_arrays(0) # Assuming surface 0
 	#var verts = surface_data[Mesh.ARRAY_VERTEX] as PackedVector3Array
 	for n in (1 if degree == 3 else 1):
-		for i in len(heights[n]):
+		for i in len(vertices[n]):
 			mdt.create_from_surface(mesh, 0)
 
 			for j in range(mdt.get_vertex_count()):
 				# Modify vertex position (e.g., move it along its normal)
 				#vertex += mdt.get_vertex_normal(i) * 0.1
-				var xz := indexToCoordsReal(j, true)
-				mdt.set_vertex(j, Vector3(xz.x / res, heights[n][i][j], xz.y / res))
+				if isParametric:
+					mdt.set_vertex(j, vertices[n][i][j])
+				else:
+					var xz := indexToCoordsReal(j, true)
+					mdt.set_vertex(j, Vector3(xz.x / res, heights[n][i][j], xz.y / res))
 				#vertices[i].x = xz.x / res
 				#verts[i].y = heights[i]
 				#vertices[i].z = xz.y / res
@@ -732,7 +754,8 @@ func gen():
 	#GlobalSignals.set_field_surface_vertices.emit(shader_vertices)
 	#GlobalSignals.set_field_surface_vertices.emit(shader_vertices)
 	if field != null:
-		field._apply_surface_vertices(shader_vertices)
+		field._apply_surface_vertices(shader_vertices, global_transform)
+		print(global_transform)
 	#print("Elapsed time: " + str(end_time - start_time) + " ms")
 	#place_tangent_plane(5, -5);
 
@@ -973,7 +996,7 @@ func _process(delta: float) -> void:
 			for i in mesh.get_surface_count():
 				mesh.surface_set_material(i, surface_material)
 		last_hide_surface = hide_surface
-	if parse:
+	if parse and !isParametric:
 		_on_expression_entered("")
 		parse = false
 	'''if find_root:

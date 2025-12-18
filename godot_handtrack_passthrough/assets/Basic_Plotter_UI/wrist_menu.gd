@@ -232,7 +232,7 @@ func _on_right_pressed() -> void:
 
 func _on_enter_pressed() -> void:
 	GlobalSignals.expression_entered.emit(expr)
-	GlobalSignals.update_plot_scale.emit(plot_scale.value)
+	GlobalSignals.update_plot_scale.emit(1)#plot_scale.value)
 	GlobalSignals.set_plot_alpha.emit(clamp(plot_alpha_slider.value, 0.0, 1.0))
 	_update_display()
 	#if debug_label:
@@ -272,10 +272,10 @@ func _on_preset_pressed(s: String) -> void:
 	_on_function_pressed(s)
 
 func _on_plot_scale_changed(value: float) -> void:
-	GlobalSignals.update_plot_scale.emit(value)
+	GlobalSignals.update_plot_scale.emit(1)#value)
 
 func _on_function_scale_changed(value: float) -> void:
-	GlobalSignals.update_function_scale.emit(value)
+	GlobalSignals.update_function_scale.emit(1)#value)
 
 func _on_rotate_toggled(pressed: bool) -> void:
 	GlobalSignals.set_rotating.emit(pressed)

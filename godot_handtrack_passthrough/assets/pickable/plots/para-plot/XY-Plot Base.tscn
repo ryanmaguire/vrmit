@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://8hmtso2m2yhe"]
+
+[ext_resource type="PackedScene" uid="uid://c5p2qt5x72drj" path="res://assets/pickable/plots/pickable_base.tscn" id="1_fq1y6"]
+[ext_resource type="PackedScene" uid="uid://bb1o0kd2hk3hl" path="res://assets/pickable/plots/para-plot/resources/gradient_vector.tscn" id="2_sy1v2"]
+
+[node name="Pickable Base" instance=ExtResource("1_fq1y6")]
+
+[node name="XY-Plot Base" type="Node" parent="Plot Base" index="1"]
+
+[node name="GradientVector" parent="Plot Base" index="2" instance=ExtResource("2_sy1v2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.15388, 0, 1.11559)

@@ -61,4 +61,4 @@ signal set_field_resolution(res:float)
 signal set_field_alpha(alpha:float)
 
 @warning_ignore("unused_signal")
-signal set_field_surface_vertices(vertices:PackedVector3Array)
+signal set_field_surface_vertices(vertices:PackedVector3Array, transform:Transform3D)
