@@ -18,6 +18,7 @@ func _ready():
 	hasGenerated = false
 	surface = get_parent()
 	
+## Generates each layer of the level curves
 func generate_level_mesh_layers():
 	print("generate")
 	"""
@@ -58,6 +59,10 @@ func generate_level_mesh_layers():
 	
 	hasGenerated = true;
 
+## Finds the perimeter for one layer
+##
+## @param y_threshold: the y-cutoff for marching squares to find the perimeter
+## @return: array containing the points of
 func extract_level_loops(y_threshold: float) -> Array:
 	var loops: Array = []
 	if not surface.has_method("coordsToIndexReal") or surface.heights.is_empty():
@@ -166,7 +171,10 @@ func extract_level_loops(y_threshold: float) -> Array:
 
 
 
-
+## Chain raw line segments into closed loops
+##
+## @param segments: segments to chain into one whole loop
+## @return: the whole loop 2D array
 func _chain_segments_to_loops(segments: Array) -> Array:
 	"""
 	Chain raw line segments into closed loops (robust version).
@@ -232,7 +240,11 @@ func _chain_segments_to_loops(segments: Array) -> Array:
 
 
 
-
+## Creates the polygon mesh layer from loops
+##
+## @param loops: the complete loops
+## @param y: the y level
+## @return: node that is the polygon mesh object
 func create_polygon_layer_from_loops(loops: Array, y: float) -> Node3D:
 	var container := Node3D.new()
 	if loops.is_empty():
@@ -295,6 +307,10 @@ func create_polygon_layer_from_loops(loops: Array, y: float) -> Node3D:
 	return container
 
 
+## Finds the area of a polygon
+##
+## @param points: the polygon vertices
+## @return: area of polygon
 func _polygon_area(points: Array) -> float:
 	# Signed area: >0 = CCW, <0 = CW
 	var area := 0.0
@@ -304,7 +320,10 @@ func _polygon_area(points: Array) -> float:
 	return area * 0.5
 
 
-
+## Ear clipping triangulation fallback
+##
+## @param points: the polygon points to clip
+## @return: the trimmed polygon
 func _ear_clip_triangulate(points: Array) -> PackedInt32Array:
 	"""
 	Ear clipping triangulation fallback.
@@ -359,6 +378,13 @@ func _ear_clip_triangulate(points: Array) -> PackedInt32Array:
 	return PackedInt32Array(triangles)
 
 
+## Determines whether or not a point is inside a triange
+##
+## @param p: point
+## @param a: triangle vertex a
+## @param b: triangle vertex b
+## @param c: triangle vertex c
+## @return: is the point inside the triangle
 func _point_in_triangle(p: Vector2, a: Vector2, b: Vector2, c: Vector2) -> bool:
 	var v0 = c - a
 	var v1 = b - a

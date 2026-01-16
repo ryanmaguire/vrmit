@@ -22,9 +22,14 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
+## Initializes the function
 func initialize():
 	parse()
 
+## Sets the function string and parses
+##
+## @param s: function string
+## @param type: 0 for singular function, 1 for x component, 2 for y component, 3 for z component
 func set_string(s: String, type: int):
 	if type == 0:
 		exp_string = s
@@ -36,6 +41,10 @@ func set_string(s: String, type: int):
 		exp_string_z = s
 	parse()
 	
+## Adds to function string and parses
+##
+## @param s: add string
+## @param type: 0 for singular function, 1 for x component, 2 for y component, 3 for z component
 func add_string(s: String, type: int):
 	if type == 0:
 		exp_string += s
@@ -47,6 +56,7 @@ func add_string(s: String, type: int):
 		exp_string_z += s
 	parse()
 
+## Clears function and parses
 func clear():
 	exp_string = ""
 	exp_string_x = ""
@@ -54,6 +64,9 @@ func clear():
 	exp_string_z = ""
 	parse()
 	
+## Filters through the raw function string to replace certain characters and clean up mistakes
+##
+## @param original: raw function string
 func filter_string(original: String):
 	original = original.replace(" ", "")
 	if original == "":
@@ -110,6 +123,7 @@ func filter_string(original: String):
 		par_count += 1
 	return original
 	
+## Does some truncation and filtering and parses the function and assigns to expression so it can be used to calculate values
 func parse():
 	hasSlider = false
 	expression = Expression.new()
@@ -245,9 +259,24 @@ func parse():
 	print("Parsed expression d2z/dy2: " + exp_string_d2zdy2)
 	print("Parsed expression implicit: " + string_left + "-(" + string_right + ")")'''
 
+## Evaluates the expression after it's been parsed
+##
+## @param x: x variable
+## @param y: y variable
+## @param z: z variable
+## @param type: 0 for singular function, 1 for x component, 2 for y component, 3 for z component
+## @return: evaluated output
 func calculate(x: float, y: float, z: float, type: int) -> float:
 	return calculate_a(x, y, z, 0, type)
-	
+
+## Evaluates the expression after it's been parsed, including constant variable
+##
+## @param x: x variable
+## @param y: y variable
+## @param z: z variable
+## @param a: constant variable
+## @param type: 0 for singular function, 1 for x component, 2 for y component, 3 for z component
+## @return: evaluated output
 func calculate_a(x: float, y: float, z: float, a: float, type: int) -> float:
 	var X = x;
 	var Y = y;
@@ -271,10 +300,25 @@ func calculate_a(x: float, y: float, z: float, a: float, type: int) -> float:
 			return (left + right) / 2
 	else:
 		return result
-	
+
+## Evaluates the parametric expression after it's been parsed
+##
+## @param s: s variable
+## @param t: t variable
+## @param x: x variable
+## @param type: 1 for x component, 2 for y component, 3 for z component
+## @return: evaluated output
 func calculate_para(s: float, t: float, x: float, type: int) -> float:
 	return calculate_para_a(s, t, x, 0, type)
 	
+## Evaluates the parametric expression after it's been parsed, including constant variable
+##
+## @param s: s variable
+## @param t: t variable
+## @param x: x variable
+## @param a: constant variable
+## @param type: 1 for x component, 2 for y component, 3 for z component
+## @return: evaluated output
 func calculate_para_a(s: float, t: float, x: float, a: float, type: int) -> float:
 	if type == 1:
 		var result = expression_x.execute([s, t, x, a])
@@ -311,7 +355,16 @@ func calculate_para_a(s: float, t: float, x: float, a: float, type: int) -> floa
 			return result
 	return 0
 
-# Bisection method implementation
+## Finds the value of z that solves an equation using the bisection method, with two endpoints as bounds for z
+##
+## @param x: constant x value
+## @param y: constant y value
+## @param A: constant constant value
+## @param a: lower z bound
+## @param b: upper z bound
+## @param type: 0 for singular function, 1 for x component, 2 for y component, 3 for z component, default 0
+## @param tolerance: max error before termination, default 0.01
+## @return: evaluated z root
 func bisection(x: float, y: float, A: float, a: float, b: float, type: int = 0, tolerance : float = 0.01) -> float:
 	if calculate_a(x, y, a, A, type) == 0:
 		return a
@@ -347,6 +400,17 @@ func bisection(x: float, y: float, A: float, a: float, b: float, type: int = 0, 
 			a = c
 	return None  # Did not converge'''
 
+## Finds all value of z that solves an equation using the bisection method, with two endpoints as bounds for z
+##
+## @param x: constant x value
+## @param y: constant y value
+## @param A: constant constant value
+## @param type: 0 for singular function, 1 for x component, 2 for y component, 3 for z component
+## @param start: lower z bound, default -100
+## @param end: upper z bound, default 100
+## @param steps: number of steps it does bisection on between the bounds
+## @param tol: max error before termination, default 0.01
+## @return: evaluated z roots array
 func find_all_roots(x: float, y: float, A: float, type: int, start=-100, end=100, steps=10, tol : float = 0.01):
 	var roots = PackedFloat32Array()
 	for i in range(steps):
@@ -367,6 +431,9 @@ func find_all_roots(x: float, y: float, A: float, type: int, start=-100, end=100
 	f = f_factory(expr)
 	return find_all_roots(f, start, end)'''
 
+## Gets differential equation order of function
+##
+## @return: order
 func getDegree() -> int:
 	'''if exp_string.contains("z"):
 		return 3

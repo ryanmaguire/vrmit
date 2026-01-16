@@ -120,6 +120,9 @@ func _ready() -> void:
 	#gen_mesh(x_min, x_max, z_min, z_max, resolution)
 
 
+## Signal function to send a newly entered function
+##
+## @param expr: expression for z
 func _on_expression_entered(expr: String):
 	#print("New Expression: " + expr)
 	#expression_z = expr
@@ -128,11 +131,17 @@ func _on_expression_entered(expr: String):
 	else:
 		function.set_string(expr, 0)
 	gen()
-	
+
+## Signal function when constant slider is updated
+##
+## @param aye: value of slider
 func _on_update_slider(aye: float):
 	a = aye
 	upd_slider()
-	
+
+## Signal function when auto rotation is toggled
+##
+## @param rotating: is rotating bool
 func _on_set_rotating(rotating: bool):
 	is_rotating = rotating
 
@@ -149,6 +158,13 @@ func _on_set_rotating(rotating: bool):
 	#gradients.resize(totalPoints)
 	#curvatures.resize(totalPoints)
 
+## Calculates all points and info for the mesh, but does not render
+##
+## @param xmin: min x bound inclusive
+## @param xmax: max x bound inclusive
+## @param zmin: min z bound inclusive
+## @param zmax: max z bound inclusive
+## @param res: resolution in points per unit
 func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	degree = function.getDegree()
 	layerz = [1, 1, 1]
@@ -562,6 +578,13 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 		for j in layerz[i]:
 			print("Total vertices: " + str(vertices[i][j].size()))'''
 
+## Creates the mesh from previous info to render
+##
+## @param xmin: min x bound inclusive
+## @param xmax: max x bound inclusive
+## @param zmin: min z bound inclusive
+## @param zmax: max z bound inclusive
+## @param res: resolution in points per unit
 func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
@@ -676,7 +699,14 @@ func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	surface_tool.generate_normals()
 	a_mesh = surface_tool.commit()
 	mesh = a_mesh'''
-	
+
+## Updates an existing mesh if info has changed
+##
+## @param xmin: min x bound inclusive
+## @param xmax: max x bound inclusive
+## @param zmin: min z bound inclusive
+## @param zmax: max z bound inclusive
+## @param res: resolution in points per unit
 func update_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 	#var a_mesh = ArrayMesh.new()
 	# Assuming 'original_mesh' is an existing Mesh resource
@@ -714,6 +744,13 @@ func update_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 
 	#$MeshInstance3D.mesh = mesh
 
+## Updates an existing mesh when the constant slider is adjusted
+##
+## @param xmin: min x bound inclusive
+## @param xmax: max x bound inclusive
+## @param zmin: min z bound inclusive
+## @param zmax: max z bound inclusive
+## @param res: resolution in points per unit
 func update_mesh_slider(xmin: int, xmax: int, zmin: int, zmax: int, A: float, res: int):
 	for n in (1 if degree == 3 else 1):
 		for i in len(heights[n]):
@@ -744,6 +781,7 @@ func update_mesh_slider(xmin: int, xmax: int, zmin: int, zmax: int, A: float, re
 			mesh.surface_remove(0)
 			mdt.commit_to_surface(mesh)
 
+## Wrapper function to generate a plot if function has been parsed
 func gen():
 	var start_time = Time.get_ticks_msec()
 	#initialize_mesh(x_min, x_max, z_min, z_max, resolution)
@@ -759,6 +797,7 @@ func gen():
 	#print("Elapsed time: " + str(end_time - start_time) + " ms")
 	#place_tangent_plane(5, -5);
 
+## Wrapper function to update a plot if function has been parsed and generated
 func upd():
 	calculate_mesh(x_min, x_max, z_min, z_max, resolution)
 	var start_time = Time.get_ticks_msec()
@@ -767,6 +806,7 @@ func upd():
 	update_extensions()
 	#print("Elapsed time: " + str(end_time - start_time) + " ms")
 	
+## Wrapper function to update a plot if function has been parsed and generated, and slider adjusted
 func upd_slider():
 	var start_time = Time.get_ticks_msec()
 	update_mesh_slider(x_min, x_max, z_min, z_max, a, resolution)
@@ -774,57 +814,110 @@ func upd_slider():
 	update_extensions()
 	#print("Elapsed time: " + str(end_time - start_time) + " ms")
 	
+## Converts xy coords to index in a corresponding 1D array, x and y min are at 0
+##
+## @param x: x coordinate
+## @param y: y coordinate
+## @param isBounds: is the upper x and y bound inclusive or not
+## @return: index
 func coordsToIndex(x: int, y: int, isBounds: bool) -> int:
 	return x * ((z_max - z_min) * resolution + (1 if isBounds else 0)) + y
-	
+
+## Converts xy coords to index in a corresponding 1D array, x and y min are at x_min and y_min
+##
+## @param x: x coordinate
+## @param y: y coordinate
+## @param isBounds: is the upper x and y bound inclusive or not
+## @return: index
 func coordsToIndexReal(x: int, y: int, isBounds: bool) -> int:
 	return (x - x_min * resolution) * ((z_max - z_min) * resolution + (1 if isBounds else 0)) + y - z_min * resolution
-	
+
+## Converts index in a 1D array to corresponding xy coords, x and y min are at 0
+##
+## @param index: index
+## @param isBounds: is the upper x and y bound inclusive or not
+## @return: xy coordinates
 func indexToCoords(index: int, isBounds: bool) -> Vector2:
 	var offset = (z_max - z_min) * resolution + (1 if isBounds else 0)
 	return Vector2(index / offset, index % offset)
 
+## Converts index in a 1D array to corresponding xy coords, x and y min are at x_min and y_min
+##
+## @param index: index
+## @param isBounds: is the upper x and y bound inclusive or not
+## @return: xy coordinates
 func indexToCoordsReal(index: int, isBounds: bool) -> Vector2:
 	var offset = (z_max - z_min) * resolution + (1 if isBounds else 0)
 	return Vector2(index / offset + x_min * resolution, index % offset + z_min * resolution)
 
+## Same thing but in the xz plane
 func coordsToIndexH(x: int, y: int, isBounds: bool) -> int:
 	return x * ((ceil(h_max) - floor(h_min)) * resolution + (1 if isBounds else 0)) + y
-	
+
+## Same thing but in the xz plane
 func coordsToIndexRealH(x: int, y: int, isBounds: bool) -> int:
 	return (x - x_min * resolution) * ((ceil(h_max) - floor(h_min)) * resolution + (1 if isBounds else 0)) + y - z_min * resolution
-	
+
+## Same thing but in the xz plane
 func indexToCoordsH(index: int, isBounds: bool) -> Vector2:
 	var offset = (ceil(h_max) - floor(h_min)) * resolution + (1 if isBounds else 0)
 	return Vector2(index / offset, index % offset)
 
+## Same thing but in the xz plane
 func indexToCoordsRealH(index: int, isBounds: bool) -> Vector2:
 	var offset = (int(ceil(h_max)) - int(floor(h_min))) * resolution + (1 if isBounds else 0)
 	return Vector2(index / offset + x_min * resolution, index % offset + z_min * resolution)
 
+## Same thing but in the yz plane
 func coordsToIndexX(x: int, y: int, isBounds: bool) -> int:
 	return x * ((x_max - x_min) * resolution + (1 if isBounds else 0)) + y
 	
+## Same thing but in the yz plane
 func coordsToIndexRealX(x: int, y: int, isBounds: bool) -> int:
 	return (x - x_min * resolution) * ((z_max - z_min) * resolution + (1 if isBounds else 0)) + y - z_min * resolution
 	
+## Same thing but in the yz plane
 func indexToCoordsX(index: int, isBounds: bool) -> Vector2:
 	var offset = (z_max - z_min) * resolution + (1 if isBounds else 0)
 	return Vector2(index / offset, index % offset)
 
+## Same thing but in the yz plane
 func indexToCoordsRealX(index: int, isBounds: bool) -> Vector2:
 	var offset = (z_max - z_min) * resolution + (1 if isBounds else 0)
 	return Vector2(index / offset + x_min * resolution, index % offset + z_min * resolution)
 
+## Converts index from one isBounds setting to the other
+##
+## @param index: index in isBounds
+## @param isBounds: is the upper x and y bound inclusive or not
+## @return: index in not isBounds
 func indexToIndex(index: int, isBounds: bool) -> int:
 	return coordsToIndex(indexToCoords(index, isBounds).x, indexToCoords(index, isBounds).y, !isBounds)
 	
+## Converts slider value to index in array of values ordered by integer slider intervals
+##
+## @param x: slider value
+## @return: index
 func sliderToIndex(x: int) -> int:
 	return x - a_min
 
+## Converts index in array of values ordered by integer slider intervals to slider value
+##
+## @param x: index
+## @return: slider vlaue
 func indexToSlider(x: int) -> int:
 	return x + a_min
-	
+
+## Performs runga kutta to find the next z value and partial derivative in the same xy direction
+##
+## @param type: 1 for first order in x direction, -1 for first order in y direction, 2 for second order in x direction, -2 for second order in y direction
+## @param x_0: initial x
+## @param y_0: initial y
+## @param z_0: initial z
+## @param g_0: initial partial derivative
+## @param n: number of steps per grid step
+## @param res: resolution in grid steps per unit
+## @return: Vector2 of new z and partial derivative
 func runge_kutta(type: int, x_0: float, y_0: float, z_0: float, g_0: float, n: int, res: int) -> Vector2:
 	var X: float = x_0
 	var Y: float = y_0
@@ -879,7 +972,18 @@ func runge_kutta(type: int, x_0: float, y_0: float, z_0: float, g_0: float, n: i
 			Y = Y + 1.0 / res / n
 
 	return Vector2(Z, G)
-	
+
+## Performs runga kutta to find the next z value and partial derivative in the cross xy direction
+##
+## @param type: 2 for second order in x direction, -2 for second order in y direction
+## @param x_0: initial x
+## @param y_0: initial y
+## @param z_0: initial z
+## @param gx_0: initial partial derivative in x direction
+## @param gy_0: initial partial derivative in y direction
+## @param n: number of steps per grid step
+## @param res: resolution in grid steps per unit
+## @return: Vector2 of new z and partial derivative
 func runge_kutta_cross(type: int, x_0: float, y_0: float, z_0: float, gx_0: float, gy_0: float, n: int, res: int) -> Vector2:
 	var X: float = x_0
 	var Y: float = y_0
@@ -1029,7 +1133,10 @@ func _physics_process(delta: float) -> void:
 		var rot_basis := Basis.from_euler(new_e).orthonormalized()
 		t.basis = rot_basis.scaled(cur_scale)
 		global_transform = t
-		
+
+## Signal function when plot scale is changed
+##
+## @param value: scale value
 func _on_update_plot_scale(value: float) -> void:
 	# Apply scale to the mesh itself
 	scale = Vector3(value, value, value)
@@ -1037,7 +1144,8 @@ func _on_update_plot_scale(value: float) -> void:
 	# Apply scale to the sibling CollisionShape3D
 	if $"../CollisionShape3D":
 		$"../CollisionShape3D".scale = Vector3(value, value, value)
-		
+
+## Updates extensions like cursor dot, tangent plane, gradient arrow, and level curves
 func update_extensions():
 	if cursor_dot:
 		place_cursor_dot(cursorX, cursorZ)
@@ -1050,11 +1158,19 @@ func update_extensions():
 		if show_level_curves:
 			level_curves.generate_level_mesh_layers()
 	
+## Places cursor dot on a point on the plot
+##
+## @param x: x coordinate
+## @param y: y coordinate
 func place_cursor_dot(x, y):
 	var xx = round(x * resolution)
 	var yy = round(y * resolution)
 	cursor_dot.position = Vector3(xx / resolution, heights[0][0][coordsToIndexReal(xx, yy, true)], yy / resolution)
-	
+
+## Places tangent plane on a point on the plot
+##
+## @param x: x coordinate
+## @param y: y coordinate
 func place_tangent_plane(x, y):
 	var xx = round(x * resolution)
 	var yy = round(y * resolution)
@@ -1063,6 +1179,10 @@ func place_tangent_plane(x, y):
 	#tangent_plane.look_at(tangent_plane.global_position + Basis(Vector3.UP, rotation.y) * Vector3(1, gradients[0][coordsToIndexReal(xx, yy, true)].x, 0).cross(Vector3(0, gradients[0][coordsToIndexReal(xx, yy, true)].y, 1)), Vector3.UP)
 	#tangent_plane.visible = true
 	
+## Places gradient arrow on a point on the plot
+##
+## @param x: x coordinate
+## @param y: y coordinate
 func place_gradient_arrow(x, y):
 	var xx = round(x * resolution)
 	var yy = round(y * resolution)

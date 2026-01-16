@@ -7,6 +7,10 @@ extends MeshInstance3D
 	var arrow_node = create_arrow(Vector3.ZERO, vec, Color.GREEN)
 	add_child(arrow_node)'''
 
+## Creates a gradient arrow
+##
+## @param direction: which direction to point, magnitude matters
+## @param color: color of arrow, default RED
 func create_arrow(direction: Vector3, color: Color = Color.RED):
 	rotation = Vector3.ZERO
 	transform.basis = Basis(Quaternion(transform.basis.y, direction))

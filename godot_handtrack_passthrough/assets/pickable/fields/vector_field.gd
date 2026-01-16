@@ -58,24 +58,39 @@ func _ready() -> void:
 		function.initialize()
 	_on_expressions_entered("0", "0", "0")
 	rotation_degrees = Vector3(0, 0, 0)
-	
+
+## Signal function to set the render type of field
+##
+## @param type: 0 for plain, 1 for color-based magnitude, 2 for alpha-based magnitude
 func _on_set_field_render(type : int):
 	render_type = type
 	upd()
-	
+
+## Signal function to set field resolution
+##
+## @param res: resolution in points per unit
 func _on_set_field_resolution(res : float):
 	resolution = res
 	#upd()
-	
+
+## Signal function to set field alpha
+##
+## @param alpha: alpha value
 func _on_set_field_alpha(alpha: float) -> void:
 	_apply_field_alpha(clamp(alpha, 0.0, 1.0))
-	
+
+## Signal function to toggle cartesian basis
+##
+## @param is_on: is on bool
 func _on_set_cartesian_basis(is_on: bool) -> void:
 	show_cartesian_basis = is_on
 	cartesian_basis.visible = is_on
 	
 # --- Material alpha application ---
 
+## Signal function to apply the alpha
+##
+## @param alpha: alpha value
 func _apply_field_alpha(alpha: float) -> void:
 	# update the stored materials so future surface toggles keep the alpha
 	for mat_var in ["arrow_material"]:
@@ -102,6 +117,10 @@ func _apply_field_alpha(alpha: float) -> void:
 				d.albedo_color = cc
 				mesh.surface_set_material(i, d)'''
 
+## Signal function to send field info to every shader material script
+##
+## @param vertices: field vertices
+## @param trans: field transform
 func _apply_surface_vertices(vertices: PackedVector3Array, trans: Transform3D) -> void:
 	# update the stored materials so future surface toggles keep the alpha
 	for mat_var in ["arrow_material"]:
@@ -110,7 +129,12 @@ func _apply_surface_vertices(vertices: PackedVector3Array, trans: Transform3D) -
 		shader_material.set_shader_parameter("surface_size", len(vertices))
 		shader_material.set_shader_parameter("surface_vertices", vertices)
 		shader_material.set_shader_parameter("transform", trans)
-		
+
+## Signal function to send a newly entered parametric function
+##
+## @param exprX: expression for x
+## @param exprY: expression for y
+## @param exprZ: expression for z
 func _on_expressions_entered(exprX: String, exprY: String, exprZ: String):
 	#print("New Expression: " + expr)
 	#expression_z = expr
@@ -123,7 +147,16 @@ func _on_expressions_entered(exprX: String, exprY: String, exprZ: String):
 		function.set_string(exprY, 2)
 		function.set_string(exprZ, 3)
 	gen()
-	
+
+## Calculates all points and info for the field, but does not render
+##
+## @param xmin: min x bound inclusive
+## @param xmax: max x bound inclusive
+## @param ymin: min y bound inclusive
+## @param ymax: max y bound inclusive
+## @param zmin: min z bound inclusive
+## @param zmax: max z bound inclusive
+## @param res: resolution in points per unit
 func calculate_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: float) -> void:
 	vectors = []
 	v_max = 0
@@ -146,7 +179,16 @@ func calculate_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax
 				vectors[x - x_min * res][y - y_min * res].append(V)
 				if V.length() > v_max:
 					v_max = V.length()
-				
+
+## Creates the field from previous info to render
+##
+## @param xmin: min x bound inclusive
+## @param xmax: max x bound inclusive
+## @param ymin: min y bound inclusive
+## @param ymax: max y bound inclusive
+## @param zmin: min z bound inclusive
+## @param zmax: max z bound inclusive
+## @param res: resolution in points per unit
 func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: float) -> void:
 	mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
@@ -208,6 +250,15 @@ func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 	#mesh.clear_surfaces()
 	mdt.commit_to_surface(mesh)
 
+## Updates an existing field if info has changed
+##
+## @param xmin: min x bound inclusive
+## @param xmax: max x bound inclusive
+## @param ymin: min y bound inclusive
+## @param ymax: max y bound inclusive
+## @param zmin: min z bound inclusive
+## @param zmax: max z bound inclusive
+## @param res: resolution in points per unit
 func update_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: float) -> void:
 	mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
@@ -269,7 +320,11 @@ func update_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 	#mesh.clear_surfaces()
 	mdt.commit_to_surface(mesh)
 
-				
+## Creates a single field arrow
+##
+## @param origin: arrow origin
+## @param direction: arrow direction, magnitude matters
+## @param index: index of info related to this arrow in 1D arrays
 func create_arrow(origin : Vector3, direction : Vector3, index : int) -> void:
 	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.RIGHT * 0.05))
 	vertices.append(origin + (Vector3.ZERO if direction == Vector3.ZERO else Quaternion(Vector3.UP, direction) * Vector3.RIGHT * -0.05))
@@ -301,6 +356,7 @@ func create_arrow(origin : Vector3, direction : Vector3, index : int) -> void:
 	indices.append(index * 6 + 4)
 	indices.append(index * 6 + 5)
 
+## Wrapper function to generate a field if functions have been parsed
 func gen():
 	var start_time = Time.get_ticks_msec()
 	#initialize_mesh(x_min, x_max, z_min, z_max, resolution)
@@ -315,6 +371,7 @@ func gen():
 	#print("Elapsed time: " + str(end_time - start_time) + " ms")
 	#place_tangent_plane(5, -5);
 
+## Wrapper function to update a field if functions have been parsed and generated
 func upd():
 	var start_time = Time.get_ticks_msec()
 	#initialize_mesh(x_min, x_max, z_min, z_max, resolution)

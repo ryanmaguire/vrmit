@@ -199,11 +199,18 @@ func _connect_preset(btn: BaseButton, idx: int) -> void:
 		btn.pressed.connect(_on_preset_pressed.bind(preset_exprs[idx]))
 
 # ---------- UI actions ----------
+
+## Signal function when a preset function is selected
+##
+## @param s: preset function string
 func _on_function_pressed(s: String) -> void:
 	expr = s
 	cursor_index = s.length()
 	_on_enter_pressed()
 
+## Signal function when a text key is pressed
+##
+## @param s: text string
 func _on_text_pressed(s: String) -> void:
 	if cursor_index == 0:
 		expr = s + expr
@@ -216,20 +223,24 @@ func _on_text_pressed(s: String) -> void:
 		cursor_index -= 1
 	_update_display()
 
+## Signal function when backspace is pressed
 func _on_back_pressed() -> void:
 	if cursor_index > 0:
 		expr = expr.left(cursor_index - 1) + expr.right(-cursor_index)
 		cursor_index -= 1
 	_update_display()
 
+## Signal function when left is pressed
 func _on_left_pressed() -> void:
 	cursor_index = max(cursor_index - 1, 0)
 	_update_display()
 
+## Signal function when right is pressed
 func _on_right_pressed() -> void:
 	cursor_index = min(cursor_index + 1, expr.length())
 	_update_display()
 
+## Signal function when enter is pressed
 func _on_enter_pressed() -> void:
 	GlobalSignals.expression_entered.emit(expr)
 	GlobalSignals.update_plot_scale.emit(1)#plot_scale.value)
@@ -238,11 +249,15 @@ func _on_enter_pressed() -> void:
 	#if debug_label:
 	#	debug_label.text = ""
 
+## Signal function when clear is pressed
 func _on_clear_pressed() -> void:
 	expr = ""
 	cursor_index = 0
 	_update_display()
 
+## Gets the string of a function to display on menu
+##
+## @param original: raw function string including the weird symbol conventions
 func expr_display(original: String = "") -> String:
 	var display
 	if original != "":

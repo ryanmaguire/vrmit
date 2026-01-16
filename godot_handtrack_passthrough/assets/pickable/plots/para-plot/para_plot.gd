@@ -12,6 +12,11 @@ func _ready() -> void:
 	call_deferred("_on_expression_entered_para", "0", "0", "0")
 	#_on_expression_entered_para("0", "0", "0")
 	
+## Signal function to send a newly entered parametric function
+##
+## @param exprX: expression for x
+## @param exprY: expression for y
+## @param exprZ: expression for z
 func _on_expression_entered_para(exprX: String, exprY: String, exprZ: String):
 	#print("New Expression: " + expr)
 	#expression_z = expr

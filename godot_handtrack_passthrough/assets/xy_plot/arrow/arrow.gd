@@ -1,3 +1,4 @@
+# OBSOLETE SCPRIPT
 @tool
 extends Node3D
 

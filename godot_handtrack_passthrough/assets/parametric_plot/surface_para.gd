@@ -1,3 +1,4 @@
+# Obsolete script
 @tool
 extends MeshInstance3D
 
