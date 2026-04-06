@@ -62,3 +62,6 @@ signal set_field_alpha(alpha:float)
 
 @warning_ignore("unused_signal")
 signal set_field_surface_vertices(vertices:PackedVector3Array, transform:Transform3D)
+
+@warning_ignore("unused_signal")
+signal switch_mode(mode:String)

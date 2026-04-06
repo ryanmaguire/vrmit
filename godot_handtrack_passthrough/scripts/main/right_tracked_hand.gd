@@ -9,10 +9,15 @@ func _ready():
 	var laser_attach := BoneAttachment3D.new()
 	
 	poke_attach.bone_name = "RightIndexTip"
+	poke_attach.name = "PokeAttach"
 	laser_attach.bone_name = "RightIndexTip"
+	laser_attach.name = "LaserAttach"
+	
 	skeleton.add_child(poke_attach)
 	skeleton.add_child(laser_attach)
 	# 3) Load and instance the poke pointer under it
 	var poke = "res://addons/godot-xr-tools/player/poke/poke.tscn"
 	var poke_scn = load(poke)
-	poke_attach.add_child(poke_scn.instantiate())
+	var poke_inst = poke_scn.instantiate()
+	poke_inst.add_to_group("r_poke")
+	poke_attach.add_child(poke_inst)

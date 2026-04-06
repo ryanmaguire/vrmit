@@ -41,6 +41,7 @@ var mdt : MeshDataTool
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	add_to_group("fields")
 	GlobalSignals.connect("expressions_entered", _on_expressions_entered)
 	GlobalSignals.connect("set_field_render", _on_set_field_render)
 	GlobalSignals.connect("set_field_resolution", _on_set_field_resolution)

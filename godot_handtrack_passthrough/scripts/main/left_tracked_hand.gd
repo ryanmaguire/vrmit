@@ -15,4 +15,6 @@ func _ready():
 	# 3) Load and instance the poke pointer under it
 	var poke = "res://addons/godot-xr-tools/player/poke/poke.tscn"
 	var poke_scn = load(poke)
-	poke_attach.add_child(poke_scn.instantiate())
+	var poke_inst = poke_scn.instantiate()
+	poke_inst.add_to_group("l_poke")
+	poke_attach.add_child(poke_inst)

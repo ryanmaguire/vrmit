@@ -70,6 +70,16 @@ extends MarginContainer
 
 @export var plot_alpha_slider: HSlider
 
+# --- Jonathan's Stuff 😊 ---
+@export var math_panel : Panel
+@export var physics_panel : Panel
+
+@export var btn_math_mode : Button
+@export var btn_physics_mode : Button
+
+@export var btn_pt_charge_tool : Button
+@export var btn_spawn_pt_charge :  Button
+
 # --- State ---
 var expr: String = ""
 var cursor_index: int = 0
@@ -142,7 +152,11 @@ func _ready() -> void:
 	_connect_preset(preset_func_7, 6)
 	_connect_preset(preset_func_8, 7)
 	_connect_preset(preset_func_9, 8)
-
+	
+	#Jonathan 😊
+	_connect(btn_math_mode, _on_mode_switch)
+	_connect(btn_physics_mode, _on_mode_switch)
+	
 	# Sliders and toggle
 	if plot_scale:
 		plot_scale.value_changed.connect(_on_plot_scale_changed)
@@ -180,6 +194,7 @@ func _ready() -> void:
 		_on_tangent_plane_toggled(tangent_plane_toggle.button_pressed)
 	if plot_alpha_slider:
 		_on_plot_alpha_changed(plot_alpha_slider.value)
+		
 
 # ---------- Connection helpers ----------
 func _connect_global() -> void:
@@ -197,7 +212,7 @@ func _connect_text(btn: BaseButton, s: String) -> void:
 func _connect_preset(btn: BaseButton, idx: int) -> void:
 	if btn and idx >= 0 and idx < preset_exprs.size():
 		btn.pressed.connect(_on_preset_pressed.bind(preset_exprs[idx]))
-
+		
 # ---------- UI actions ----------
 
 ## Signal function when a preset function is selected
@@ -255,6 +270,14 @@ func _on_clear_pressed() -> void:
 	cursor_index = 0
 	_update_display()
 
+## Signal function when Mode button is pressed
+func _on_mode_switch() -> void:
+	if math_panel and physics_panel:
+		var visibility = math_panel.visible
+		math_panel.visible = !visibility
+		physics_panel.visible = visibility
+	_update_display()
+	
 ## Gets the string of a function to display on menu
 ##
 ## @param original: raw function string including the weird symbol conventions
@@ -281,7 +304,7 @@ func expr_display(original: String = "") -> String:
 func _on_debug_message(message: String) -> void:
 	if debug_label:
 		debug_label.text = message
-
+		
 # ---------- Presets and options ----------
 func _on_preset_pressed(s: String) -> void:
 	_on_function_pressed(s)

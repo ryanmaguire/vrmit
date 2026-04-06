@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://ckuwfukp2o5hw"]
+
+[ext_resource type="Texture2D" uid="uid://kfkr03s55iyd" path="res://assets/blocks/Sigh.png" id="1_kb0ty"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_le7o1"]
+diffuse_mode = 3
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.6703957, 0, 0.015419649, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_kt0o4"]
+lightmap_size_hint = Vector2i(17, 9)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hj8w0"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_kb0ty")
+emission_enabled = true
+emission = Color(0, 0.1898984, 1, 1)
+emission_energy_multiplier = 5.0
+billboard_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_h8ha0"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6yjv1"]
+gradient = SubResource("Gradient_h8ha0")
+
+[sub_resource type="Curve" id="Curve_3u2d7"]
+_limits = [-1.0, 1.0, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_8udau"]
+curve = SubResource("Curve_3u2d7")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h5644"]
+emission_shape_scale = Vector3(0.75, 0.75, 0.75)
+emission_shape = 1
+emission_sphere_radius = 0.55
+gravity = Vector3(0, 0, 0)
+radial_accel_curve = SubResource("CurveTexture_8udau")
+color_ramp = SubResource("GradientTexture1D_6yjv1")
+
+[sub_resource type="QuadMesh" id="QuadMesh_i5pmu"]
+size = Vector2(0.3, 0.3)
+
+[node name="PositiveCharge" type="Node3D" unique_id=243861539]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1732343302]
+transform = Transform3D(0.49999997, 0, 0, 0, 0.49999997, 0, 0, 0, 0.49999997, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_le7o1")
+mesh = SubResource("SphereMesh_kt0o4")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="MeshInstance3D" unique_id=1768788937]
+material_override = SubResource("StandardMaterial3D_hj8w0")
+lifetime = 0.14
+process_material = SubResource("ParticleProcessMaterial_h5644")
+draw_pass_1 = SubResource("QuadMesh_i5pmu")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="MeshInstance3D" unique_id=1728828004]

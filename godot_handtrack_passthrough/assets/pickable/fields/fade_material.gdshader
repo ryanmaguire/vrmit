@@ -14,7 +14,7 @@ render_mode unshaded, cull_disabled, depth_prepass_alpha;
 
 void fragment() {
 	ALBEDO = COLOR.rgb;
-
+	/*
     // Get the distance from the camera to the current fragment
     //float distance = length(VERTEX - CAMERA_POSITION_WORLD);
     float distance = length(VERTEX);
@@ -39,7 +39,7 @@ void fragment() {
 		ALPHA = (fade_surface_distance - min_distance) / fade_surface_distance;
 	} else {
 		ALPHA = COLOR.a * alpha * alpha_scale;
-	}
+	}*/
 }
 
 //void light() {

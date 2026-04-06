@@ -82,9 +82,9 @@ func filter_string(original: String):
 	while i < original.length() - 1 and i < 1000:
 		var c1 = original[i]
 		var c2 = original[i + 1]
-		if (c1 >= "a" and c1 <= "z") and (c2 >= "A" and c2 <= "z"):
-			original = original.insert(i + 1, "*")
-		elif c1.is_valid_int() and (c2 == "(" or c2 >= "A" and c2 <= "z"):
+		#if (c1 >= "a" and c1 <= "z") and (c2 >= "A" and c2 <= "z"):
+			#original = original.insert(i + 1, "*")
+		if c1.is_valid_int() and (c2 == "(" or c2 >= "A" and c2 <= "z"):
 			original = original.insert(i + 1, "*")
 		elif (c1 == ")" or c1 >= "a" and c1 <= "z") and c2.is_valid_int():
 			original = original.insert(i + 1, "*")

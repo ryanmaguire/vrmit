@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="HandPose" load_steps=4 format=3 uid="uid://n6qmsq57l1g4"]
+[gd_resource type="Resource" script_class="HandPose" format=3 uid="uid://n6qmsq57l1g4"]
 
 [ext_resource type="Script" uid="uid://dufeqij7efjy4" path="res://addons/hand_pose_detector/fitness_function.gd" id="1_xi57t"]
 [ext_resource type="Script" uid="uid://dl70mc6x33s74" path="res://addons/hand_pose_detector/hand_pose.gd" id="2_kocur"]
@@ -10,5 +10,5 @@ to = 10.0
 
 [resource]
 script = ExtResource("2_kocur")
-pose_name = "Index Pinch"
+pose_name = "index_pinch"
 distance_thumb_index = SubResource("Resource_ab0ld")
