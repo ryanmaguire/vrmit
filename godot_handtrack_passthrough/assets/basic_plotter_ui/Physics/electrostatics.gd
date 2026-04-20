@@ -2,10 +2,12 @@ extends HBoxContainer
 
 # --- Preset buttons (assign in Inspector) ---
 @export var btn_pt_charge_tool : Button
-@export var btn_spawn_pt_charge :  Button
+@export var btn_particle_flow : Button
 
 @export var pos_charge_mesh : PackedScene
 @export var neg_charge_mesh : PackedScene
+
+@export var particle_mesh : PackedScene
 
 var vector_field = null
 var r_hand_pose_detector = null
@@ -14,14 +16,20 @@ var r_poke = null
 var l_poke = null
 var selected_stylebox = StyleBoxFlat.new()
 
-# --- Physics Constants ---
-var EPSILON_0 = 8.85 * pow(10, -12)
-var k = round(1 / (4 * PI * EPSILON_0))
+# --- Euler ---
+#var EPSILON_0 = 8.85 * pow(10, -12)
+#var k = round(1 / (4 * PI * EPSILON_0))
+var k = 1
+
+var force_x = Expression.new()
+var force_y = Expression.new()
+var force_z = Expression.new()
 
 # Tools:
 # 1. Point Charges
 # 2. Charged Rod
 var tools = {"pt_charge": false, "charged_rod": false}
+var functions = {"particle_flow" : false}
 var selected_tool = null
 
 # Called when the node enters the scene tree for the first time.
@@ -37,10 +45,16 @@ func _ready() -> void:
 	selected_stylebox.set_border_width_all(2)
 	
 	_connect(btn_pt_charge_tool, _on_tool_switch.bind("pt_charge"))
-	_connect(btn_spawn_pt_charge, spawn_pt_charge.bind(2.0, 2.0, 2.0, 1.0))
+	_connect(btn_particle_flow, enable_particle_flow)
 	
 	r_hand_pose_detector.pose_started.connect(right)
 	l_hand_pose_detector.pose_started.connect(left)
+
+var n = 0
+func _process(delta) -> void:
+	if functions["particle_flow"]:
+		particle_flow_upd(delta * 0.05, n)
+		n += 1
 
 
 # ---------- Connection helpers ----------
@@ -71,17 +85,20 @@ var pt_charge_locations = []
 var E_fields = []
 var charge
 
+var Net_E_x = []
+var Net_E_y = []
+var Net_E_z = []
 func spawn_pt_charge(a_x, a_y, a_z, q):
-	var Net_E_x = []
-	var Net_E_y = []
-	var Net_E_z = []
-
-	if tools["pt_charge"] and [a_x, a_y, a_z] not in pt_charge_locations:
-		var E_x = "((%s*%s)/((sqrt((x-%s)^2+(y-%s)^2+(z-%s)^2))^3))*(x-%s)" % [k, q, a_x, a_z, a_y, a_x]
-		var E_y = "((%s*%s)/((sqrt((x-%s)^2+(y-%s)^2+(z-%s)^2))^3))*(y-%s)" % [k, q, a_x, a_z, a_y, a_z]
-		var E_z = "((%s*%s)/((sqrt((x-%s)^2+(y-%s)^2+(z-%s)^2))^3))*(z-%s)" % [k, q, a_x, a_z, a_y, a_y]
+	Net_E_x.clear()
+	Net_E_y.clear()
+	Net_E_z.clear()
+	# Note: for VECTOR FIELDS, need to flip a_y and a_z
+	if tools["pt_charge"] and Vector3(a_x, a_y, a_z) not in pt_charge_locations:
+		var E_x = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(x-%s)" % [k, q, a_x, a_z, a_y, a_x]
+		var E_y = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(y-%s)" % [k, q, a_x, a_z, a_y, a_y]
+		var E_z = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(z-%s)" % [k, q, a_x, a_z, a_y, a_z]
 		
-		pt_charge_locations.append([a_x, a_y, a_z])
+		pt_charge_locations.append(Vector3(a_x, a_y, a_z))
 		E_fields.append([E_x, E_y, E_z])
 
 		for E_field in E_fields:
@@ -96,15 +113,93 @@ func spawn_pt_charge(a_x, a_y, a_z, q):
 		charge.position = Vector3(a_x, a_y, a_z)
 		vector_field.add_child(charge)
 		
-		GlobalSignals.expressions_entered.emit(" + ".join(Net_E_x), " + ".join(Net_E_y), " + ".join(Net_E_z))
+		#GlobalSignals.expressions_entered.emit(" + ".join(Net_E_x), " + ".join(Net_E_y), " + ".join(Net_E_z))
+		force_x.parse(" + ".join(Net_E_x), ["x", "y", "z"])
+		force_y.parse(" + ".join(Net_E_y), ["x", "y", "z"])
+		force_z.parse(" + ".join(Net_E_z), ["x", "y", "z"])
 
+
+# ------------------- PARTICLE FLOW -----------------------------------------------------
+var m = 1.0
+func accel(t, R, V):	
+	# Currently not dependent on time, velocity
+	if pt_charge_locations.is_empty():
+		return Vector3.ZERO
+	else:
+		return Vector3(
+			force_x.execute([R.x, R.y, R.z]) / m, 
+			force_y.execute([R.x, R.y, R.z]) / m, 
+			force_z.execute([R.x, R.y, R.z]) / m
+		)
+
+func rk4(t_n, R : Vector3, V : Vector3, h):
+	var k_1_x = V
+	var k_1_v = accel(t_n, R, V)
+	
+	var k_2_x = V + k_1_v * (h/2)
+	var k_2_v = accel(t_n + h/2, R + k_1_x * (h/2), V + k_1_v * (h/2))
+	
+	var k_3_x = V + k_2_v * (h/2)
+	var k_3_v = accel(t_n + h/2,  R + k_2_x * (h/2), V + k_2_v * (h/2))
+	
+	var k_4_x = V + h * k_3_v
+	var k_4_v = accel(t_n + h, R + h * k_3_x, V + h * k_3_v)
+	
+	var R_next = R + (h / 6) * (k_1_x + 2 * k_2_x + 2 * k_3_x + k_4_x)
+	var V_next = V + (h / 6) * (k_1_v + 2 * k_2_v + 2 * k_3_v + k_4_v)
+	
+	return [R_next, V_next]
+
+var particles = []
+func enable_particle_flow():
+	functions["particle_flow"] = !functions["particle_flow"]
+	if functions["particle_flow"]:
+		if !btn_particle_flow.has_theme_stylebox_override("normal"):
+			btn_particle_flow.add_theme_stylebox_override("normal", selected_stylebox)
+			await get_tree().create_timer(0.5).timeout
+	else:
+		btn_particle_flow.remove_theme_stylebox_override("normal")
+	for i in range(750):
+		particles.append(particle_mesh.instantiate())
+		particles[i].position = Vector3(
+			randi_range(-7, 7),
+			randi_range(-7, 7),
+			randi_range(-7, 7)
+		)
+		vector_field.add_child(particles[i])
+		
+func particle_flow_upd(h, n):
+	if pt_charge_locations.is_empty():
+		return
+		
+	var t_n = n * h
+	for i in range(particles.size()):	
+		var state = rk4(t_n, particles[i].position, particles[i].velocity, h)
+		var too_close = false
+		
+		for pt_charge_pos in pt_charge_locations:
+			if state[0].distance_to(pt_charge_pos) < 0.2:
+				too_close = true
+				break
+				
+		if too_close or abs(state[0].x) > 10 or abs(state[0].y) > 10 or abs(state[0].z) > 35:
+			particles[i].velocity = Vector3.ZERO
+			particles[i].position = Vector3(
+				randi_range(-7, 7),
+				randi_range(-7, 7),
+				randi_range(-7, 7)
+			)
+		else:
+			particles[i].position = state[0]
+			particles[i].velocity = state[1]
+	# ------------------------------------------------------------------------------------------	
 var debounce = true
 func right(p_name : String):
 	if p_name == "index_pinch" and debounce:
 		debounce = false
 		if r_poke:
 			var pos = vector_field.to_local(r_poke.global_position)
-			spawn_pt_charge(pos.x, pos.y, pos.z, 1.0)
+			spawn_pt_charge(pos.x, pos.y, pos.z, 750.0)
 		await get_tree().create_timer(0.2).timeout
 		debounce = true
 
@@ -113,6 +208,7 @@ func left(p_name : String):
 		debounce = false
 		if l_poke:
 			var pos = vector_field.to_local(l_poke.global_position)
-			spawn_pt_charge(pos.x, pos.y, pos.z, -1.0)
+			spawn_pt_charge(pos.x, pos.y, pos.z, -750.0)
 		await get_tree().create_timer(0.2).timeout
 		debounce = true
+		

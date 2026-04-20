@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dy3bbyxncb1sj" path="res://assets/basic_plotter_ui/Physics/electrostatics.gd" id="4_l1u8m"]
 [ext_resource type="PackedScene" uid="uid://ckuwfukp2o5hw" path="res://assets/physics/point charges/positive_charge.tscn" id="5_imu5p"]
 [ext_resource type="PackedScene" uid="uid://btwolidrmttcl" path="res://assets/physics/point charges/negative_charge.tscn" id="6_snqju"]
+[ext_resource type="PackedScene" uid="uid://ccpelyryvyx0n" path="res://assets/physics/particle.tscn" id="7_snqju"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4oc21"]
 
@@ -115,9 +116,10 @@ physics_panel = NodePath("PhysicsPanel")
 btn_math_mode = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer/MarginContainer/math_mode")
 btn_physics_mode = NodePath("MathPanel/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/HBoxContainer/MarginContainer/physics_mode")
 btn_pt_charge_tool = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
-btn_spawn_pt_charge = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2/MarginContainer2/spawn_pt_charge")
+btn_spawn_pt_charge = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
 
 [node name="MathPanel" type="Panel" parent="wrist menu" unique_id=1074228934]
+visible = false
 material = SubResource("ShaderMaterial_4oc21")
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4oc21")
@@ -1175,7 +1177,6 @@ layout_mode = 2
 text = "  3  "
 
 [node name="PhysicsPanel" type="Panel" parent="wrist menu" unique_id=889021881]
-visible = false
 material = SubResource("ShaderMaterial_4oc21")
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_8m7cg")
@@ -1203,13 +1204,14 @@ current_tab = 0
 all_tabs_in_front = true
 drag_to_rearrange_enabled = true
 
-[node name="Electrostatics" type="HBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer" unique_id=2067645953 node_paths=PackedStringArray("btn_pt_charge_tool", "btn_spawn_pt_charge")]
+[node name="Electrostatics" type="HBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer" unique_id=2067645953 node_paths=PackedStringArray("btn_pt_charge_tool", "btn_particle_flow")]
 layout_mode = 2
 script = ExtResource("4_l1u8m")
 btn_pt_charge_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
-btn_spawn_pt_charge = NodePath("VBoxContainer/GridContainer2/MarginContainer2/spawn_pt_charge")
+btn_particle_flow = NodePath("VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
 pos_charge_mesh = ExtResource("5_imu5p")
 neg_charge_mesh = ExtResource("6_snqju")
+particle_mesh = ExtResource("7_snqju")
 metadata/_tab_index = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics" unique_id=1878751406]
@@ -1256,11 +1258,10 @@ columns = 3
 custom_minimum_size = Vector2(130, 38)
 layout_mode = 2
 
-[node name="spawn_pt_charge" type="Button" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2/MarginContainer2" unique_id=645588375]
+[node name="enable_particle_flow" type="Button" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2/MarginContainer2" unique_id=645588375]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-text = "Spwn Pt Charge
-"
+text = "Enable Particle Flow"
 
 [node name="MarginContainer2" type="MarginContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer" unique_id=203942513]
 custom_minimum_size = Vector2(0, 80)

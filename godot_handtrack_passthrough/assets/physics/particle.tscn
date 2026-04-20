@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://ccpelyryvyx0n"]
+
+[ext_resource type="Script" uid="uid://duo3ix3p6eml7" path="res://assets/physics/particle.gd" id="1_u6l7d"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m7r3s"]
+shading_mode = 0
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_lcmia"]
+size = Vector2(0.005, 0.005)
+
+[node name="Node3D" type="Node3D" unique_id=1183694472]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
+script = ExtResource("1_u6l7d")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=406206817]
+material_override = SubResource("StandardMaterial3D_m7r3s")
+mesh = SubResource("QuadMesh_lcmia")
