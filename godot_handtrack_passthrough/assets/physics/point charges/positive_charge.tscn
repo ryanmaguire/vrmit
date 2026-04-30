@@ -15,8 +15,8 @@ transparency = 1
 vertex_color_use_as_albedo = true
 albedo_texture = ExtResource("1_kb0ty")
 emission_enabled = true
-emission = Color(0, 0.1898984, 1, 1)
-emission_energy_multiplier = 5.0
+emission = Color(0.00090582075, 0.499802, 0.72714615, 1)
+emission_energy_multiplier = 2.0
 billboard_mode = 1
 
 [sub_resource type="Gradient" id="Gradient_h8ha0"]
@@ -42,19 +42,21 @@ radial_accel_curve = SubResource("CurveTexture_8udau")
 color_ramp = SubResource("GradientTexture1D_6yjv1")
 
 [sub_resource type="QuadMesh" id="QuadMesh_i5pmu"]
-size = Vector2(0.3, 0.3)
+size = Vector2(0.11, 0.11)
 
 [node name="PositiveCharge" type="Node3D" unique_id=243861539]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1732343302]
-transform = Transform3D(0.49999997, 0, 0, 0, 0.49999997, 0, 0, 0, 0.49999997, 0, 0, 0)
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_le7o1")
 mesh = SubResource("SphereMesh_kt0o4")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="MeshInstance3D" unique_id=1768788937]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_hj8w0")
 lifetime = 0.14
 process_material = SubResource("ParticleProcessMaterial_h5644")
 draw_pass_1 = SubResource("QuadMesh_i5pmu")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="MeshInstance3D" unique_id=1728828004]
+visible = false

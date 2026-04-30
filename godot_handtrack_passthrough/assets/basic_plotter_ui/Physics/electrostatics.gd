@@ -21,9 +21,9 @@ var selected_stylebox = StyleBoxFlat.new()
 #var k = round(1 / (4 * PI * EPSILON_0))
 var k = 1
 
-var force_x = Expression.new()
-var force_y = Expression.new()
-var force_z = Expression.new()
+#var force_x = Expression.new()
+#var force_y = Expression.new()
+#var force_z = Expression.new()
 
 # Tools:
 # 1. Point Charges
@@ -81,10 +81,10 @@ func select_tool(tool: String):
 			btn_pt_charge_tool.remove_theme_stylebox_override("normal")
 			
 
-var pt_charge_locations = []
+var pt_charges = []
 var E_fields = []
 var charge
-
+# [{"location": Vector3, "charge": q}]
 var Net_E_x = []
 var Net_E_y = []
 var Net_E_z = []
@@ -93,13 +93,13 @@ func spawn_pt_charge(a_x, a_y, a_z, q):
 	Net_E_y.clear()
 	Net_E_z.clear()
 	# Note: for VECTOR FIELDS, need to flip a_y and a_z
-	if tools["pt_charge"] and Vector3(a_x, a_y, a_z) not in pt_charge_locations:
-		var E_x = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(x-%s)" % [k, q, a_x, a_z, a_y, a_x]
-		var E_y = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(y-%s)" % [k, q, a_x, a_z, a_y, a_y]
-		var E_z = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(z-%s)" % [k, q, a_x, a_z, a_y, a_z]
+	if tools["pt_charge"] and {"location": Vector3(a_x,a_y,a_z), "charge": q} not in pt_charges:
+		#var E_x = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(x-%s)" % [k, q, a_x, a_z, a_y, a_x]
+		#var E_y = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(y-%s)" % [k, q, a_x, a_z, a_y, a_y]
+		#var E_z = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(z-%s)" % [k, q, a_x, a_z, a_y, a_z]
 		
-		pt_charge_locations.append(Vector3(a_x, a_y, a_z))
-		E_fields.append([E_x, E_y, E_z])
+		pt_charges.append({"location": Vector3(a_x,a_y,a_z), "charge": q})
+		#E_fields.append([E_x, E_y, E_z])
 
 		for E_field in E_fields:
 			Net_E_x.append(E_field[0])
@@ -114,23 +114,37 @@ func spawn_pt_charge(a_x, a_y, a_z, q):
 		vector_field.add_child(charge)
 		
 		#GlobalSignals.expressions_entered.emit(" + ".join(Net_E_x), " + ".join(Net_E_y), " + ".join(Net_E_z))
-		force_x.parse(" + ".join(Net_E_x), ["x", "y", "z"])
-		force_y.parse(" + ".join(Net_E_y), ["x", "y", "z"])
-		force_z.parse(" + ".join(Net_E_z), ["x", "y", "z"])
+		#force_x.parse(" + ".join(Net_E_x), ["x", "y", "z"])
+		#force_y.parse(" + ".join(Net_E_y), ["x", "y", "z"])
+		#force_z.parse(" + ".join(Net_E_z), ["x", "y", "z"])
 
 
 # ------------------- PARTICLE FLOW -----------------------------------------------------
 var m = 1.0
 func accel(t, R, V):	
 	# Currently not dependent on time, velocity
-	if pt_charge_locations.is_empty():
+	if pt_charges.is_empty():
 		return Vector3.ZERO
 	else:
-		return Vector3(
-			force_x.execute([R.x, R.y, R.z]) / m, 
-			force_y.execute([R.x, R.y, R.z]) / m, 
-			force_z.execute([R.x, R.y, R.z]) / m
-		)
+		var Net_F = Vector3.ZERO
+		for pt_charge in pt_charges:
+			var r = pt_charge["location"]
+			var q = pt_charge["charge"]
+			var vector = R - r
+			var magnitude = (k * q) / (((R.x - r.x) * (R.x - r.x) +
+			 						(R.y - r.y) * (R.y - r.y) +
+									(R.z - r.z) * (R.z - r.z)) 
+									* sqrt((R.x - r.x) * (R.x - r.x) +
+			 						(R.y - r.y) * (R.y - r.y) +
+									(R.z - r.z) * (R.z - r.z)))
+			Net_F += vector * magnitude
+		return Net_F
+		#return Vector3(
+			#force_x.execute([R.x, R.y, R.z]) / m, 
+			#force_y.execute([R.x, R.y, R.z]) / m, 
+			#force_z.execute([R.x, R.y, R.z]) / m
+		#)
+		
 
 func rk4(t_n, R : Vector3, V : Vector3, h):
 	var k_1_x = V
@@ -159,7 +173,7 @@ func enable_particle_flow():
 			await get_tree().create_timer(0.5).timeout
 	else:
 		btn_particle_flow.remove_theme_stylebox_override("normal")
-	for i in range(750):
+	for i in range(1250):
 		particles.append(particle_mesh.instantiate())
 		particles[i].position = Vector3(
 			randi_range(-7, 7),
@@ -169,7 +183,7 @@ func enable_particle_flow():
 		vector_field.add_child(particles[i])
 		
 func particle_flow_upd(h, n):
-	if pt_charge_locations.is_empty():
+	if pt_charges.is_empty():
 		return
 		
 	var t_n = n * h
@@ -177,8 +191,8 @@ func particle_flow_upd(h, n):
 		var state = rk4(t_n, particles[i].position, particles[i].velocity, h)
 		var too_close = false
 		
-		for pt_charge_pos in pt_charge_locations:
-			if state[0].distance_to(pt_charge_pos) < 0.2:
+		for pt_charge in pt_charges:
+			if state[0].distance_to(pt_charge["location"]) < 0.2:
 				too_close = true
 				break
 				

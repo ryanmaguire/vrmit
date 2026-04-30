@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Godot_AR_Demo"
 run/main_scene="uid://dl36n1hl5wcxp"
-config/features=PackedStringArray("4.6", "GL Compatibility")
+config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -24,6 +24,10 @@ config/icon="res://icon.svg"
 XRToolsUserSettings="*uid://bw0uhup0m02hn"
 XRToolsRumbleManager="*uid://bhmya33af1t0k"
 GlobalSignals="*res://scripts/global_signals.gd"
+
+[dotnet]
+
+project/assembly_name="Godot_AR_Demo"
 
 [editor_plugins]
 
