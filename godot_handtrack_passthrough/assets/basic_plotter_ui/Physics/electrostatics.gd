@@ -16,14 +16,10 @@ var r_poke = null
 var l_poke = null
 var selected_stylebox = StyleBoxFlat.new()
 
-# --- Euler ---
-#var EPSILON_0 = 8.85 * pow(10, -12)
-#var k = round(1 / (4 * PI * EPSILON_0))
-var k = 1
+@onready var rk4_cs = null
 
-#var force_x = Expression.new()
-#var force_y = Expression.new()
-#var force_z = Expression.new()
+# --- Physics Constants ---
+var k = 1
 
 # Tools:
 # 1. Point Charges
@@ -34,6 +30,7 @@ var selected_tool = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	rk4_cs = get_tree().get_first_node_in_group("rk4")
 	vector_field = get_tree().get_first_node_in_group("fields")
 	r_hand_pose_detector = get_tree().get_first_node_in_group("r_hand_pose_detector")
 	l_hand_pose_detector = get_tree().get_first_node_in_group("l_hand_pose_detector")
@@ -50,12 +47,9 @@ func _ready() -> void:
 	r_hand_pose_detector.pose_started.connect(right)
 	l_hand_pose_detector.pose_started.connect(left)
 
-var n = 0
 func _process(delta) -> void:
 	if functions["particle_flow"]:
-		particle_flow_upd(delta * 0.05, n)
-		n += 1
-
+		particle_flow_upd(delta * 0.05)
 
 # ---------- Connection helpers ----------
 func _connect(btn: BaseButton, fn: Callable) -> void:
@@ -84,7 +78,6 @@ func select_tool(tool: String):
 var pt_charges = []
 var E_fields = []
 var charge
-# [{"location": Vector3, "charge": q}]
 var Net_E_x = []
 var Net_E_y = []
 var Net_E_z = []
@@ -99,6 +92,7 @@ func spawn_pt_charge(a_x, a_y, a_z, q):
 		#var E_z = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(z-%s)" % [k, q, a_x, a_z, a_y, a_z]
 		
 		pt_charges.append({"location": Vector3(a_x,a_y,a_z), "charge": q})
+		rk4_cs.SetCharges(pt_charges)
 		#E_fields.append([E_x, E_y, E_z])
 
 		for E_field in E_fields:
@@ -114,57 +108,11 @@ func spawn_pt_charge(a_x, a_y, a_z, q):
 		vector_field.add_child(charge)
 		
 		#GlobalSignals.expressions_entered.emit(" + ".join(Net_E_x), " + ".join(Net_E_y), " + ".join(Net_E_z))
-		#force_x.parse(" + ".join(Net_E_x), ["x", "y", "z"])
-		#force_y.parse(" + ".join(Net_E_y), ["x", "y", "z"])
-		#force_z.parse(" + ".join(Net_E_z), ["x", "y", "z"])
 
 
 # ------------------- PARTICLE FLOW -----------------------------------------------------
-var m = 1.0
-func accel(t, R, V):	
-	# Currently not dependent on time, velocity
-	if pt_charges.is_empty():
-		return Vector3.ZERO
-	else:
-		var Net_F = Vector3.ZERO
-		for pt_charge in pt_charges:
-			var r = pt_charge["location"]
-			var q = pt_charge["charge"]
-			var vector = R - r
-			var magnitude = (k * q) / (((R.x - r.x) * (R.x - r.x) +
-			 						(R.y - r.y) * (R.y - r.y) +
-									(R.z - r.z) * (R.z - r.z)) 
-									* sqrt((R.x - r.x) * (R.x - r.x) +
-			 						(R.y - r.y) * (R.y - r.y) +
-									(R.z - r.z) * (R.z - r.z)))
-			Net_F += vector * magnitude
-		return Net_F
-		#return Vector3(
-			#force_x.execute([R.x, R.y, R.z]) / m, 
-			#force_y.execute([R.x, R.y, R.z]) / m, 
-			#force_z.execute([R.x, R.y, R.z]) / m
-		#)
-		
-
-func rk4(t_n, R : Vector3, V : Vector3, h):
-	var k_1_x = V
-	var k_1_v = accel(t_n, R, V)
-	
-	var k_2_x = V + k_1_v * (h/2)
-	var k_2_v = accel(t_n + h/2, R + k_1_x * (h/2), V + k_1_v * (h/2))
-	
-	var k_3_x = V + k_2_v * (h/2)
-	var k_3_v = accel(t_n + h/2,  R + k_2_x * (h/2), V + k_2_v * (h/2))
-	
-	var k_4_x = V + h * k_3_v
-	var k_4_v = accel(t_n + h, R + h * k_3_x, V + h * k_3_v)
-	
-	var R_next = R + (h / 6) * (k_1_x + 2 * k_2_x + 2 * k_3_x + k_4_x)
-	var V_next = V + (h / 6) * (k_1_v + 2 * k_2_v + 2 * k_3_v + k_4_v)
-	
-	return [R_next, V_next]
-
 var particles = []
+var particle_count = 1000
 func enable_particle_flow():
 	functions["particle_flow"] = !functions["particle_flow"]
 	if functions["particle_flow"]:
@@ -173,40 +121,30 @@ func enable_particle_flow():
 			await get_tree().create_timer(0.5).timeout
 	else:
 		btn_particle_flow.remove_theme_stylebox_override("normal")
-	for i in range(1250):
+		
+	for i in range(particle_count):
 		particles.append(particle_mesh.instantiate())
 		particles[i].position = Vector3(
-			randi_range(-7, 7),
-			randi_range(-7, 7),
-			randi_range(-7, 7)
+			randf_range(-6, 6),
+			randf_range(-6, 6),
+			randf_range(-6, 6)
 		)
 		vector_field.add_child(particles[i])
+	rk4_cs.SetParticles(particles, particle_count)
 		
-func particle_flow_upd(h, n):
+func particle_flow_upd(h):
 	if pt_charges.is_empty():
 		return
 		
-	var t_n = n * h
-	for i in range(particles.size()):	
-		var state = rk4(t_n, particles[i].position, particles[i].velocity, h)
+	var new_states = rk4_cs.StepIntegrate(h, 1)
+		
+	for i in range(particle_count):	
+		var state = []
 		var too_close = false
 		
-		for pt_charge in pt_charges:
-			if state[0].distance_to(pt_charge["location"]) < 0.2:
-				too_close = true
-				break
-				
-		if too_close or abs(state[0].x) > 10 or abs(state[0].y) > 10 or abs(state[0].z) > 35:
-			particles[i].velocity = Vector3.ZERO
-			particles[i].position = Vector3(
-				randi_range(-7, 7),
-				randi_range(-7, 7),
-				randi_range(-7, 7)
-			)
-		else:
-			particles[i].position = state[0]
-			particles[i].velocity = state[1]
-	# ------------------------------------------------------------------------------------------	
+		particles[i].position = new_states[i][0]
+		particles[i].velocity = new_states[i][1]
+
 var debounce = true
 func right(p_name : String):
 	if p_name == "index_pinch" and debounce:
