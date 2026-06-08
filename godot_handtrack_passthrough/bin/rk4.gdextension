@@ -1,0 +1,25 @@
+[configuration]
+
+entry_symbol = "rk4_library_init"
+compatibility_minimum = "4.1"
+
+[libraries]
+
+macos.debug = "res://bin/macos/librk4.macos.template_debug.dylib"
+macos.debug.arm64 = "res://bin/macos/librk4.macos.template_debug.arm64.dylib"
+macos.release = "res://bin/macos/librk4.macos.template_release.dylib"
+macos.release.arm64 = "res://bin/macos/librk4.macos.template_release.arm64.dylib"
+windows.debug.x86_64 = "res://bin/librk4.windows.debug.x86_64.dll"
+windows.release.x86_64 = "res://bin/librk4.windows.release.x86_64.dll"
+linux.debug.x86_64 = "res://bin/librk4.linux.debug.x86_64.so"
+linux.release.x86_64 = "res://bin/librk4.linux.release.x86_64.so"
+
+# Repeat for other architectures to support arm64, rv64, etc.
+android.debug.arm64 = "res://bin/android/librk4.android.template_debug.arm64.so"
+android.release.arm64 = "res://bin/android/librk4.android.template_release.arm64.so"
+
+android.arm64.debug = "res://bin/android/librk4.android.template_debug.arm64.so"
+android.arm64.release = "res://bin/android/librk4.android.template_release.arm64.so"
+
+android.arm64.single.debug = "res://bin/android/librk4.android.template_debug.arm64.so"
+android.arm64.single.release = "res://bin/android/librk4.android.template_release.arm64.so"

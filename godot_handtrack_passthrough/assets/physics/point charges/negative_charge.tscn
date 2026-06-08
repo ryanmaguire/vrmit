@@ -52,11 +52,8 @@ material_override = SubResource("StandardMaterial3D_yd800")
 mesh = SubResource("SphereMesh_3jbaw")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="MeshInstance3D" unique_id=428733977]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, 0)
+transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_7m30j")
 lifetime = 0.14
 process_material = SubResource("ParticleProcessMaterial_niaru")
 draw_pass_1 = SubResource("QuadMesh_d5jdj")
-
-[node name="OmniLight3D" type="OmniLight3D" parent="MeshInstance3D" unique_id=919892310]
-visible = false

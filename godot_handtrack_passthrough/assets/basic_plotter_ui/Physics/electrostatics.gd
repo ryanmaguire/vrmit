@@ -16,7 +16,7 @@ var r_poke = null
 var l_poke = null
 var selected_stylebox = StyleBoxFlat.new()
 
-@onready var rk4_cs = null
+@onready var rk4: RK4Wrapper = RK4Wrapper.new()
 
 # --- Physics Constants ---
 var k = 1
@@ -30,7 +30,8 @@ var selected_tool = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	rk4_cs = get_tree().get_first_node_in_group("rk4")
+	add_child(rk4)
+
 	vector_field = get_tree().get_first_node_in_group("fields")
 	r_hand_pose_detector = get_tree().get_first_node_in_group("r_hand_pose_detector")
 	l_hand_pose_detector = get_tree().get_first_node_in_group("l_hand_pose_detector")
@@ -49,7 +50,7 @@ func _ready() -> void:
 
 func _process(delta) -> void:
 	if functions["particle_flow"]:
-		particle_flow_upd(delta * 0.05)
+		particle_flow_upd(delta * 0.15)
 
 # ---------- Connection helpers ----------
 func _connect(btn: BaseButton, fn: Callable) -> void:
@@ -92,7 +93,7 @@ func spawn_pt_charge(a_x, a_y, a_z, q):
 		#var E_z = "((%s*%s)/(pow(pow(x-%s,2)+pow(y-%s,2)+pow(z-%s,2),1.5)+0.001))*(z-%s)" % [k, q, a_x, a_z, a_y, a_z]
 		
 		pt_charges.append({"location": Vector3(a_x,a_y,a_z), "charge": q})
-		rk4_cs.SetCharges(pt_charges)
+		rk4.SetCharges(pt_charges)
 		#E_fields.append([E_x, E_y, E_z])
 
 		for E_field in E_fields:
@@ -110,9 +111,9 @@ func spawn_pt_charge(a_x, a_y, a_z, q):
 		#GlobalSignals.expressions_entered.emit(" + ".join(Net_E_x), " + ".join(Net_E_y), " + ".join(Net_E_z))
 
 
-# ------------------- PARTICLE FLOW -----------------------------------------------------
+# ------------------- PARTICLE FLOW ----------------------------------------------
 var particles = []
-var particle_count = 1000
+var particle_count = 700
 func enable_particle_flow():
 	functions["particle_flow"] = !functions["particle_flow"]
 	if functions["particle_flow"]:
@@ -130,22 +131,20 @@ func enable_particle_flow():
 			randf_range(-6, 6)
 		)
 		vector_field.add_child(particles[i])
-	rk4_cs.SetParticles(particles, particle_count)
+	rk4.SetParticles(particles, particle_count)
 		
 func particle_flow_upd(h):
 	if pt_charges.is_empty():
 		return
 		
-	var new_states = rk4_cs.StepIntegrate(h, 1)
+	var new_states = rk4.StepIntegrate(h, 1)
 		
 	for i in range(particle_count):	
-		var state = []
-		var too_close = false
-		
 		particles[i].position = new_states[i][0]
-		particles[i].velocity = new_states[i][1]
 
+# ------------------- UI ----------------------------------------------
 var debounce = true
+
 func right(p_name : String):
 	if p_name == "index_pinch" and debounce:
 		debounce = false
