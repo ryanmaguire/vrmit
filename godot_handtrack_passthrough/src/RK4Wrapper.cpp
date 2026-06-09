@@ -5,14 +5,13 @@
 
 void RK4Wrapper::_bind_methods()
 {
-    ClassDB::bind_method(D_METHOD("SetParticles", "particles", "size"), &RK4Wrapper::SetParticles);
+    ClassDB::bind_method(D_METHOD("SetParticles", "size"), &RK4Wrapper::SetParticles);
     ClassDB::bind_method(D_METHOD("SetCharges", "charges"), &RK4Wrapper::SetCharges);
     ClassDB::bind_method(D_METHOD("StepIntegrate", "h", "steps"), &RK4Wrapper::StepIntegrate);
 }
 
-RK4Wrapper::RK4Wrapper() 
+RK4Wrapper::RK4Wrapper() : gen(std::random_device{}())
 {
-    UtilityFunctions::print("YAY");
 }
 
 RK4Wrapper::~RK4Wrapper() 
@@ -20,20 +19,19 @@ RK4Wrapper::~RK4Wrapper()
     UtilityFunctions::print("NAY");
 }
 
-void RK4Wrapper::SetParticles(Array g_particles, int size) 
+Array RK4Wrapper::SetParticles(int size) 
 {
+    Array initial_positions;
     particles.clear();
+    std::uniform_real_distribution<> distr(-6.0, 6.0);
+
     for (int i = 0; i < size; i++) 
     {
-        Node3D *particle = Object::cast_to<Node3D>(g_particles[i]);
-
-        if (!particle)
-            continue;
-
-        Vector3 pos = particle->get_position();
-
-        particles.push_back(Vec6{Vec3{pos.x, pos.y, pos.z}, Vec3{0, 0, 0}});
+        particles.push_back(Vec6{Vec3{distr(gen), distr(gen), distr(gen)}, Vec3{0, 0, 0}});
+        initial_positions.append(Vector3(particles[i].p.x, particles[i].p.y, particles[i].p.z));
     }
+
+    return initial_positions;
 }
 
 void RK4Wrapper::SetCharges(Array g_charges) 
@@ -55,30 +53,38 @@ Array RK4Wrapper::StepIntegrate(double h, int steps)
     integrate(coulomb, particles.data(), particles.size(), h, static_cast<size_t> (steps), charges.data(), charges.size());
 
     Array states;
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> distr(-5.0, 5.0);
+    std::uniform_real_distribution<> distr(-6.0, 6.0);
 
     for (int i = 0; i < particles.size(); i++) 
     {
+        bool bad_value =
+            !std::isfinite(particles[i].p.x) ||
+            !std::isfinite(particles[i].p.y) ||
+            !std::isfinite(particles[i].p.z) ||
+            !std::isfinite(particles[i].v.x) ||
+            !std::isfinite(particles[i].v.y) ||
+            !std::isfinite(particles[i].v.z);
         bool too_close = false;
+        bool regenerated = false;
 
         for (const Charge& c : charges) 
         {
-            if (sqrt((particles[i].p.x - c.p.x) * (particles[i].p.x - c.p.x) +
-            (particles[i].p.y - c.p.y) * (particles[i].p.y - c.p.y) +
-            (particles[i].p.z - c.p.z) * (particles[i].p.z - c.p.z)) < 0.25) 
+            double dx = particles[i].p.x - c.p.x;
+            double dy = particles[i].p.y - c.p.y;
+            double dz = particles[i].p.z - c.p.z;
+
+            if (dx * dx + dy * dy + dz * dz < 0.25 * 0.25)
             {
                 too_close = true;
                 break;
             }
         }
 
-        if (too_close || std::abs(particles[i].p.x) > 5 || abs(particles[i].p.y) > 5 || abs(particles[i].p.z) > 5) 
+        if (bad_value || too_close || std::abs(particles[i].p.x) > 6 || std::abs(particles[i].p.y) > 6 || std::abs(particles[i].p.z) > 6) 
         {
             particles[i].v = Vec3{0, 0, 0};
             particles[i].p = Vec3{distr(gen), distr(gen), distr(gen)};
-
+            regenerated = true;
         }
 
         Array state;
@@ -87,7 +93,7 @@ Array RK4Wrapper::StepIntegrate(double h, int steps)
 
         state.append(pos);
         state.append(vel);
-        state.append(vel.is_zero_approx());
+        state.append(regenerated);
         states.append(state);
     }
 

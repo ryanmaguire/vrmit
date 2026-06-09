@@ -7,7 +7,7 @@ extends HBoxContainer
 @export var pos_charge_mesh : PackedScene
 @export var neg_charge_mesh : PackedScene
 
-@export var particle_mesh : PackedScene
+@export var particle_multimesh : PackedScene
 
 var vector_field = null
 var r_hand_pose_detector = null
@@ -28,10 +28,22 @@ var tools = {"pt_charge": false, "charged_rod": false}
 var functions = {"particle_flow" : false}
 var selected_tool = null
 
+const TRAIL_LENGTH := 16
+var trails: Array = [] # trails[i] = PackedVector3Array
+var trail_mesh := ImmediateMesh.new()
+var mat := StandardMaterial3D.new()
+@onready var trail_instance := MeshInstance3D.new()
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	add_child(rk4)
-
+	
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	#mat.emission_enabled = true
+	#mat.emission = Color.CYAN
+	#mat.emission_energy_multiplier = 2.0
+	trail_instance.material_override = mat
+	
 	vector_field = get_tree().get_first_node_in_group("fields")
 	r_hand_pose_detector = get_tree().get_first_node_in_group("r_hand_pose_detector")
 	l_hand_pose_detector = get_tree().get_first_node_in_group("l_hand_pose_detector")
@@ -51,6 +63,7 @@ func _ready() -> void:
 func _process(delta) -> void:
 	if functions["particle_flow"]:
 		particle_flow_upd(delta * 0.15)
+
 
 # ---------- Connection helpers ----------
 func _connect(btn: BaseButton, fn: Callable) -> void:
@@ -112,8 +125,9 @@ func spawn_pt_charge(a_x, a_y, a_z, q):
 
 
 # ------------------- PARTICLE FLOW ----------------------------------------------
-var particles = []
+var mm_instance : MultiMeshInstance3D
 var particle_count = 700
+
 func enable_particle_flow():
 	functions["particle_flow"] = !functions["particle_flow"]
 	if functions["particle_flow"]:
@@ -123,24 +137,59 @@ func enable_particle_flow():
 	else:
 		btn_particle_flow.remove_theme_stylebox_override("normal")
 		
-	for i in range(particle_count):
-		particles.append(particle_mesh.instantiate())
-		particles[i].position = Vector3(
-			randf_range(-6, 6),
-			randf_range(-6, 6),
-			randf_range(-6, 6)
-		)
-		vector_field.add_child(particles[i])
-	rk4.SetParticles(particles, particle_count)
+	mm_instance = particle_multimesh.instantiate()
+	mm_instance.multimesh.instance_count = particle_count
+	
+	var initial_positions = rk4.SetParticles(particle_count)
+	for i in range(mm_instance.multimesh.instance_count):
+		mm_instance.multimesh.set_instance_transform(i, Transform3D(Basis(), initial_positions[i]))
 		
+	trail_instance.mesh = trail_mesh
+	vector_field.add_child(mm_instance)
+	vector_field.add_child(trail_instance)
+	
+	
+	for i in range(particle_count):
+		trails.append(PackedVector3Array())
+
+# trails : PackedVector3Array
+# trail_instance -> assigned trail mesh
+func update_trails(positions : PackedVector3Array):
+	for i in positions.size():
+		var trail = trails[i]
+		trail.append(positions[i])
+		if trail.size() > TRAIL_LENGTH:
+			trail.remove_at(0)
+		trails[i] = trail
+	rebuild_trail_mesh()
+	
+func rebuild_trail_mesh():
+	trail_mesh.clear_surfaces()
+	trail_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+	
+	for trail in trails:
+		for j in range(trail.size() - 1):
+			trail_mesh.surface_add_vertex(trail[j])
+			trail_mesh.surface_add_vertex(trail[j + 1])
+	trail_mesh.surface_end()
+
+var positions = PackedVector3Array()
 func particle_flow_upd(h):
 	if pt_charges.is_empty():
 		return
 		
 	var new_states = rk4.StepIntegrate(h, 1)
+	
+	positions.clear()
+	
+	for i in range(mm_instance.multimesh.instance_count):
+		mm_instance.multimesh.set_instance_transform(i, Transform3D(Basis(), new_states[i][0]))
+		if new_states[i][2]:
+			trails[i].clear()
+		positions.append(new_states[i][0])
 		
-	for i in range(particle_count):	
-		particles[i].position = new_states[i][0]
+	update_trails(positions)
+		
 
 # ------------------- UI ----------------------------------------------
 var debounce = true

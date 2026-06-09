@@ -1,22 +1,27 @@
 [gd_scene format=3 uid="uid://ckuwfukp2o5hw"]
 
 [ext_resource type="Texture2D" uid="uid://kfkr03s55iyd" path="res://assets/blocks/Sigh.png" id="1_kb0ty"]
+[ext_resource type="Texture2D" uid="uid://dnyxetugptgdw" path="res://assets/physics/point charges/Glow.png" id="2_le7o1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_le7o1"]
-diffuse_mode = 3
 vertex_color_use_as_albedo = true
 albedo_color = Color(0.6703957, 0, 0.015419649, 1)
+emission_energy_multiplier = 4.0
+rim_enabled = true
+rim = 0.2
+rim_tint = 1.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_kt0o4"]
 lightmap_size_hint = Vector2i(17, 9)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hj8w0"]
 transparency = 1
+blend_mode = 1
 vertex_color_use_as_albedo = true
 albedo_texture = ExtResource("1_kb0ty")
 emission_enabled = true
-emission = Color(0.00090582075, 0.499802, 0.72714615, 1)
-emission_energy_multiplier = 2.0
+emission = Color(1, 0.1181316, 0.13523287, 1)
+emission_energy_multiplier = 4.0
 billboard_mode = 1
 
 [sub_resource type="Gradient" id="Gradient_h8ha0"]
@@ -36,13 +41,27 @@ curve = SubResource("Curve_3u2d7")
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h5644"]
 emission_shape_scale = Vector3(0.75, 0.75, 0.75)
 emission_shape = 1
-emission_sphere_radius = 0.55
+emission_sphere_radius = 0.65
 gravity = Vector3(0, 0, 0)
 radial_accel_curve = SubResource("CurveTexture_8udau")
 color_ramp = SubResource("GradientTexture1D_6yjv1")
 
 [sub_resource type="QuadMesh" id="QuadMesh_i5pmu"]
 size = Vector2(0.11, 0.11)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kt0o4"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(0.24317619, 0.0005264737, 0.027694369, 1)
+albedo_texture = ExtResource("2_le7o1")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_hj8w0"]
+size = Vector2(0.22, 0.2)
 
 [node name="PositiveCharge" type="Node3D" unique_id=243861539]
 
@@ -52,8 +71,15 @@ material_override = SubResource("StandardMaterial3D_le7o1")
 mesh = SubResource("SphereMesh_kt0o4")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="MeshInstance3D" unique_id=1768788937]
-transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
+visible = false
 material_override = SubResource("StandardMaterial3D_hj8w0")
+cast_shadow = 0
 lifetime = 0.14
+explosiveness = 0.4
+randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_h5644")
 draw_pass_1 = SubResource("QuadMesh_i5pmu")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" unique_id=344503804]
+material_override = SubResource("StandardMaterial3D_kt0o4")
+mesh = SubResource("QuadMesh_hj8w0")

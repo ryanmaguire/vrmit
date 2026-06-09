@@ -23,6 +23,7 @@ class RK4Wrapper : public Node3D
     private:
         std::vector<Vec6> particles; 
         std::vector<Charge> charges;
+        std::mt19937 gen;
 
     protected:
         static void _bind_methods();
@@ -31,7 +32,7 @@ class RK4Wrapper : public Node3D
         RK4Wrapper();
         ~RK4Wrapper();
 
-        void SetParticles(Array g_particles, int size);
+        Array SetParticles(int size);
         void SetCharges(Array g_charges);
         Array StepIntegrate(double h, int steps);
 };

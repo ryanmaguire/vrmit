@@ -42,9 +42,14 @@ background_mode = 1
 background_color = Color(1, 1, 1, 0)
 background_energy_multiplier = 0.0
 sky = SubResource("Sky_ig7tw")
-ambient_light_color = Color(0.686275, 0.686275, 0.686275, 0)
-ambient_light_energy = 0.0
+ambient_light_source = 2
+ambient_light_color = Color(0.7591545, 0.74673927, 0.76743996, 1)
+ambient_light_energy = 0.06
 tonemap_mode = 2
+tonemap_exposure = 1.1
+glow_enabled = true
+glow_intensity = 0.75
+glow_bloom = 0.3
 
 [sub_resource type="Resource" id="Resource_82xsv"]
 script = ExtResource("13_c6pm6")
@@ -145,12 +150,12 @@ script = ExtResource("1_vxglm")
 
 [node name="LeftHandHumanoid2" parent="XROrigin3D/LeftTrackedHand" unique_id=1116108651 instance=ExtResource("2_2f3dj")]
 
-[node name="LeftHandHumanoidMesh" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1569295819) index="0" unique_id=2070110007]
+[node name="LeftHandHumanoidMesh" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1488243212) index="0" unique_id=1673881749]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.02132e-05, -9.86457e-05, -0.000219271)
 
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1569295819) index="1" unique_id=1429586075]
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1488243212) index="1" unique_id=1429586075]
 
-[node name="Wrist UI Visibility" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1569295819) index="2" unique_id=1108170099]
+[node name="Wrist UI Visibility" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1488243212) index="2" unique_id=1108170099]
 transform = Transform3D(1.7881392e-07, -1.838803e-05, 0.99999994, -0.9999985, 0.0016677376, 1.7881392e-07, -0.0016676484, -0.99999833, -1.8358229e-05, 3.8642522e-08, -1.8697472e-05, 0.027175574)
 bone_name = "LeftHand"
 bone_idx = 0
@@ -177,7 +182,7 @@ script = ExtResource("17_chjal")
 
 [node name="RightHandHumanoid2" parent="XROrigin3D/RightTrackedHand" unique_id=203249440 instance=ExtResource("18_cjqg0")]
 
-[node name="Skeleton3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid" parent_id_path=PackedInt32Array(203249440, 62970999) index="0" unique_id=149160975 groups=["r_skeleton_3d"]]
+[node name="Skeleton3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid" parent_id_path=PackedInt32Array(203249440, 847281232) index="0" unique_id=328703208 groups=["r_skeleton_3d"]]
 
 [node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" index="1" unique_id=986943058]
 hand_tracker = &"/user/hand_tracker/right"

@@ -1,0 +1,17 @@
+[gd_resource type="QuadMesh" format=3 uid="uid://bmspcr6t6nq0m"]
+
+[ext_resource type="Texture2D" uid="uid://xv3473pub2d3" path="res://assets/circle.png" id="1_13l1p"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lcmia"]
+transparency = 1
+shading_mode = 0
+disable_fog = true
+albedo_texture = ExtResource("1_13l1p")
+billboard_mode = 1
+stencil_flags = 2
+stencil_reference = 0
+stencil_outline_thickness = 0.92
+
+[resource]
+material = SubResource("StandardMaterial3D_lcmia")
+size = Vector2(0.005, 0.005)
