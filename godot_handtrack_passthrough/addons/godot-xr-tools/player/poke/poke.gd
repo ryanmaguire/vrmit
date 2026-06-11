@@ -19,7 +19,7 @@ signal pointing_event(event)
 # Default layer of 18:player-hands
 const DEFAULT_LAYER := 0b0000_0000_0000_0010_0000_0000_0000_0000
 
-# Default mask [1..16] and 23:ui-objects
+# Default mask [1..16] and 23:ui-objects 
 const DEFAULT_MASK := 0b0000_0000_0100_0000_1111_1111_1111_1111
 
 
@@ -206,6 +206,8 @@ func _on_PokeBody_body_contact_start(body):
 	last_collided_at = $PokeBody.global_transform.origin
 	XRToolsPointerEvent.entered(self, body, last_collided_at)
 	XRToolsPointerEvent.pressed(self, body, last_collided_at)
+	
+	print("POKE HIT: ", body.name, " class: ", body.get_class())
 
 	# Enable processing to track movement
 	set_process(true)
@@ -215,7 +217,9 @@ func _on_PokeBody_body_contact_end(body):
 	# Skip if not current target
 	if body != target:
 		return
-
+		
+	print("POKE END: ", body.name)
+	
 	# Report release
 	XRToolsPointerEvent.released(self, target, last_collided_at)
 	XRToolsPointerEvent.exited(self, target, last_collided_at)

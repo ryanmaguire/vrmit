@@ -29,10 +29,9 @@ class RK4Wrapper : public Node3D
         static void _bind_methods();
 
     public:
-        RK4Wrapper();
-        ~RK4Wrapper();
-
         Array SetParticles(int size);
         void SetCharges(Array g_charges);
+        void AddCharge(Object *g_charge);
+        void UpdateCharge(Object *g_charge, int index);
         Array StepIntegrate(double h, int steps);
 };

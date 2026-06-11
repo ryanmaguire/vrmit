@@ -5,7 +5,7 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_le7o1"]
 vertex_color_use_as_albedo = true
-albedo_color = Color(0.6703957, 0, 0.015419649, 1)
+albedo_color = Color(0.67058825, 0, 0, 1)
 emission_energy_multiplier = 4.0
 rim_enabled = true
 rim = 0.2

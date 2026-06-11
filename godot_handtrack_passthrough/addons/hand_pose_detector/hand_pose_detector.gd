@@ -142,3 +142,9 @@ func _get_configuration_warnings() -> PackedStringArray:
 func _on_tracker_changed(p_name : StringName, _type) -> void:
 	if p_name == hand_tracker_name:
 		hand_tracker = XRServer.get_tracker(hand_tracker_name)
+		
+func get_hand_tracker() -> XRHandTracker:
+	return hand_tracker
+
+func get_current_data() -> HandPoseData:
+	return _current_data

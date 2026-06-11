@@ -1209,8 +1209,8 @@ layout_mode = 2
 script = ExtResource("4_l1u8m")
 btn_pt_charge_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
 btn_particle_flow = NodePath("VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
-pos_charge_mesh = ExtResource("5_imu5p")
-neg_charge_mesh = ExtResource("6_snqju")
+pos_charge_scene = ExtResource("5_imu5p")
+neg_charge_scene = ExtResource("6_snqju")
 particle_multimesh = ExtResource("7_snqju")
 metadata/_tab_index = 0
 

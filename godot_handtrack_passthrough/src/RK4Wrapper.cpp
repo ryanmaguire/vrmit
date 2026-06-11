@@ -8,15 +8,8 @@ void RK4Wrapper::_bind_methods()
     ClassDB::bind_method(D_METHOD("SetParticles", "size"), &RK4Wrapper::SetParticles);
     ClassDB::bind_method(D_METHOD("SetCharges", "charges"), &RK4Wrapper::SetCharges);
     ClassDB::bind_method(D_METHOD("StepIntegrate", "h", "steps"), &RK4Wrapper::StepIntegrate);
-}
-
-RK4Wrapper::RK4Wrapper() : gen(std::random_device{}())
-{
-}
-
-RK4Wrapper::~RK4Wrapper() 
-{
-    UtilityFunctions::print("NAY");
+    ClassDB::bind_method(D_METHOD("AddCharge", "charge"), &RK4Wrapper::AddCharge);
+    ClassDB::bind_method(D_METHOD("UpdateCharge", "charge", "index"), &RK4Wrapper::UpdateCharge);
 }
 
 Array RK4Wrapper::SetParticles(int size) 
@@ -37,16 +30,39 @@ Array RK4Wrapper::SetParticles(int size)
 void RK4Wrapper::SetCharges(Array g_charges) 
 {
     charges.clear();
-    for (const Variant& v : g_charges)
+    for (int i = 0; i < g_charges.size(); i++)
     {
-        const Dictionary c = v;
+        Object *obj = Object::cast_to<Object>(g_charges[i]);
 
-        Vector3 pos = c["location"];
-        float q = c["charge"];
+        Vector3 pos = obj->get("pos");
+        float q = obj->get("q");
         
         charges.push_back(Charge{Vec3{pos.x, pos.y, pos.z}, q});
     }
 }
+
+void RK4Wrapper::AddCharge(Object *g_charge) 
+{
+    Vector3 pos = g_charge->get("pos");
+    float q = g_charge->get("q");
+    
+    charges.push_back(Charge{Vec3{pos.x, pos.y, pos.z}, q});
+}
+
+void RK4Wrapper::UpdateCharge(Object *g_charge, int index) 
+{
+    if (!g_charge) return;
+    if (index < 0 || index >= charges.size()) return;
+
+    Vector3 pos = g_charge->get("pos");
+    float q = g_charge->get("q");
+
+    charges[index].p.x = pos.x;
+    charges[index].p.y = pos.y;
+    charges[index].p.z = pos.z;
+    charges[index].q = q;
+}
+
 
 Array RK4Wrapper::StepIntegrate(double h, int steps) 
 {

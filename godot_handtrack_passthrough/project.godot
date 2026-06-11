@@ -41,6 +41,10 @@ r_skeleton_3d=""
 r_poke=""
 l_hand_pose_detector=""
 rk4=""
+TEST=""
+holding=""
+pickup=""
+release=""
 
 [layer_names]
 
@@ -62,7 +66,6 @@ rk4=""
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
-anti_aliasing/quality/msaa_3d=1
 
 [shader_globals]
 

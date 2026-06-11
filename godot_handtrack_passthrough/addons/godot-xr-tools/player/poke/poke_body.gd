@@ -12,7 +12,6 @@ signal body_contact_end(node)
 ## Distance at which we teleport our poke body
 @export var teleport_distance : float = 0.1
 
-
 # Node currently in contact with
 var _contact : Node3D = null
 
