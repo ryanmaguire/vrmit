@@ -9,6 +9,7 @@ void RK4Wrapper::_bind_methods()
     ClassDB::bind_method(D_METHOD("SetCharges", "charges"), &RK4Wrapper::SetCharges);
     ClassDB::bind_method(D_METHOD("StepIntegrate", "h", "steps"), &RK4Wrapper::StepIntegrate);
     ClassDB::bind_method(D_METHOD("AddCharge", "charge"), &RK4Wrapper::AddCharge);
+    ClassDB::bind_method(D_METHOD("RemoveCharge", "index"), &RK4Wrapper::RemoveCharge);
     ClassDB::bind_method(D_METHOD("UpdateCharge", "charge", "index"), &RK4Wrapper::UpdateCharge);
 }
 
@@ -43,10 +44,18 @@ void RK4Wrapper::SetCharges(Array g_charges)
 
 void RK4Wrapper::AddCharge(Object *g_charge) 
 {
+    if (!g_charge) return;
+
     Vector3 pos = g_charge->get("pos");
     float q = g_charge->get("q");
     
     charges.push_back(Charge{Vec3{pos.x, pos.y, pos.z}, q});
+}
+
+void RK4Wrapper::RemoveCharge(int index) 
+{
+    if (index < 0 || index >= charges.size()) return;
+    charges.erase(charges.begin() + index);
 }
 
 void RK4Wrapper::UpdateCharge(Object *g_charge, int index) 

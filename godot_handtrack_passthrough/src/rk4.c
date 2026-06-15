@@ -171,7 +171,7 @@ void rk4(force f, Vec6 * const u, double h, size_t steps, const Charge * charges
     Vec6 k1 = {u->v, a};
     Vec6 k2 = rk4_factor(u, h0, &k1, f, charges, charge_count);
     Vec6 k3 = rk4_factor(u, h0, &k2, f, charges, charge_count);
-    Vec6 k4 = rk4_factor(u, h, &k2, f, charges, charge_count);
+    Vec6 k4 = rk4_factor(u, h, &k3, f, charges, charge_count);
 
     /*  Iteratively performed RK4.                                            */
     for (n = 0; n < steps; ++n)
@@ -198,7 +198,7 @@ void rk4(force f, Vec6 * const u, double h, size_t steps, const Charge * charges
 
         k2 = rk4_factor(u, h0, &k1, f, charges, charge_count);
         k3 = rk4_factor(u, h0, &k2, f, charges, charge_count);
-        k4 = rk4_factor(u, h, &k2, f, charges, charge_count);
+        k4 = rk4_factor(u, h, &k3, f, charges, charge_count);
     }
 }
 /*  End of rk4.                                                               */

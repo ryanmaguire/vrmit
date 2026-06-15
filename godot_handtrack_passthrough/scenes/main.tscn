@@ -54,6 +54,9 @@ tonemap_exposure = 1.1
 glow_intensity = 0.75
 glow_bloom = 0.3
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_5q0nq"]
+size = Vector3(0.724, 0.9, 0.4)
+
 [sub_resource type="Resource" id="Resource_82xsv"]
 script = ExtResource("13_c6pm6")
 poses = Array[ExtResource("10_kmb1v")]([ExtResource("11_fuf3a"), ExtResource("12_og1vs")])
@@ -153,13 +156,13 @@ script = ExtResource("1_vxglm")
 
 [node name="LeftHandHumanoid2" parent="XROrigin3D/LeftTrackedHand" unique_id=1116108651 instance=ExtResource("2_2f3dj")]
 
-[node name="LeftHandHumanoidMesh" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 267272827) index="0" unique_id=720228570]
+[node name="LeftHandHumanoidMesh" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1453001696) index="0" unique_id=66527091]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.02132e-05, -9.86457e-05, -0.000219271)
 surface_material_override/0 = ExtResource("19_5q0nq")
 
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 267272827) index="1" unique_id=1429586075]
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1453001696) index="1" unique_id=1429586075]
 
-[node name="Wrist UI Visibility" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 267272827) index="2" unique_id=1108170099]
+[node name="Wrist UI Visibility" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 1453001696) index="2" unique_id=1108170099]
 transform = Transform3D(1.7881392e-07, -1.838803e-05, 0.99999994, -0.9999985, 0.0016677376, 1.7881392e-07, -0.0016676484, -0.99999833, -1.8358229e-05, 3.8642522e-08, -1.8697472e-05, 0.027175574)
 bone_name = "LeftHand"
 bone_idx = 0
@@ -171,6 +174,12 @@ bloom_cube_scene = ExtResource("5_tel4y")
 hagood_cube_scene = ExtResource("6_qkpxi")
 chen_cube_scene = ExtResource("7_5q0nq")
 maguire_cube_scene = ExtResource("8_dgi5k")
+
+[node name="Area3D" type="Area3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D/Wrist UI Visibility" unique_id=1660973295 groups=["l_palm"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D/Wrist UI Visibility/Area3D" unique_id=1351846743]
+transform = Transform3D(0.1, -1.4555157e-11, -3.5535052e-15, 1.4555157e-11, 0.1, -1.9677337e-12, 3.5535057e-15, 1.9677337e-12, 0.1, -0.005, 0.045, 0)
+shape = SubResource("BoxShape3D_5q0nq")
 
 [node name="HandPoseDetector" parent="XROrigin3D/LeftTrackedHand" unique_id=1098845215 groups=["l_hand_pose_detector"] instance=ExtResource("9_j8jky")]
 hand_pose_set = SubResource("Resource_82xsv")
@@ -186,13 +195,22 @@ script = ExtResource("17_chjal")
 
 [node name="RightHandHumanoid2" parent="XROrigin3D/RightTrackedHand" unique_id=203249440 instance=ExtResource("18_cjqg0")]
 
-[node name="Skeleton3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid" parent_id_path=PackedInt32Array(203249440, 903255932) index="0" unique_id=995490014 groups=["r_skeleton_3d"]]
-
-[node name="RightHandHumanoidMesh" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" index="0" unique_id=1450850713]
+[node name="RightHandHumanoidMesh" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 1795621983) index="0" unique_id=1403269103]
 surface_material_override/0 = ExtResource("19_5q0nq")
 
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" index="1" unique_id=986943058]
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 1795621983) index="1" unique_id=986943058]
 hand_tracker = &"/user/hand_tracker/right"
+
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 1795621983) index="2" unique_id=1103613469]
+transform = Transform3D(1.7881392e-07, 1.838803e-05, -0.99999994, 0.9999985, 0.0016677376, 1.7881392e-07, 0.0016676484, -0.99999833, -1.8358229e-05, -3.8642522e-08, -1.8697472e-05, 0.027175574)
+bone_name = "RightHand"
+bone_idx = 0
+
+[node name="Area3D" type="Area3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D/BoneAttachment3D" unique_id=1900311761 groups=["r_palm"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D/BoneAttachment3D/Area3D" unique_id=2137319053]
+transform = Transform3D(0.1, -1.4555157e-11, -3.5535052e-15, 1.4555157e-11, 0.1, -1.9677337e-12, 3.5535057e-15, 1.9677337e-12, 0.1, -0.005, 0.045, 0)
+shape = SubResource("BoxShape3D_5q0nq")
 
 [node name="HandPoseDetector" parent="XROrigin3D/RightTrackedHand" unique_id=1429456489 groups=["r_hand_pose_detector"] instance=ExtResource("9_j8jky")]
 hand_tracker_name = "/user/hand_tracker/right"

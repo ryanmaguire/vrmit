@@ -32,6 +32,7 @@ class RK4Wrapper : public Node3D
         Array SetParticles(int size);
         void SetCharges(Array g_charges);
         void AddCharge(Object *g_charge);
+        void RemoveCharge(int index);
         void UpdateCharge(Object *g_charge, int index);
         Array StepIntegrate(double h, int steps);
 };

@@ -45,6 +45,8 @@ TEST=""
 holding=""
 pickup=""
 release=""
+l_palm=""
+r_palm=""
 
 [layer_names]
 

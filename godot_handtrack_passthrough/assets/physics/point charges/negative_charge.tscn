@@ -62,7 +62,10 @@ particles_anim_loop = false
 [sub_resource type="QuadMesh" id="QuadMesh_7m30j"]
 size = Vector2(0.22, 0.2)
 
-[node name="NegativeCharge" type="Node3D" unique_id=1459763964]
+[sub_resource type="SphereShape3D" id="SphereShape3D_yd800"]
+radius = 0.1
+
+[node name="NegativeCharge" type="Area3D" unique_id=1642953640]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=166502080]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
@@ -82,3 +85,6 @@ draw_pass_1 = SubResource("QuadMesh_d5jdj")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" unique_id=375017442]
 material_override = SubResource("StandardMaterial3D_3jbaw")
 mesh = SubResource("QuadMesh_7m30j")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1890386778]
+shape = SubResource("SphereShape3D_yd800")

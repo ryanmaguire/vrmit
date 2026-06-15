@@ -25,6 +25,9 @@ var r_hand_pose_detector = null
 var l_hand_pose_detector = null
 var r_poke = null
 var l_poke = null
+var r_palm = null
+var l_palm = null
+
 var selected_stylebox = StyleBoxFlat.new()
 
 @onready var rk4: RK4Wrapper = RK4Wrapper.new()
@@ -61,6 +64,11 @@ func _ready() -> void:
 	r_hand_state = HandState.new(r_hand_pose_detector)
 	l_hand_state = HandState.new(l_hand_pose_detector)
 	
+	l_palm = get_tree().get_first_node_in_group("l_palm")
+	r_palm = get_tree().get_first_node_in_group("r_palm")
+	l_palm.connect("area_entered", Callable(self, "_on_area_entered"))
+	r_palm.connect("area_entered", Callable(self, "_on_area_entered"))
+	
 	holding_sfx = get_tree().get_first_node_in_group("holding")
 	pickup_sfx = get_tree().get_first_node_in_group("pickup")
 	release_sfx = get_tree().get_first_node_in_group("release")
@@ -83,9 +91,9 @@ var l_previous_charge_index = null
 var r_moving_charge = false
 var l_moving_charge = false
 
-func _process(delta) -> void:
+func _process(delta) -> void:	
 	if functions["particle_flow"]:
-		particle_flow_upd(delta * 0.15)
+		particle_flow_upd(delta * 0.1)
 		
 	if pt_charges:
 		r_hand_state.update(vector_field)
@@ -96,7 +104,7 @@ func _process(delta) -> void:
 		
 		r_moving_charge = is_moving_charge(r_charge_index, r_previous_charge_index)
 		l_moving_charge = is_moving_charge(l_charge_index, l_previous_charge_index)
-	
+			
 	if r_moving_charge and r_charge_index != null:
 		move_selected_charges(r_hand_state, r_charge_index)
 		r_moving_charge = !r_hand_state.released()
@@ -106,7 +114,7 @@ func _process(delta) -> void:
 		l_moving_charge = !l_hand_state.released()
 		
 	r_previous_charge_index = r_charge_index
-	l_previous_charge_index = l_charge_index		
+	l_previous_charge_index = l_charge_index
 
 
 # ---------- Connection helpers ----------
@@ -134,7 +142,7 @@ func select_tool(tool: String):
 			
 
 var pt_charges : Array[PointCharge] = []
-var charge_node : Node3D
+var charge_area : Area3D
 
 func spawn_pt_charge(pos, q):
 	var too_close = false
@@ -146,16 +154,16 @@ func spawn_pt_charge(pos, q):
 			
 	if tools["pt_charge"] and not too_close:		
 		if q < 0:
-			charge_node = neg_charge_scene.instantiate()
+			charge_area = neg_charge_scene.instantiate()
 		else:
-			charge_node = pos_charge_scene.instantiate()
+			charge_area = pos_charge_scene.instantiate()
 
-		var pt_charge = PointCharge.new(pos, q, charge_node)
+		var pt_charge = PointCharge.new(pos, q, charge_area)
 		pt_charges.append(pt_charge)
-		rk4.AddCharge(pt_charge) # add/remove charge functions might be more efficient
+		rk4.AddCharge(pt_charge)
 
-		charge_node.position = pos
-		vector_field.add_child(charge_node)
+		charge_area.position = pos
+		vector_field.add_child(charge_area)
 		
 		if pt_charge.mesh.material_override:
 			pt_charge.mesh.material_override = pt_charge.mesh.material_override.duplicate()
@@ -197,17 +205,28 @@ func is_moving_charge(c_index, previous_c_index):
 func move_selected_charges(hand_state : HandState, c_index):
 	var c = pt_charges[c_index]
 
-	c.node.position = hand_state.pinch_center
+	c.area.position = hand_state.pinch_center
 	c.pos = hand_state.pinch_center
 	holding_sfx.position = hand_state.pinch_center
 	if !holding_sfx.playing:
 		holding_sfx.play()
 	rk4.UpdateCharge(c, c_index)
 	
+# delete charges
+
+func _on_area_entered(area: Area3D):
+	if pt_charges:
+		for i in range(pt_charges.size()):
+			if area == pt_charges[i].area:
+				rk4.RemoveCharge(i)
+				vector_field.remove_child(pt_charges[i].area)
+				pt_charges[i].area.queue_free()
+				pt_charges.remove_at(i)
+				break
 
 # ------------------- PARTICLE FLOW ----------------------------------------------
 var mm_instance : MultiMeshInstance3D
-var particle_count = 700
+var particle_count = 800
 
 func enable_particle_flow():
 	functions["particle_flow"] = !functions["particle_flow"]
@@ -232,8 +251,7 @@ func enable_particle_flow():
 	for i in range(particle_count):
 		trails.append(PackedVector3Array())
 
-# trails : PackedVector3Array
-# trail_instance -> assigned trail mesh
+# ------------------- TRAILS ----------------------------------------------
 func update_trails(positions : PackedVector3Array):
 	for i in positions.size():
 		var trail = trails[i]
@@ -253,22 +271,22 @@ func rebuild_trail_mesh():
 			trail_mesh.surface_add_vertex(trail[j + 1])
 	trail_mesh.surface_end()
 
-var positions = PackedVector3Array()
+var trail_positions = PackedVector3Array()
 func particle_flow_upd(h):
-	if pt_charges.is_empty():
-		return
+	#if pt_charges.is_empty():
+		#return
 		
 	var new_states = rk4.StepIntegrate(h, 1)
 	
-	positions.clear()
+	trail_positions.clear()
 	
 	for i in range(mm_instance.multimesh.instance_count):
 		mm_instance.multimesh.set_instance_transform(i, Transform3D(Basis(), new_states[i][0]))
 		if new_states[i][2]: # Regenerated
 			trails[i].clear()
-		positions.append(new_states[i][0])
+		trail_positions.append(new_states[i][0])
 		
-	update_trails(positions)
+	update_trails(trail_positions)
 		
 
 # ------------------- MORE UI ---------------------------------------------
