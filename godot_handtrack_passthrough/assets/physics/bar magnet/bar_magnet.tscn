@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bcpdhqeden63h"]
+
+[ext_resource type="Shader" uid="uid://cfkc1frcbe248" path="res://assets/physics/bar magnet/bar_magnet.gdshader" id="1_rgsva"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_40b6x"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d0hcw"]
+render_priority = 0
+shader = ExtResource("1_rgsva")
+shader_parameter/blue = Color(0, 0, 1, 1)
+shader_parameter/red = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rgsva"]
+size = Vector3(0.135, 0.407, 0.135)
+
+[node name="BarMagnet" type="Area3D" unique_id=1158977946]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1075477757]
+transform = Transform3D(0.108, 0, 0, 0, 0.36, 0, 0, 0, 0.108, 0, 0, 0)
+mesh = SubResource("BoxMesh_40b6x")
+surface_material_override/0 = SubResource("ShaderMaterial_d0hcw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=685001163]
+shape = SubResource("BoxShape3D_rgsva")

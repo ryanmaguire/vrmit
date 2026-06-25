@@ -42,11 +42,16 @@ r_poke=""
 l_hand_pose_detector=""
 rk4=""
 TEST=""
+l_palm=""
+r_palm=""
+r_thumb_area=""
+r_index_area=""
+l_index_area=""
+l_thumb_area=""
 holding=""
 pickup=""
 release=""
-l_palm=""
-r_palm=""
+whoosh=""
 
 [layer_names]
 

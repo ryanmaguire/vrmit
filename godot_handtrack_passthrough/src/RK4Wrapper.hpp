@@ -21,8 +21,13 @@ class RK4Wrapper : public Node3D
     GDCLASS(RK4Wrapper, Node3D)
 
     private:
+        std::vector<FieldObject> objects;
+        // Particle Flow
         std::vector<Vec6> particles; 
-        std::vector<Charge> charges;
+        // Field Lines
+        std::vector<Vec3> e_positions;
+        std::vector<Vec3> b_positions;
+
         std::mt19937 gen;
 
     protected:
@@ -30,9 +35,12 @@ class RK4Wrapper : public Node3D
 
     public:
         Array SetParticles(int size);
-        void SetCharges(Array g_charges);
-        void AddCharge(Object *g_charge);
-        void RemoveCharge(int index);
-        void UpdateCharge(Object *g_charge, int index);
+        void SetFieldPositions(Array init_positions, int type);
+
+        void AddObject(Object *g_object);
+        void RemoveObject(int index);
+        void UpdateObject(Object *g_object, int index);
+
         Array StepIntegrate(double h, int steps);
+        Array StepIntegrateField(double h, int steps, int type);
 };
