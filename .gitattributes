@@ -1,0 +1,6 @@
+# Default all files to LF
+* text=auto eol=lf
+
+# Some files on windows specifically require CRLF still. These are the only exceptions I could find. Update with more/less if you look into it more.
+*.bat text eol=crlf
+*.cmd text eol=crlf
