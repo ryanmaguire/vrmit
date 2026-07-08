@@ -26,17 +26,18 @@ var pinch_center : Vector3
 
 ## Distance below which a pinch engages (mm). MUST be less than
 ## [member release_threshold] for proper hysteresis
-var pinch_threshold : float = 65.0
+var pinch_threshold : float = 30.0
 
 ## Distance above which a pinch releases (mm). MUST be greater
 ## than [member pinch_threshold] for proper hysteresis
-var release_threshold : float = 80.0
+var release_threshold : float = 40.0
 
 # Current pinch state.
 var _pinching : bool = false
 
 ## Initialization. Pass in the proper [HandPoseDetector] for the correct side
 func _init(detectorInput : HandPoseDetector) -> void:
+	detector = detectorInput
 	if detectorInput:
 		tracker = detectorInput.get_hand_tracker()
 

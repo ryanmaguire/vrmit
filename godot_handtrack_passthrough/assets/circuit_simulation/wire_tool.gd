@@ -3,8 +3,8 @@ class_name WireTool extends Node
 ## Wire tool
 
 ## Settings
-const WIRE_START_DST := 0.06 # Distance between two pinch centers (m)
-const WIRE_RADIUS := 0.012 # (m)
+const WIRE_START_DST := 0.04 # Distance between two pinch centers (m)
+const WIRE_RADIUS := 0.008 # (m)
 const WIRE_COLOR := Color(0.13, 0.13, 0.13, 1.0) # Any color object
 
 ## CircuitHands. If unset, resolved from [member group_hands].
@@ -66,7 +66,7 @@ func _process(_delta : float) -> void:
 
 ## Global toggle for the wire tool. Will cancel any in-progress draw if disabled mid-draw.
 func set_active(value : bool) -> void:
-	print("[CircuitSIM/WIRE]: State recieved: ", value)
+	print("[CircuitSim/wire_tool]: State recieved from menu: ", value)
 	active = value
 	if not active:
 		_wire_drawing = false
