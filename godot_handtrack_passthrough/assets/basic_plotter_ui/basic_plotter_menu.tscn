@@ -1,12 +1,14 @@
 [gd_scene format=3 uid="uid://c54n2c5nolvnx"]
 
-[ext_resource type="Script" uid="uid://bn8f5todv3cxc" path="res://assets/basic_plotter_ui/wrist_menu.gd" id="1_d7qq6"]
-[ext_resource type="Script" uid="uid://cxo0foyl4j80a" path="res://assets/basic_plotter_ui/vector_eq_input.gd" id="2_0le4w"]
-[ext_resource type="Script" uid="uid://b8xbwsjy4o4gb" path="res://assets/basic_plotter_ui/vector_field_options.gd" id="3_c240p"]
-[ext_resource type="Script" uid="uid://dy3bbyxncb1sj" path="res://assets/basic_plotter_ui/Physics/electrostatics.gd" id="4_l1u8m"]
+[ext_resource type="Script" uid="uid://df1hgmsdnr6va" path="res://assets/basic_plotter_ui/wrist_menu.gd" id="1_d7qq6"]
+[ext_resource type="Script" uid="uid://b28t2fs8lmwfa" path="res://assets/basic_plotter_ui/vector_eq_input.gd" id="2_0le4w"]
+[ext_resource type="Script" uid="uid://c517vi77h4foa" path="res://assets/basic_plotter_ui/vector_field_options.gd" id="3_c240p"]
+[ext_resource type="Script" uid="uid://uw1ns6382rle" path="res://assets/basic_plotter_ui/Physics/electrostatics.gd" id="4_l1u8m"]
 [ext_resource type="PackedScene" uid="uid://ckuwfukp2o5hw" path="res://assets/physics/point charges/positive_charge.tscn" id="5_imu5p"]
 [ext_resource type="PackedScene" uid="uid://btwolidrmttcl" path="res://assets/physics/point charges/negative_charge.tscn" id="6_snqju"]
 [ext_resource type="PackedScene" uid="uid://ccpelyryvyx0n" path="res://assets/physics/particle.tscn" id="7_snqju"]
+[ext_resource type="Script" uid="uid://dmgg1hv25wqxr" path="res://assets/basic_plotter_ui/Circuits/circuit_simulator.gd" id="8_af2fp"]
+[ext_resource type="Texture2D" uid="uid://ceovky0s18x7w" path="res://assets/basic_plotter_ui/Circuits/textures/gdj-circuit-board-3773755.svg" id="9_c17oa"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4oc21"]
 
@@ -47,10 +49,28 @@ corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tv7qw"]
+bg_color = Color(0.7607843, 0.57254905, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 13
+
+[sub_resource type="LabelSettings" id="LabelSettings_ncskb"]
+font_size = 32
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+
 [node name="Wrist Menu" type="Node2D" unique_id=578506306]
 scale = Vector2(1.0046631, 1)
 
-[node name="wrist menu" type="MarginContainer" parent="." unique_id=1729704129 node_paths=PackedStringArray("btn_x", "btn_y", "btn_z", "btn_a", "btn_7", "btn_8", "btn_9", "btn_divide", "btn_back", "btn_par_l", "btn_par_r", "btn_power", "btn_sqrt", "btn_4", "btn_5", "btn_6", "btn_times", "btn_left", "btn_sin", "btn_cos", "btn_tan", "btn_abs", "btn_1", "btn_2", "btn_3", "btn_minus", "btn_right", "btn_ln", "btn_pi", "btn_e", "btn_clear", "btn_0", "btn_dot", "btn_equals", "btn_plus", "btn_enter", "debug_label", "plot_scale", "function_scale", "rotate_toggle", "axis_toggle", "preset_func_1", "preset_func_2", "preset_func_3", "preset_func_4", "preset_func_5", "preset_func_6", "preset_func_7", "preset_func_8", "preset_func_9", "gradient_toggle", "level_curves_toggle", "tangent_plane_toggle", "tangent_plane_x_slider", "tangent_plane_y_slider", "plot_alpha_slider", "math_panel", "physics_panel", "btn_math_mode", "btn_physics_mode", "btn_pt_charge_tool", "btn_spawn_pt_charge")]
+[node name="wrist menu" type="MarginContainer" parent="." unique_id=1729704129 node_paths=PackedStringArray("btn_x", "btn_y", "btn_z", "btn_a", "btn_7", "btn_8", "btn_9", "btn_divide", "btn_back", "btn_par_l", "btn_par_r", "btn_power", "btn_sqrt", "btn_4", "btn_5", "btn_6", "btn_times", "btn_left", "btn_sin", "btn_cos", "btn_tan", "btn_abs", "btn_1", "btn_2", "btn_3", "btn_minus", "btn_right", "btn_ln", "btn_pi", "btn_e", "btn_clear", "btn_0", "btn_dot", "btn_equals", "btn_plus", "btn_enter", "debug_label", "plot_scale", "function_scale", "rotate_toggle", "axis_toggle", "preset_func_1", "preset_func_2", "preset_func_3", "preset_func_4", "preset_func_5", "preset_func_6", "preset_func_7", "preset_func_8", "preset_func_9", "gradient_toggle", "level_curves_toggle", "tangent_plane_toggle", "tangent_plane_x_slider", "tangent_plane_y_slider", "plot_alpha_slider", "math_panel", "physics_panel", "btn_math_mode", "btn_physics_mode", "btn_pt_charge_tool", "btn_spawn_pt_charge", "circuits_panel", "btn_circuits_to_physics", "btn_physics_to_circuits")]
 light_mask = 3
 offset_right = 511.0
 offset_bottom = 300.0
@@ -113,10 +133,13 @@ tangent_plane_y_slider = NodePath("MathPanel/ColorRect/TabContainer/Plot Calculu
 plot_alpha_slider = NodePath("MathPanel/ColorRect/TabContainer/Plot Calculus/Plot Alpha/HBoxContainer/MarginContainer2/plot alpha")
 math_panel = NodePath("MathPanel")
 physics_panel = NodePath("PhysicsPanel")
-btn_math_mode = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer/MarginContainer/math_mode")
+btn_math_mode = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer/GridContainer/math_mode")
 btn_physics_mode = NodePath("MathPanel/ColorRect/TabContainer/Basic Plot Options/VBoxContainer/HBoxContainer/MarginContainer/physics_mode")
 btn_pt_charge_tool = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
 btn_spawn_pt_charge = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
+circuits_panel = NodePath("CircuitsPanel")
+btn_circuits_to_physics = NodePath("CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer2/ReturnButton")
+btn_physics_to_circuits = NodePath("PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer/GridContainer/CircuitsModeSwitch")
 
 [node name="MathPanel" type="Panel" parent="wrist menu" unique_id=1074228934]
 visible = false
@@ -1207,11 +1230,11 @@ drag_to_rearrange_enabled = true
 [node name="Electrostatics" type="HBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer" unique_id=2067645953 node_paths=PackedStringArray("btn_pt_charge_tool", "btn_particle_flow")]
 layout_mode = 2
 script = ExtResource("4_l1u8m")
-btn_pt_charge_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
-btn_particle_flow = NodePath("VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
 pos_charge_scene = ExtResource("5_imu5p")
 neg_charge_scene = ExtResource("6_snqju")
 particle_multimesh = ExtResource("7_snqju")
+btn_pt_charge_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
+btn_particle_flow = NodePath("VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
 metadata/_tab_index = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics" unique_id=1878751406]
@@ -1271,18 +1294,29 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 8
 
+[node name="GridContainer" type="GridContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer" unique_id=1741563744]
+layout_mode = 2
+theme_override_constants/h_separation = 30
+columns = 2
+
+[node name="math_mode" type="Button" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer/GridContainer" unique_id=1538083165]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+text = "Math Mode"
+
+[node name="CircuitsModeSwitch" type="Button" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer/GridContainer" unique_id=1202471842]
+custom_minimum_size = Vector2(153.935, 0)
+layout_mode = 2
+text = "Circuits Mode"
+
 [node name="MarginContainer" type="MarginContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer" unique_id=803089196]
+visible = false
 custom_minimum_size = Vector2(140, 38)
 layout_direction = 2
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
 theme_override_constants/margin_left = 80
-
-[node name="math_mode" type="Button" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/HBoxContainer/MarginContainer" unique_id=1538083165]
-custom_minimum_size = Vector2(140, 0)
-layout_mode = 2
-text = "Math Mode"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics" unique_id=1948523879]
 visible = false
@@ -1312,3 +1346,117 @@ size_flags_horizontal = 1
 max_value = 2.0
 step = 0.01
 value = 0.38
+
+[node name="CircuitsPanel" type="Panel" parent="wrist menu" unique_id=1787342005]
+visible = false
+clip_contents = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_tv7qw")
+
+[node name="TextureRect" type="TextureRect" parent="wrist menu/CircuitsPanel" unique_id=1635608100]
+self_modulate = Color(1, 0.8039216, 0.15686275, 0.17254902)
+layout_mode = 0
+offset_left = -252.82108
+offset_top = -80.0
+offset_right = 2307.179
+offset_bottom = 1629.0
+scale = Vector2(0.6140727, 0.6140727)
+mouse_filter = 2
+texture = ExtResource("9_c17oa")
+flip_h = true
+
+[node name="ColorRect" type="ColorRect" parent="wrist menu/CircuitsPanel" unique_id=2083949454]
+custom_minimum_size = Vector2(511, 300)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(1, 1, 1, 0)
+
+[node name="MarginContainer" type="MarginContainer" parent="wrist menu/CircuitsPanel/ColorRect" unique_id=1717353441]
+layout_mode = 0
+offset_right = 511.0
+offset_bottom = 300.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer" unique_id=1447839777]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer" unique_id=1725829743 node_paths=PackedStringArray("btn_global_circuits", "btn_clear_components")]
+layout_mode = 2
+theme_override_constants/separation = 24
+script = ExtResource("8_af2fp")
+btn_global_circuits = NodePath("VBoxContainer/GlobalCircuitsButton")
+btn_clear_components = NodePath("VBoxContainer/ClearnComponentsButton")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer" unique_id=209480407]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1134681281]
+layout_mode = 2
+text = "Circuit Simulation:"
+label_settings = SubResource("LabelSettings_ncskb")
+
+[node name="GlobalCircuitsButton" type="Button" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=367516959]
+custom_minimum_size = Vector2(180.71, 66.57)
+layout_mode = 2
+size_flags_horizontal = 0
+action_mode = 0
+text = "Enable Circuits"
+
+[node name="ClearnComponentsButton" type="Button" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1174845910]
+custom_minimum_size = Vector2(180.71, 66.57)
+layout_mode = 2
+size_flags_horizontal = 0
+action_mode = 0
+text = "Clear Components"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer" unique_id=228711529]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ToolboxButton" type="Button" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=318951059]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "Show toolbox"
+
+[node name="TimescaleLabel" type="Label" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=1586243727]
+layout_mode = 2
+text = "Sim Timescale:"
+
+[node name="TimescaleSlider" type="HSlider" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=1919989232]
+layout_mode = 2
+
+[node name="TimescaleValues" type="HBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=681249262]
+layout_mode = 2
+
+[node name="LowLabel" type="Label" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/TimescaleValues" unique_id=1231563371]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "10⁻⁹"
+
+[node name="HighLabel" type="Label" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/TimescaleValues" unique_id=723241527]
+layout_mode = 2
+text = "1"
+
+[node name="ExplosionsButton" type="CheckButton" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=124222707]
+layout_mode = 2
+text = "Explosions"
+
+[node name="ThermalsButton" type="CheckButton" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=98422981]
+layout_mode = 2
+text = "Thermals"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer" unique_id=1441561454]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 10
+
+[node name="ReturnButton" type="Button" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer2" unique_id=1781675967]
+custom_minimum_size = Vector2(225.525, 47.365)
+layout_mode = 2
+action_mode = 0
+text = "Switch to Electrostatics ⇆"
