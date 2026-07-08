@@ -36,9 +36,9 @@ var release_threshold : float = 80.0
 var _pinching : bool = false
 
 ## Initialization. Pass in the proper [HandPoseDetector] for the correct side
-func _init(detector : HandPoseDetector) -> void:
-	if detector:
-		tracker = detector.get_hand_tracker()
+func _init(detectorInput : HandPoseDetector) -> void:
+	if detectorInput:
+		tracker = detectorInput.get_hand_tracker()
 
 
 ## Get refreshed data about this hand. Ideally this should be called once a frame.
@@ -47,24 +47,23 @@ func update(space : Node3D) -> void:
 	if detector == null:
 		return
 
-    # Tracker still may not have returned
+	# Tracker still may not have returned
 	if tracker == null:
 		tracker = detector.get_hand_tracker()
 		if tracker == null:
 			return
 
-    # Get latest data
+	# Get latest data
 	data = detector.get_current_data()
 	if data == null:
 		return
 
-    # Actually pick out useful data
+	# Actually pick out useful data
 	dst = data.dst_index
 	var index_pos := tracker.get_hand_joint_transform(XRHandTracker.HAND_JOINT_INDEX_FINGER_TIP).origin
-    var thumb_pos := tracker.get_hand_joint_transform(XRHandTracker.HAND_JOINT_THUMB_TIP).origin
+	var thumb_pos := tracker.get_hand_joint_transform(XRHandTracker.HAND_JOINT_THUMB_TIP).origin
 	var center := (index_pos + thumb_pos) * 0.5
 	pinch_center = space.to_local(center)
-
 
 	# Hysteresis
 	if _pinching:
