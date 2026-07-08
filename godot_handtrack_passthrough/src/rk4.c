@@ -51,42 +51,149 @@
  *          The force exterted on the point by the charge at the origin.      *
  ******************************************************************************/
 
-Vec3 coulomb(const Vec3 * const position, const Charge *charges, size_t charge_count)
-{
+Vec3 coulomb_f(const Vec3 * const pos, const Vec3 * const vel, const FieldObject * objects, size_t obj_size)
+{    
     /*  Variable for the output force.                                        */
     Vec3 out = {0.0, 0.0, 0.0};
 
-    for (size_t i = 0; i < charge_count; i++) 
+    for (size_t i = 0; i < obj_size; i++) 
     {
-        const double rsq = (position->x - charges[i].p.x) * (position->x - charges[i].p.x)
-         + (position->y - charges[i].p.y) * (position->y - charges[i].p.y)
-         + (position->z - charges[i].p.z) * (position->z - charges[i].p.z);
+        if (objects[i].type == POINT_CHARGE) 
+        {
+            const double rsq = (pos->x - objects[i].p.x) * (pos->x - objects[i].p.x)
+            + (pos->y - objects[i].p.y) * (pos->y - objects[i].p.y)
+            + (pos->z - objects[i].p.z) * (pos->z - objects[i].p.z);
 
-        /*  The L2 norm, given by Pythagoras, || P || = sqrt(x^2 + y^2).          */
-        const double r = sqrt(rsq);
+            /*  The L2 norm, given by Pythagoras, || P || = sqrt(x^2 + y^2).          */
+            const double r = sqrt(rsq);
 
-        /*  The input vector is not necessary a unit vector. The inverse square   *
-        *  law thus becomes:                                                     *
-        *                                                                        *
-        *             ^          ->                                              *
-        *             R          R                                               *
-        *      F = -------- = --------                                           *
-        *                 2          3                                           *
-        *          || R ||    || R ||                                            *
-        *                                                                        *
-        *  Where the "hat" indicates the unit vector in the direction of R. The  *
-        *  scale factor is hence the reciprocal of the cube of the norm.         */
-        const double scale = charges[i].q / (r * rsq);
+            /*  The input vector is not necessary a unit vector. The inverse square   *
+            *  law thus becomes:                                                     *
+            *                                                                        *
+            *             ^          ->                                              *
+            *             R          R                                               *
+            *      F = -------- = --------                                           *
+            *                 2          3                                           *
+            *          || R ||    || R ||                                            *
+            *                                                                        *
+            *  Where the "hat" indicates the unit vector in the direction of R. The  *
+            *  scale factor is hence the reciprocal of the cube of the norm.         */
+            const double scale = objects[i].data.charge.q / (r * rsq);
 
-        /*  The force is just the scale factor times the position vector. Compute.*/
-        out.x += (position->x - charges[i].p.x) * scale;
-        out.y += (position->y - charges[i].p.y) * scale;
-        out.z += (position->z - charges[i].p.z) * scale; 
+            /*  The force is just the scale factor times the position vector. Compute.*/
+            out.x += (pos->x - objects[i].p.x) * scale;
+            out.y += (pos->y - objects[i].p.y) * scale;
+            out.z += (pos->z - objects[i].p.z) * scale; 
+        }
     }
 
     return out;
 }
 /*  End of coulomb.                                                           */
+
+/*  B: Magnetic Field                                                         */
+Vec3 bar_magnet_b(const Vec3 * const pos, const Vec3 * const vel, const FieldObject * objects, size_t obj_count) 
+{
+    /*  Variable for the output force.                                        */
+    Vec3 out = {0.0, 0.0, 0.0};
+
+    for (size_t i = 0; i < obj_count; i++) 
+    {
+        if (objects[i].type == BAR_MAGNET) 
+        {
+            const double rsq = (pos->x - objects[i].p.x) * (pos->x - objects[i].p.x)
+            + (pos->y - objects[i].p.y) * (pos->y - objects[i].p.y)
+            + (pos->z - objects[i].p.z) * (pos->z - objects[i].p.z);
+
+            const double r = sqrt(rsq);
+
+            const double scale = 1.0 / (r * rsq);
+
+            const Vec3 r_hat = {
+                (pos->x - objects[i].p.x) / r, 
+                (pos->y - objects[i].p.y) / r,
+                (pos->z - objects[i].p.z) / r};
+
+            const double mdotr_hat = (objects[i].data.bar_magnet.m.x * r_hat.x) + 
+            (objects[i].data.bar_magnet.m.y * r_hat.y) + 
+            (objects[i].data.bar_magnet.m.z * r_hat.z);
+
+            out.x += scale * (3 * (mdotr_hat) * r_hat.x - objects[i].data.bar_magnet.m.x);
+            out.y += scale * (3 * (mdotr_hat) * r_hat.y - objects[i].data.bar_magnet.m.y);
+            out.z += scale * (3 * (mdotr_hat) * r_hat.z - objects[i].data.bar_magnet.m.z);
+        } 
+    }
+
+    return out;
+}
+
+/*  Bar Magnet Force w/ Corresponding Cross Product Calculation                       */
+Vec3 bar_magnet_f(const Vec3 * const pos, const Vec3 * const vel, const FieldObject * objects, size_t obj_count) 
+{
+    const Vec3 B = bar_magnet_b(pos, NULL, objects, obj_count);
+    Vec3 out = {vel->y * B.z - vel->z * B.y, 
+        vel->z * B.x - vel->x * B.z, 
+        vel->x * B.y - vel->y * B.x};
+    return out;
+}
+
+/*  Net force to compute particle pos/vel with multiple types of electromagnetic phenomena.  */
+Vec3 net_force(const Vec3 * const pos, const Vec3 * const vel, const FieldObject * objects, size_t obj_count) 
+{
+    Vec3 out = {0.0, 0.0, 0.0};
+
+    Vec3 E_f = coulomb_f(pos, vel, objects, obj_count);
+    Vec3 B_f = bar_magnet_f(pos, vel, objects, obj_count);
+
+    out.x += E_f.x + B_f.x;
+    out.y += E_f.y + B_f.y;
+    out.z += E_f.z + B_f.z;
+
+    return out;
+}
+
+/* Net E & B Fields to compute field lines (WIP FEATURE)                                      */
+Vec3 net_e_field(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
+{
+    Vec3 E_coulomb = coulomb_f(pos, NULL, objects, obj_count); // particle q = 1, should make a seperate coulomb_e function
+    return E_coulomb;
+}
+
+Vec3 net_e_field_norm(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
+{
+    Vec3 out = {0.0, 0.0, 0.0};
+    Vec3 E = net_e_field(pos, objects, obj_count);
+
+    float E_sq = E.x * E.x + E.y * E.y + E.z * E.z;
+    float E_mag = sqrt(E_sq);
+
+    out.x = E.x / E_mag;
+    out.y = E.y / E_mag;
+    out.z = E.z / E_mag;
+
+    return out;
+}
+
+Vec3 net_b_field(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
+{
+    Vec3 B_bar_magnet = bar_magnet_b(pos, NULL, objects, obj_count);
+    return B_bar_magnet;
+}
+
+Vec3 net_b_field_norm(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
+{
+    Vec3 out = {0.0, 0.0, 0.0};
+    Vec3 B = net_b_field(pos, objects, obj_count);
+
+    float B_sq = B.x * B.x + B.y * B.y + B.z * B.z;
+    float B_mag = sqrt(B_sq);
+
+    out.x = B.x / B_mag;
+    out.y = B.y / B_mag;
+    out.z = B.z / B_mag;
+
+    return out;
+}
 
 /******************************************************************************
  *  Function:                                                                 *
@@ -110,7 +217,7 @@ Vec3 coulomb(const Vec3 * const position, const Charge *charges, size_t charge_c
  *      out (Vec4):                                                           *
  *          The new perturbation factor, one of the k_n terms.                *
  ******************************************************************************/
-Vec6 rk4_factor(const Vec6 * const u0, double h, const Vec6 * const u1, force f, const Charge * charges, size_t charge_count)
+Vec6 rk4_factor(const Vec6 * const u0, double h, const Vec6 * const u1, force f, const FieldObject * objects, size_t obj_count)
 {
     /*  Declare a variable for the output.                                    */
     Vec6 out;
@@ -131,7 +238,27 @@ Vec6 rk4_factor(const Vec6 * const u0, double h, const Vec6 * const u1, force f,
     out.p.z = u0->v.z + h * u1->v.z;
 
     /*  The new velocity is given by the force at the current point. Compute. */
-    out.v = f(&p, charges, charge_count);
+    out.v = f(&p, &out.p, objects, obj_count);
+
+    return out;
+}
+
+Vec3 rk4_factor_field(const Vec3 * const u0, double h, const Vec3 * const u1, field f, const FieldObject * objects, size_t obj_count) 
+{
+        /*  Declare a variable for the output.                                */
+    Vec3 out;
+
+    /*  Place holder for the Euler-like step used to compute out.p and out.v. */
+    Vec3 p;
+
+    /*  u1 acts like the velocity in phase-space, and u0 is the position.     *
+     *  Calculate the new point by applying Euler's method.                   */
+    p.x = u0->x + h * u1->x;
+    p.y = u0->y + h * u1->y;
+    p.z = u0->z + h * u1->z;
+
+    /*  The new velocity is given by the force at the current point. Compute. */
+    out = f(&p, objects, obj_count);
 
     return out;
 }
@@ -155,7 +282,7 @@ Vec6 rk4_factor(const Vec6 * const u0, double h, const Vec6 * const u1, force f,
  *  Output:                                                                   *
  *      None (void).                                                          *
  ******************************************************************************/
-void rk4(force f, Vec6 * const u, double h, size_t steps, const Charge * charges, size_t charge_count)
+void rk4(force f, Vec6 * const u, double h, size_t steps, const FieldObject * objects, size_t obj_count)
 {
     /*  Index for keeping track of the number of iterations performed.        */
     size_t n = 0;
@@ -165,13 +292,13 @@ void rk4(force f, Vec6 * const u, double h, size_t steps, const Charge * charges
     const double h1 = h * 0.1666666666666667;
 
     /*  Current acceleration vector given by the starting position.           */
-    Vec3 a = f(&u->p, charges, charge_count);
+    Vec3 a = f(&u->p, &u->v, objects, obj_count);
 
     /*  Compute the initial Runge-Kutta factors.                              */
     Vec6 k1 = {u->v, a};
-    Vec6 k2 = rk4_factor(u, h0, &k1, f, charges, charge_count);
-    Vec6 k3 = rk4_factor(u, h0, &k2, f, charges, charge_count);
-    Vec6 k4 = rk4_factor(u, h, &k3, f, charges, charge_count);
+    Vec6 k2 = rk4_factor(u, h0, &k1, f, objects, obj_count);
+    Vec6 k3 = rk4_factor(u, h0, &k2, f, objects, obj_count);
+    Vec6 k4 = rk4_factor(u, h, &k3, f, objects, obj_count);
 
     /*  Iteratively performed RK4.                                            */
     for (n = 0; n < steps; ++n)
@@ -191,14 +318,49 @@ void rk4(force f, Vec6 * const u, double h, size_t steps, const Charge * charges
         u->v.z += h1 * (k1.v.z + 2.0*k2.v.z + 2.0*k3.v.z + k4.v.z);
 
         /*  Update the Runge-Kutta factors.                                   */
-        a = f(&u->p, charges, charge_count);
+        a = f(&u->p, &u->v, objects, obj_count);
 
         k1.p = u->v;
         k1.v = a;
 
-        k2 = rk4_factor(u, h0, &k1, f, charges, charge_count);
-        k3 = rk4_factor(u, h0, &k2, f, charges, charge_count);
-        k4 = rk4_factor(u, h, &k3, f, charges, charge_count);
+        k2 = rk4_factor(u, h0, &k1, f, objects, obj_count);
+        k3 = rk4_factor(u, h0, &k2, f, objects, obj_count);
+        k4 = rk4_factor(u, h, &k3, f, objects, obj_count);
+    }
+}
+
+void rk4_field(field f, Vec3 * const p, double h, size_t steps, const FieldObject * objects, size_t obj_count) 
+{
+    /*  Index for keeping track of the number of iterations performed.        */
+    size_t n = 0;
+
+    /*  Constant multiples of h used in the computation.                      */
+    const double h0 = 0.5 * h;
+    const double h1 = h * 0.1666666666666667;
+
+    /*  Compute the initial Runge-Kutta factors.                              */
+    Vec3 k1 = f(p, objects, obj_count);
+    Vec3 k2 = rk4_factor_field(p, h0, &k1, f, objects, obj_count);
+    Vec3 k3 = rk4_factor_field(p, h0, &k2, f, objects, obj_count);
+    Vec3 k4 = rk4_factor_field(p, h, &k3, f, objects, obj_count);
+    
+    /*  Iteratively performed RK4.                                            */
+    for (n = 0; n < steps; ++n)
+    {
+        /*  We numerically solve d^2/dt^2 p = F(p) in two steps. First we     *
+         *  compute the velocity dp/dt, meaning we solve dv/dt = F(p). We     *
+         *  solve numerically with the Runge-Kutta method. We use this v to   *
+         *  compute p via dp/dt = v, solving numerically again. So long as dt *
+         *  is small, the error should be small as well. Error is O(dt^4).    */
+        p->x += h1 * (k1.x + 2.0*k2.x + 2.0*k3.x + k4.x);
+        p->y += h1 * (k1.y + 2.0*k2.y + 2.0*k3.y + k4.y);
+        p->z += h1 * (k1.z + 2.0*k2.z + 2.0*k3.z + k4.z);
+
+        /*  Update the Runge-Kutta factors.                                   */
+        k1 = f(p, objects, obj_count);
+        k2 = rk4_factor_field(p, h0, &k1, f, objects, obj_count);
+        k3 = rk4_factor_field(p, h0, &k2, f, objects, obj_count);
+        k4 = rk4_factor_field(p, h, &k3, f, objects, obj_count);
     }
 }
 /*  End of rk4.                                                               */
@@ -212,7 +374,7 @@ void rk4(force f, Vec6 * const u, double h, size_t steps, const Charge * charges
  *      f (force):                                                            *
  *          The force on the particle. We use Newton's 2nd law and apply RK4  *
  *          to find the path of the particle.                                 *
- *      u (Vec4 * const):                                                     *
+ *      u (Vec6 * const):                                                     *
  *          Array with the initial positions and velocities of the particles. *
  *      n_elements (size_t):                                                  *
  *          The number of elements in the "u" array.                          *
@@ -224,14 +386,25 @@ void rk4(force f, Vec6 * const u, double h, size_t steps, const Charge * charges
  *      None (void).                                                          *
  ******************************************************************************/
 void
-integrate(force f, Vec6 * const u, size_t n_elements, double h, size_t steps, const Charge * charges, size_t charge_count)
+integrate(force f, Vec6 * const u, size_t n_elements, double h, size_t steps, const FieldObject * objects, size_t obj_count)
 {
     /*  Variable for indexing over the array.                                 */
     size_t n;
 
     /*  Loop through each point and apply RK4.                                */
     for (n = 0; n < n_elements; ++n)
-        rk4(f, &u[n], h, steps, charges, charge_count);
+        rk4(f, &u[n], h, steps, objects, obj_count);
 
 }
 /*  End of integrate.                                                         */
+
+void 
+integrate_field(field f, Vec3 * const p, size_t n_elements, double h, size_t steps, const FieldObject * objects, size_t obj_count) 
+{
+    size_t n;
+
+    for (n = 0; n < n_elements; ++n) 
+    {
+        rk4_field(f, &p[n], h, steps, objects, obj_count);
+    }
+}
