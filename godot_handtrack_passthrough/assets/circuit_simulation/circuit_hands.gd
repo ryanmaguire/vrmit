@@ -1,5 +1,4 @@
-class_name CircuitHands
-extends Node
+class_name CircuitHands extends Node
 
 ## Manager for hand tracking in the circuit system, though this class is extensible
 ## to other uses if needed.

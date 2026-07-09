@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cdvurxbi7cit5"]
+
+[ext_resource type="Script" uid="uid://dn8uiaxhwfl01" path="res://assets/circuit_simulation/components/wire.gd" id="1_3plps"]
+[ext_resource type="Script" uid="uid://dbw5ekqmuv6bu" path="res://assets/circuit_simulation/components/snap_point.gd" id="2_biyup"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vyskd"]
+shading_mode = 0
+albedo_color = Color(0.25565878, 0.25565878, 0.25565878, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ce3mh"]
+material = SubResource("StandardMaterial3D_vyskd")
+top_radius = 0.008
+bottom_radius = 0.008
+rings = 6
+
+[node name="Wire" type="Node3D" unique_id=1850475499 node_paths=PackedStringArray("mesh_instance", "snap_a", "snap_b")]
+script = ExtResource("1_3plps")
+mesh_instance = NodePath("MeshInstance3D")
+snap_a = NodePath("SnapPointA")
+snap_b = NodePath("SnapPointB")
+
+[node name="SnapPointA" type="Node3D" parent="." unique_id=539910822]
+script = ExtResource("2_biyup")
+metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
+
+[node name="SnapPointB" type="Node3D" parent="." unique_id=500625572]
+script = ExtResource("2_biyup")
+metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=32909239]
+mesh = SubResource("CylinderMesh_ce3mh")

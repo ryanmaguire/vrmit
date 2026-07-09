@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://btpewvb2cxhse"]
+
+[ext_resource type="Script" uid="uid://b4rruvr5hawdy" path="res://assets/circuit_simulation/components/circuit_component.gd" id="1_w7fne"]
+[ext_resource type="Script" uid="uid://dbw5ekqmuv6bu" path="res://assets/circuit_simulation/components/snap_point.gd" id="2_hmsae"]
+
+[node name="resistor" type="Node3D" unique_id=289237883]
+script = ExtResource("1_w7fne")
+
+[node name="SnapPoint" type="Node3D" parent="." unique_id=624100554]
+script = ExtResource("2_hmsae")
+metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
+
+[node name="SnapPoint2" type="Node3D" parent="." unique_id=1072839312]
+script = ExtResource("2_hmsae")
+metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
