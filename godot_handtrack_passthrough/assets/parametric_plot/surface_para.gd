@@ -52,6 +52,17 @@ var mdt : MeshDataTool
 
 
 
+func _notification(what: int) -> void:
+	# Remove and regenerate the mesh when saving to avoid scene file.
+	if not Engine.is_editor_hint():
+		return
+	match what:
+		NOTIFICATION_EDITOR_PRE_SAVE:
+			mesh = null
+		NOTIFICATION_EDITOR_POST_SAVE:
+			gen()
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#arrow = load("res://assets/arrow.tscn")
