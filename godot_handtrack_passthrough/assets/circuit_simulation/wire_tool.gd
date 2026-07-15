@@ -5,7 +5,7 @@ class_name WireTool extends Node
 ## Settings
 const WIRE_START_DST := 0.04 # Distance between two pinch centers (m)
 const WIRE_RADIUS := 0.008 # (m) — preview only; real wires use the scene's mesh
-const WIRE_COLOR := Color(0.30, 0.30, 0.30, 1.0) # preview only
+const WIRE_COLOR := Color(0.8, 0.8, 0.8, 1.0) # preview only
 
 ## Template instanced once per finalized wire.
 const WIRE_SCENE := preload("res://assets/circuit_simulation/components/scenes/wire.tscn")
@@ -32,8 +32,7 @@ var _wire_drawing := false
 var _last_a : Vector3
 var _last_b : Vector3
 
-# Terminals each end is currently hovering. Frozen at finalize time so the wire
-# connects to whatever it was grabbing when released.
+# Terminals each end is currently hovering
 var _last_snap_a : SnapPoint = null
 var _last_snap_b : SnapPoint = null
 
@@ -76,7 +75,7 @@ func _process(_delta : float) -> void:
 			_last_snap_a = null
 			_last_snap_b = null
 		else:
-			# Snap each end to the nearest free terminal if one is in range.
+			# Snap each end to the nearest free terminal if one is in range
 			_last_snap_a = _resolve_snap(hands.right.pinch_center)
 			_last_snap_b = _resolve_snap(hands.left.pinch_center)
 			_last_a = _snapped_pos(hands.right.pinch_center, _last_snap_a)
@@ -84,7 +83,7 @@ func _process(_delta : float) -> void:
 			update_preview(_last_a, _last_b)
 
 
-## Global toggle for the wire tool. Will cancel any in-progress draw if disabled mid-draw.
+## Global toggle for the wire tool. Will cancel any in-progress draw if disabled mid-draw
 func set_active(value : bool) -> void:
 	print("[CircuitSim/wire_tool]: State recieved from menu: ", value)
 	active = value
@@ -94,7 +93,7 @@ func set_active(value : bool) -> void:
 			_preview.visible = false
 
 
-## Remove all finalized wires and cancel any in-progress draw.
+## Remove all finalized wires and cancel any in-progress draw
 func clear() -> void:
 	_wire_drawing = false
 	if _preview:
@@ -108,13 +107,13 @@ func update_preview(a : Vector3, b : Vector3) -> void:
 	_orient_wire(_preview, a, b)
 
 
-## Spawn a real [Wire] component spanning a..b
+## Spawn the finalized wire component
 func finalize_wire(a : Vector3, b : Vector3, snap_a : SnapPoint, snap_b : SnapPoint) -> void:
 	var wire : Wire = WIRE_SCENE.instantiate()
 	components.add_child(wire)
 	wire.set_endpoints(a, b)
 
-	# Avoid both ends grabbing the same terminal.
+	# Avoid both ends grabbing the same terminal
 	if snap_a != null and wire.snap_a:
 		wire.snap_a.connect_to_snappoint(snap_a)
 	if snap_b != null and snap_b != snap_a and wire.snap_b:

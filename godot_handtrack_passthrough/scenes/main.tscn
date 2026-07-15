@@ -34,7 +34,9 @@
 [ext_resource type="AudioStream" uid="uid://deh4i3hmxxovt" path="res://assets/basic_plotter_ui/SFX/whoosh.wav" id="31_dgi5k"]
 [ext_resource type="Script" uid="uid://ctbmu86kesqnd" path="res://assets/circuit_simulation/circuit_hands.gd" id="34_dgi5k"]
 [ext_resource type="Script" uid="uid://chklu8a4eqump" path="res://assets/circuit_simulation/wire_tool.gd" id="35_j8jky"]
+[ext_resource type="Script" uid="uid://bpk3l3xwul8h0" path="res://assets/circuit_simulation/move_tool.gd" id="36_kmb1v"]
 [ext_resource type="Script" uid="uid://b3nlbf6j4ox5h" path="res://assets/circuit_simulation/snap_point_manager.gd" id="37_fuf3a"]
+[ext_resource type="PackedScene" uid="uid://btpewvb2cxhse" path="res://assets/circuit_simulation/components/scenes/resistor.tscn" id="38_res"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -332,7 +334,10 @@ field = NodePath("../VectorField")
 
 [node name="CircuitComponents" type="Node3D" parent="Circuits" unique_id=12659135 groups=["circuit_components"]]
 
-[node name="CircuitHands" type="Node" parent="Circuits" unique_id=209280642]
+[node name="Resistor" parent="Circuits/CircuitComponents" unique_id=1841117714 instance=ExtResource("38_res")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1.6146708, 0.213153)
+
+[node name="CircuitHands" type="Node" parent="Circuits" unique_id=209280642 groups=["circuit_hands"]]
 script = ExtResource("34_dgi5k")
 
 [node name="WireTool" type="Node" parent="Circuits" unique_id=32627754 node_paths=PackedStringArray("hands", "components") groups=["wire_tool"]]
@@ -343,6 +348,11 @@ components = NodePath("../CircuitComponents")
 [node name="SnapPointManager" type="Node" parent="Circuits" unique_id=1386722019 groups=["snap_point_manager"]]
 script = ExtResource("37_fuf3a")
 metadata/_custom_type_script = "uid://b3nlbf6j4ox5h"
+
+[node name="MoveTool" type="Node" parent="Circuits" unique_id=791165811 groups=["move_tool"]]
+script = ExtResource("36_kmb1v")
+grab_mask = 4
+metadata/_custom_type_script = "uid://bpk3l3xwul8h0"
 
 [editable path="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2"]
 [editable path="XROrigin3D/RightTrackedHand/RightHandHumanoid2"]

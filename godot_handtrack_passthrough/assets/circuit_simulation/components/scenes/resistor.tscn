@@ -1,15 +1,50 @@
 [gd_scene format=3 uid="uid://btpewvb2cxhse"]
 
-[ext_resource type="Script" uid="uid://b4rruvr5hawdy" path="res://assets/circuit_simulation/components/circuit_component.gd" id="1_w7fne"]
+[ext_resource type="Script" uid="uid://cy134xyvfftem" path="res://assets/circuit_simulation/components/resistor.gd" id="1_w7fne"]
 [ext_resource type="Script" uid="uid://dbw5ekqmuv6bu" path="res://assets/circuit_simulation/components/snap_point.gd" id="2_hmsae"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_w7fne"]
+size = Vector3(0.02, 0.02, 0.04)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_w7fne"]
+size = Vector3(0.02, 0.02, 0.04)
 
 [node name="resistor" type="Node3D" unique_id=289237883]
 script = ExtResource("1_w7fne")
 
 [node name="SnapPoint" type="Node3D" parent="." unique_id=624100554]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.02)
 script = ExtResource("2_hmsae")
 metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
 
 [node name="SnapPoint2" type="Node3D" parent="." unique_id=1072839312]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.02)
 script = ExtResource("2_hmsae")
 metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1226183364]
+mesh = SubResource("BoxMesh_w7fne")
+
+[node name="Label (temp)" type="Label3D" parent="." unique_id=735611557]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.011, 0, 0)
+pixel_size = 0.0001
+text = "resistor
+(low budget)"
+font_size = 46
+outline_size = 25
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1257735258]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=833430067]
+shape = SubResource("BoxShape3D_w7fne")
+
+[node name="Label3D" type="Label3D" parent="." unique_id=599539240]
+transform = Transform3D(-4.371139e-08, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 4.371139e-08, 1.9106855e-15, 0, 0.011, 0)
+pixel_size = 0.0001
+text = "100Ω
+(+/- 100%)"
+font_size = 45
+outline_size = 25

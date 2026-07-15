@@ -11,6 +11,9 @@ extends HBoxContainer
 @export var wire_tool: WireTool
 @export var group_wire_tool := &"wire_tool"
 
+@export var move_tool: MoveTool
+@export var group_move_tool := &"move_tool"
+
 ## Master switch for the entire circuit backend
 var sim_enabled := false
 
@@ -18,6 +21,9 @@ func _ready() -> void:
 
 	if wire_tool == null:
 		wire_tool = get_tree().get_first_node_in_group(group_wire_tool)
+
+	if move_tool == null:
+		move_tool = get_tree().get_first_node_in_group(group_move_tool)
 
 	if btn_global_circuits:
 		btn_global_circuits.pressed.connect(_on_global_toggle)
@@ -41,6 +47,9 @@ func _apply_sim_state() -> void:
 
 	if wire_tool:
 		wire_tool.set_active(sim_enabled)
+
+	if move_tool:
+		move_tool.set_active(sim_enabled)
 
 	if btn_global_circuits:
 		btn_global_circuits.text = "Disable Circuits" if sim_enabled else "Enable Circuits"
