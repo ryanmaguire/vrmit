@@ -58,7 +58,7 @@ func get_snap_points() -> Array[SnapPoint]:
 func destroy() -> void:
 	for sp in snapPoints:
 		if sp.has_active_connection():
-			sp.disconnect_snappoint()
+			sp.disconnect_all()
 		if snap_manager:
 			snap_manager.unregister(sp)
 	queue_free()

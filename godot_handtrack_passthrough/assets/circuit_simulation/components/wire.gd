@@ -13,13 +13,13 @@ func _process(_delta: float) -> void:
 	var moved := false
 
 	if snap_a.has_active_connection():
-		var target := snap_a.connection.global_position
+		var target := snap_a.get_master_connection().global_position
 		if snap_a.global_position != target:
 			snap_a.global_position = target
 			moved = true
 
 	if snap_b.has_active_connection():
-		var target := snap_b.connection.global_position
+		var target := snap_b.get_master_connection().global_position
 		if snap_b.global_position != target:
 			snap_b.global_position = target
 			moved = true

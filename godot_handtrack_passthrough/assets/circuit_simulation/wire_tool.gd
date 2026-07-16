@@ -125,7 +125,7 @@ func finalize_wire(a : Vector3, b : Vector3, snap_a : SnapPoint, snap_b : SnapPo
 func _resolve_snap(local_pos : Vector3) -> SnapPoint:
 	if snap_manager == null:
 		return null
-	return snap_manager.nearest_free(components.to_global(local_pos))
+	return snap_manager.nearest(components.to_global(local_pos))
 
 
 func _snapped_pos(local_pos : Vector3, sp : SnapPoint) -> Vector3:

@@ -7,53 +7,72 @@ class_name SnapPoint extends Node3D
 ## Parent component (will typically own two to three of these depending on component type)
 var component: Node
 
-## Connected [SnapPoint] or null
-var connection: SnapPoint
+## Connected [SnapPoint]s or null
+var connections: Array[SnapPoint] = []
 
 func _ready() -> void:
 	var parent = get_parent()
 	if parent == null:
-		print("[CircuitSim/SnapPointManager]: (WARN) Null parent on snapPoint. Did you forget to parent it to the component?")
+		print("[CircuitSim/SnapPoint]: (WARN) Null parent on snapPoint. Did you forget to parent it to the component?")
 	else:
 		component = parent
 		
 ## Returns true if the instance is currently connected.
 func has_active_connection() -> bool:
-	return connection != null
+	return not connections.is_empty()
 
 ## Connect the snapPoint to another. Returns true on success and false if already connected.
 ## Will connect both snapPoints symetrically. Run only on one.
 func connect_to_snappoint(other: SnapPoint) -> bool:
-	# Already connected
-	if (connection != null) or (other.connection != null):
-		print("[CircuitSim/SnapPointManager]: (WARN) Tried to connect already connected snapPoints")
+	# Multi-connect is allowed, but the SAME pair must not be connected twice
+	# (a duplicate edge would misrepresent one wire as two in the graph).
+	if other in connections:
+		print("[CircuitSim/SnapPoint]: (WARN) Tried to connect an already-connected pair")
 		return false
 
 	# Self connection
 	if self == other:
-		print("[CircuitSim/SnapPointManager]: (WARN) Tried to connect self connect snapPoints")
+		print("[CircuitSim/SnapPoint]: (WARN) Tried to connect self connect snapPoints")
 		return false
 
 	# Cyclical connection
 	if component == other.component:
-		print("[CircuitSim/SnapPointManager]: (WARN) Tried to connect multiple snapPoints on the same component")
+		print("[CircuitSim/SnapPoint]: (WARN) Tried to connect multiple snapPoints on the same component")
 		return false
 
-	other.connection = self
-	connection = other
-	print("[CircuitSim/SnapPointManager]: Connection succesfully established")
+	# Create symmetric connection
+	other.connections.append(self)
+	connections.append(other)
+	print("[CircuitSim/SnapPoint]: Connection succesfully established")
 	return true
 
-## Disconnect this snapPoint and the other connected one. Returns true on success and false
-## if the snapPoint is not currently connected or connection state is broken.
-func disconnect_snappoint() -> bool:
-	if (connection == null):
-		print("[CircuitSim/SnapPointManager]: Failed to disconnect, no active connection")
+## Disconnect this snapPoint and all connected ones.
+func disconnect_all() -> bool:
+	if (connections.is_empty()):
+		print("[CircuitSim/SnapPoint]: Failed to disconnect, no active connection")
 		return false
 
-	# connection.connection simply refers to the connected snapPoint's connection back to this instance. SHOULD be self.
-	# I do not check for connection.connection == self, but may be good to check in the future.
-	connection.connection = null
-	connection = null
-	print("[CircuitSim/SnapPointManager]: Succesfully disconnected")
+	for sp in connections:
+		sp.connections.erase(self)
+	connections.clear()
+	print("[CircuitSim/SnapPoint]: Succesfully disconnected from all")
 	return true
+
+## Function to disconnect from ONE specific [SnapPoint] instead of all.
+func disconnect_from(other: SnapPoint) -> bool:
+	if other not in connections:
+		print("[CircuitSim/SnapPoint]: Failed to disconnect, not connected in the first place.")
+		return false
+	
+	# Remove self from other snap
+	other.connections.erase(self)
+
+	# Remove now asymmetric entry on own connections
+	connections.erase(other)
+	return true
+
+## Return the first SnapPoint in the list. Useful if you only want the transform
+func get_master_connection() -> SnapPoint:
+	if connections.is_empty():
+		return null
+	return connections[0] 
