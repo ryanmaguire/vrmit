@@ -34,7 +34,7 @@ const Hand = preload("res://assets/circuit_simulation/hand.gd")
 @export var space : Node3D
 
 ## [member space] group to find the node in when it is unset
-@export var group_space : StringName = &"circuit_components"
+@export var group_space : StringName = &"circuits/circuit_components"
 
 ## Left hand state
 var left : Hand

@@ -12,15 +12,15 @@ const WIRE_SCENE := preload("res://assets/circuit_simulation/components/scenes/w
 
 ## CircuitHands. If unset, resolved from [member group_hands].
 @export var hands : CircuitHands
-@export var group_hands : StringName = &"circuit_hands"
+@export var group_hands : StringName = &"circuits/circuit_hands"
 
 ## Node the wire meshes are parented under. If unset, resolved from [member group_components].
 @export var components : Node3D
-@export var group_components : StringName = &"circuit_components"
+@export var group_components : StringName = &"circuits/circuit_components"
 
 ## Registry used to find terminals to snap to. If unset, resolved from [member group_snap_manager].
 @export var snap_manager : SnapPointManager
-@export var group_snap_manager : StringName = &"snap_point_manager"
+@export var group_snap_manager : StringName = &"circuits/snap_point_manager"
 
 ## Global toggle. Set via [method set_active].
 var active := false

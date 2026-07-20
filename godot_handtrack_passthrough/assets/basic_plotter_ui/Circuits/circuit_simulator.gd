@@ -9,10 +9,10 @@ extends HBoxContainer
 @export var btn_clear_components : Button
 
 @export var wire_tool: WireTool
-@export var group_wire_tool := &"wire_tool"
+@export var group_wire_tool := &"circuits/wire_tool"
 
 @export var move_tool: MoveTool
-@export var group_move_tool := &"move_tool"
+@export var group_move_tool := &"circuits/move_tool"
 
 ## Master switch for the entire circuit backend
 var sim_enabled := false

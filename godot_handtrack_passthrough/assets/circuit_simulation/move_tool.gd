@@ -3,11 +3,11 @@ class_name MoveTool extends Node
 
 ## CircuitHands
 @export var hands : CircuitHands
-@export var group_hands : StringName = &"circuit_hands"
+@export var group_hands : StringName = &"circuits/circuit_hands"
 
 ## Components live under
 @export var components : Node3D
-@export var group_components : StringName = &"circuit_components"
+@export var group_components : StringName = &"circuits/circuit_components"
 
 @export_flags_3d_physics var grab_mask : int = 1
 

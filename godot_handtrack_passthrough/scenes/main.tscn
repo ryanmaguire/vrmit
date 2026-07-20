@@ -332,24 +332,24 @@ field = NodePath("../VectorField")
 
 [node name="Circuits" type="Node3D" parent="." unique_id=807993156]
 
-[node name="CircuitComponents" type="Node3D" parent="Circuits" unique_id=12659135 groups=["circuit_components"]]
+[node name="CircuitComponents" type="Node3D" parent="Circuits" unique_id=12659135 groups=["circuits/circuit_components"]]
 
 [node name="Resistor" parent="Circuits/CircuitComponents" unique_id=1841117714 instance=ExtResource("38_res")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1.6146708, 0.213153)
 
-[node name="CircuitHands" type="Node" parent="Circuits" unique_id=209280642 groups=["circuit_hands"]]
+[node name="CircuitHands" type="Node" parent="Circuits" unique_id=209280642 groups=["circuits/circuit_hands"]]
 script = ExtResource("34_dgi5k")
 
-[node name="WireTool" type="Node" parent="Circuits" unique_id=32627754 node_paths=PackedStringArray("hands", "components") groups=["wire_tool"]]
+[node name="WireTool" type="Node" parent="Circuits" unique_id=32627754 node_paths=PackedStringArray("hands", "components") groups=["circuits/wire_tool"]]
 script = ExtResource("35_j8jky")
 hands = NodePath("../CircuitHands")
 components = NodePath("../CircuitComponents")
 
-[node name="SnapPointManager" type="Node" parent="Circuits" unique_id=1386722019 groups=["snap_point_manager"]]
+[node name="SnapPointManager" type="Node" parent="Circuits" unique_id=1386722019 groups=["circuits/snap_point_manager"]]
 script = ExtResource("37_fuf3a")
 metadata/_custom_type_script = "uid://b3nlbf6j4ox5h"
 
-[node name="MoveTool" type="Node" parent="Circuits" unique_id=791165811 groups=["move_tool"]]
+[node name="MoveTool" type="Node" parent="Circuits" unique_id=791165811 groups=["circuits/move_tool"]]
 script = ExtResource("36_kmb1v")
 grab_mask = 4
 metadata/_custom_type_script = "uid://bpk3l3xwul8h0"
