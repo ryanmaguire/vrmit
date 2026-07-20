@@ -7,3 +7,10 @@ var resistance := 100.0
 
 func set_resistance(new_resistance: float):
 	resistance = new_resistance
+
+func get_elements() -> Array:
+	return [{
+		"type": ElementType.RESISTOR,
+		"terminals": [snapPoints[0], snapPoints[1]],
+		"value": resistance,
+	}]

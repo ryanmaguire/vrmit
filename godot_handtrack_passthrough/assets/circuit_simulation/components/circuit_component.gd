@@ -12,8 +12,10 @@ var snapPoints: Array[SnapPoint]
 
 var snap_manager: SnapPointManager
 
-@export var group_snap_manager: StringName = &"snap_point_manager"
+## Kinds of electrical element a component can contribute to the netlist.
+enum ElementType {GROUND, VSOURCE, ISOURCE, RESISTOR, CAPACITOR, INDUCTOR, SWITCH}
 
+@export var group_snap_manager: StringName = &"snap_point_manager"
 
 func _ready() -> void:
 	snap_manager = get_tree().get_first_node_in_group(group_snap_manager)
@@ -62,3 +64,14 @@ func destroy() -> void:
 		if snap_manager:
 			snap_manager.unregister(sp)
 	queue_free()
+
+## Get internal shorts for the solver. Override for each component. Return
+## an array with entries of form [[SnapPoint], [SnapPoint]]
+func get_shorts() -> Array:
+	return []
+
+## Return the electrical elements this component contributes. Override for each
+## component. Return an array of entries of shape
+## {type, terminals:[[SnapPoint], [SnapPoint]], value}
+func get_elements() -> Array:
+	return []

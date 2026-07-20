@@ -10,7 +10,7 @@ class_name MoveTool extends Node
 @export var group_components : StringName = &"circuits/circuit_components"
 
 @export_flags_3d_physics var grab_mask : int = 1
-
+ 
 ## State
 var active := false
 

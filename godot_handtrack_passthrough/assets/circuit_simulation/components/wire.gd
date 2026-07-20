@@ -52,3 +52,6 @@ func _orient_mesh(a : Vector3, b : Vector3) -> void:
 	var basis := Basis(Quaternion(Vector3.UP, n))
 	mesh_instance.transform = Transform3D(basis, mid)
 	mesh_instance.scale = Vector3(1.0, length * 0.5, 1.0)
+
+func get_shorts() -> Array:
+	return [[snap_a, snap_b]]
