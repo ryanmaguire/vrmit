@@ -52,6 +52,7 @@ holding=""
 pickup=""
 release=""
 whoosh=""
+physics=""
 
 [layer_names]
 

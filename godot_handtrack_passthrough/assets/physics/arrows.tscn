@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://cgx10sjggebrl"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_63rxh"]
+shading_mode = 0
+disable_specular_occlusion = true
+vertex_color_use_as_albedo = true
+
+[sub_resource type="PrismMesh" id="PrismMesh_ltpqa"]
+material = SubResource("StandardMaterial3D_63rxh")
+size = Vector3(0.025, 0.025, 0.002)
+
+[sub_resource type="MultiMesh" id="MultiMesh_aoh6o"]
+transform_format = 1
+use_colors = true
+mesh = SubResource("PrismMesh_ltpqa")
+
+[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" unique_id=1845615322]
+transform = Transform3D(1, 0.0001863191, -8.233181e-05, -0.0001863191, 1, 4.8698825e-05, 8.233181e-05, -4.8698825e-05, 1, 0, 0, 0)
+cast_shadow = 0
+gi_mode = 0
+multimesh = SubResource("MultiMesh_aoh6o")

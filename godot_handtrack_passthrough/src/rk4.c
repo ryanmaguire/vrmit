@@ -101,18 +101,27 @@ Vec3 bar_magnet_b(const Vec3 * const pos, const Vec3 * const vel, const FieldObj
     {
         if (objects[i].type == BAR_MAGNET) 
         {
-            const double rsq = (pos->x - objects[i].p.x) * (pos->x - objects[i].p.x)
-            + (pos->y - objects[i].p.y) * (pos->y - objects[i].p.y)
-            + (pos->z - objects[i].p.z) * (pos->z - objects[i].p.z);
+            const double dx = pos->x - objects[i].p.x;
+            const double dy = pos->y - objects[i].p.y;
+            const double dz = pos->z - objects[i].p.z;
 
-            const double r = sqrt(rsq);
+            const double rsq = dx * dx + dy * dy + dz * dz;
+            const double actual_r = sqrt(rsq);
 
-            const double scale = 1.0 / (r * rsq);
+            if (actual_r < 1e-8)
+                continue;
+
+            const double softening = 0.08;
+            const double softened_rsq = rsq + softening * softening;
+            const double softened_r = sqrt(softened_rsq);
+
+            const double scale = 1.0 / (softened_r * softened_rsq);
 
             const Vec3 r_hat = {
-                (pos->x - objects[i].p.x) / r, 
-                (pos->y - objects[i].p.y) / r,
-                (pos->z - objects[i].p.z) / r};
+                dx / actual_r,
+                dy / actual_r,
+                dz / actual_r
+            };
 
             const double mdotr_hat = (objects[i].data.bar_magnet.m.x * r_hat.x) + 
             (objects[i].data.bar_magnet.m.y * r_hat.y) + 
@@ -137,7 +146,7 @@ Vec3 bar_magnet_f(const Vec3 * const pos, const Vec3 * const vel, const FieldObj
     return out;
 }
 
-/*  Net force to compute particle pos/vel with multiple types of electromagnetic phenomena.  */
+/*  Net force to compute particle flow with multiple types of electromagnetic phenomena.  */
 Vec3 net_force(const Vec3 * const pos, const Vec3 * const vel, const FieldObject * objects, size_t obj_count) 
 {
     Vec3 out = {0.0, 0.0, 0.0};
@@ -152,24 +161,34 @@ Vec3 net_force(const Vec3 * const pos, const Vec3 * const vel, const FieldObject
     return out;
 }
 
-/* Net E & B Fields to compute field lines (WIP FEATURE)                                      */
+/* Net E & B Fields to compute field lines                                           */
 Vec3 net_e_field(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
 {
+    // Coulomb force can be used for now as a substitute for E_field vector field since every pt. charge has the same charge magnitude
     Vec3 E_coulomb = coulomb_f(pos, NULL, objects, obj_count); // particle q = 1, should make a seperate coulomb_e function
     return E_coulomb;
+    // Eventually as more field objects are introduced that generate electric fields this function will return a superposition of the fields
 }
 
 Vec3 net_e_field_norm(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
 {
-    Vec3 out = {0.0, 0.0, 0.0};
     Vec3 E = net_e_field(pos, objects, obj_count);
 
-    float E_sq = E.x * E.x + E.y * E.y + E.z * E.z;
-    float E_mag = sqrt(E_sq);
+    const double E_sq = E.x * E.x + E.y * E.y + E.z * E.z;
 
-    out.x = E.x / E_mag;
-    out.y = E.y / E_mag;
-    out.z = E.z / E_mag;
+    if (E_sq < 1e-12)
+    {
+        Vec3 zero = {0.0, 0.0, 0.0};
+        return zero;
+    }
+
+    const double E_mag = sqrt(E_sq);
+
+    Vec3 out = {
+        E.x / E_mag,
+        E.y / E_mag,
+        E.z / E_mag
+    };
 
     return out;
 }
@@ -182,15 +201,23 @@ Vec3 net_b_field(const Vec3 * const pos, const FieldObject * objects, size_t obj
 
 Vec3 net_b_field_norm(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
 {
-    Vec3 out = {0.0, 0.0, 0.0};
     Vec3 B = net_b_field(pos, objects, obj_count);
 
-    float B_sq = B.x * B.x + B.y * B.y + B.z * B.z;
-    float B_mag = sqrt(B_sq);
+    const double B_sq = B.x * B.x + B.y * B.y + B.z * B.z;
 
-    out.x = B.x / B_mag;
-    out.y = B.y / B_mag;
-    out.z = B.z / B_mag;
+    if (B_sq < 1e-12)
+    {
+        Vec3 zero = {0.0, 0.0, 0.0};
+        return zero;
+    }
+
+    const double B_mag = sqrt(B_sq);
+
+    Vec3 out = {
+        B.x / B_mag,
+        B.y / B_mag,
+        B.z / B_mag
+    };
 
     return out;
 }
@@ -336,7 +363,7 @@ void rk4_field(field f, Vec3 * const p, double h, size_t steps, const FieldObjec
 
     /*  Constant multiples of h used in the computation.                      */
     const double h0 = 0.5 * h;
-    const double h1 = h * 0.1666666666666667;
+    const   double h1 = h * 0.1666666666666667;
 
     /*  Compute the initial Runge-Kutta factors.                              */
     Vec3 k1 = f(p, objects, obj_count);
@@ -356,11 +383,16 @@ void rk4_field(field f, Vec3 * const p, double h, size_t steps, const FieldObjec
         p->y += h1 * (k1.y + 2.0*k2.y + 2.0*k3.y + k4.y);
         p->z += h1 * (k1.z + 2.0*k2.z + 2.0*k3.z + k4.z);
 
-        /*  Update the Runge-Kutta factors.                                   */
-        k1 = f(p, objects, obj_count);
-        k2 = rk4_factor_field(p, h0, &k1, f, objects, obj_count);
-        k3 = rk4_factor_field(p, h0, &k2, f, objects, obj_count);
-        k4 = rk4_factor_field(p, h, &k3, f, objects, obj_count);
+        /*  Prepare factors only when another step will consume them. The final
+         *  iteration previously performed four field evaluations whose results
+         *  were immediately discarded.                                      */
+        if (n + 1 < steps)
+        {
+            k1 = f(p, objects, obj_count);
+            k2 = rk4_factor_field(p, h0, &k1, f, objects, obj_count);
+            k3 = rk4_factor_field(p, h0, &k2, f, objects, obj_count);
+            k4 = rk4_factor_field(p, h, &k3, f, objects, obj_count);
+        }
     }
 }
 /*  End of rk4.                                                               */

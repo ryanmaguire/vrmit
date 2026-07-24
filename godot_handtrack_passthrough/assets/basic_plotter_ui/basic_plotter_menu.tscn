@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://btwolidrmttcl" path="res://assets/physics/point charges/negative_charge.tscn" id="6_snqju"]
 [ext_resource type="PackedScene" uid="uid://bcpdhqeden63h" path="res://assets/physics/bar magnet/bar_magnet.tscn" id="7_af2fp"]
 [ext_resource type="PackedScene" uid="uid://ccpelyryvyx0n" path="res://assets/physics/particle.tscn" id="7_snqju"]
+[ext_resource type="PackedScene" uid="uid://cgx10sjggebrl" path="res://assets/physics/arrows.tscn" id="9_c17oa"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4oc21"]
 
@@ -1205,17 +1206,19 @@ current_tab = 0
 all_tabs_in_front = true
 drag_to_rearrange_enabled = true
 
-[node name="Electrostatics" type="HBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer" unique_id=2067645953 node_paths=PackedStringArray("btn_pt_charge_tool", "btn_bar_magnet_tool", "btn_particle_flow", "btn_field_lines")]
+[node name="Electrostatics" type="HBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer" unique_id=2067645953 node_paths=PackedStringArray("btn_pt_charge_tool", "btn_bar_magnet_tool", "btn_particle_flow", "btn_e_field_lines", "btn_b_field_lines")]
 layout_mode = 2
 script = ExtResource("4_l1u8m")
 btn_pt_charge_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
 btn_bar_magnet_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer2/bar_magnet_tool")
 btn_particle_flow = NodePath("VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
-btn_field_lines = NodePath("VBoxContainer/GridContainer2/MarginContainer3/enable_field_lines")
+btn_e_field_lines = NodePath("VBoxContainer/GridContainer2/MarginContainer3/enable_e_field_lines")
+btn_b_field_lines = NodePath("VBoxContainer/GridContainer2/MarginContainer4/enable_b_field_lines")
 pos_charge_scene = ExtResource("5_imu5p")
 neg_charge_scene = ExtResource("6_snqju")
 bar_magnet_scene = ExtResource("7_af2fp")
 particle_multimesh = ExtResource("7_snqju")
+arrow_multimesh = ExtResource("9_c17oa")
 metadata/_tab_index = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics" unique_id=1878751406]
@@ -1279,10 +1282,19 @@ text = "Enable Particle Flow"
 custom_minimum_size = Vector2(130, 38)
 layout_mode = 2
 
-[node name="enable_field_lines" type="Button" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2/MarginContainer3" unique_id=1561369810]
+[node name="enable_e_field_lines" type="Button" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2/MarginContainer3" unique_id=1561369810]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 text = "Enable E-Field Lines"
+
+[node name="MarginContainer4" type="MarginContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2" unique_id=1622905108]
+custom_minimum_size = Vector2(130, 38)
+layout_mode = 2
+
+[node name="enable_b_field_lines" type="Button" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer/GridContainer2/MarginContainer4" unique_id=750437532]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+text = "Enable B-Field Lines"
 
 [node name="MarginContainer2" type="MarginContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics/VBoxContainer" unique_id=203942513]
 custom_minimum_size = Vector2(0, 80)

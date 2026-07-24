@@ -4,6 +4,8 @@
 #include <random>
 
 #include <godot_cpp/classes/node3d.hpp>
+#include <godot_cpp/variant/packed_color_array.hpp>
+#include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/typed_array.hpp>
 #include <godot_cpp/variant/typed_dictionary.hpp>
 #include <godot_cpp/variant/variant.hpp>
@@ -34,6 +36,11 @@ class RK4Wrapper : public Node3D
         static void _bind_methods();
 
     public:
+        Vector3 GetNetEField(Vector3 pos);
+        Vector3 GetNetBField(Vector3 pos);
+        PackedColorArray GetFieldColors(const PackedVector3Array &positions, int type);
+        Array BuildFieldLines(const PackedVector3Array &seeds, double h, int max_steps, int type);
+
         Array SetParticles(int size);
         void SetFieldPositions(Array init_positions, int type);
 
