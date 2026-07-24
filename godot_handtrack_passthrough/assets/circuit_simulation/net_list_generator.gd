@@ -118,10 +118,19 @@ static func extract_netlist(components: Array) -> Array:
 
 			var root = _find(sp_to_net[element["terminals"][0]], parent_islands)
 			var island = islands[island_to_index[root]]
+
+			# Append any nets containing gronds to the relevant list
+			if element["type"] == CircuitComponent.ElementType.GROUND:
+				for net in element_nets:
+					if net not in island["ground_nets"]:
+						island["ground_nets"].append(net)
+				continue
+
 			island["elements"].append({
 				"type": element["type"],
 				"nets": element_nets,
 				"value": element["value"],
+				"component": component,
 			})
 	return islands
 

@@ -10,6 +10,10 @@ var component: Node
 ## Connected [SnapPoint]s or null
 var connections: Array[SnapPoint] = []
 
+## Last know voltage returned from the solver.
+## Uses NaN instead of null for float typing
+var solved_voltage: float = NAN
+
 func _ready() -> void:
 	var parent = get_parent()
 	if parent == null:

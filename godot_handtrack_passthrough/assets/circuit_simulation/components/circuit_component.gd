@@ -10,12 +10,16 @@ class_name CircuitComponent extends Node3D
 ## Every [SnapPoint] owned by this component. Automatically populated.
 var snapPoints: Array[SnapPoint]
 
+## Last known current through the component from the solver.
+## Uses NaN instead of null for float typing.
+var solved_current: float = NAN
+
 var snap_manager: SnapPointManager
 
 ## Kinds of electrical element a component can contribute to the netlist.
 enum ElementType {GROUND, VSOURCE, ISOURCE, RESISTOR, CAPACITOR, INDUCTOR, SWITCH}
 
-@export var group_snap_manager: StringName = &"snap_point_manager"
+@export var group_snap_manager: StringName = &"circuits/snap_point_manager"
 
 func _ready() -> void:
 	snap_manager = get_tree().get_first_node_in_group(group_snap_manager)
