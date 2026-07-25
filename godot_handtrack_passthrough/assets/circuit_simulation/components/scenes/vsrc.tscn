@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://cfayqskga881"]
+
+[ext_resource type="Script" uid="uid://b1i00pmvp1fsa" path="res://assets/circuit_simulation/components/vsrc.gd" id="1_2ycgo"]
+[ext_resource type="PackedScene" uid="uid://dljq2ygbiykw4" path="res://assets/circuit_simulation/components/mesh/BATTERY.glb" id="2_mwwiw"]
+[ext_resource type="Script" uid="uid://dbw5ekqmuv6bu" path="res://assets/circuit_simulation/components/snap_point.gd" id="3_8t1lm"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_2fsso"]
+height = 0.15
+radius = 0.03
+
+[node name="Vsrc" type="Node3D" unique_id=198060256]
+script = ExtResource("1_2ycgo")
+metadata/_custom_type_script = "uid://b1i00pmvp1fsa"
+
+[node name="BATTERY" parent="." unique_id=791260929 instance=ExtResource("2_mwwiw")]
+
+[node name="PositiveTerminal" type="Node3D" parent="." unique_id=777908497]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06539417, 0)
+script = ExtResource("3_8t1lm")
+metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
+
+[node name="NegativeTerminal" type="Node3D" parent="." unique_id=653754974]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06265916, 0)
+script = ExtResource("3_8t1lm")
+metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1491282129]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1607873332]
+shape = SubResource("CylinderShape3D_2fsso")

@@ -8,6 +8,16 @@ class_name NetListGenerator
 ## This class is not instanced, only used as a [RefCounted]. It will
 ## never enter the actual scene tree. Call the [method extract_netlist]
 ## method to use. This is the entrypoint.
+## For reference, it will return an array of shape:
+## [
+##    {
+##        "net_count": int,
+##        "ground_nets": Array[int],
+##        "net_to_snappoints": Array[Array[SnapPoint]],
+##        "elements": Array[Dictionary]
+##    },
+##    # all other islands
+##]
 
 ## Main entrypoint. Will return an array of all dicts for each "island". Island
 ## defined semantically above

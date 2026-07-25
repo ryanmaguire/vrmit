@@ -24,6 +24,10 @@ var dst : float = 0.0
 ## Midpoint of thumb and index tips relative to the space
 var pinch_center : Vector3
 
+## Provides a rotation for the pinches. Is currently based
+## off of your palm for stability.
+var pinch_basis : Basis
+
 ## Distance below which a pinch engages (mm). MUST be less than
 ## [member release_threshold] for proper hysteresis
 var pinch_threshold : float = 30.0
@@ -65,6 +69,7 @@ func update(space : Node3D) -> void:
 	var thumb_pos := tracker.get_hand_joint_transform(XRHandTracker.HAND_JOINT_THUMB_TIP).origin
 	var center := (index_pos + thumb_pos) * 0.5
 	pinch_center = space.to_local(center)
+	pinch_basis = tracker.get_hand_joint_transform(XRHandTracker.HAND_JOINT_PALM).basis
 
 	# Hysteresis
 	if _pinching:

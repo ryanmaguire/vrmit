@@ -10,16 +10,23 @@ class_name MoveTool extends Node
 @export var group_components : StringName = &"circuits/circuit_components"
 
 @export_flags_3d_physics var grab_mask : int = 1
- 
+
+## Rotation smoothing. Lower value is smoother.
+@export var rotation_sharpness : float = 12.0
+
 ## State
 var active := false
 
-## Active
-var grabbing := false
+## Grabstate used to represent hand grabbing per hand
+class GrabState:
+	var held : CircuitComponent
+	var comp_pos : Vector3
+	var hand_basis : Basis
+	var comp_basis : Basis
+	var scale : Vector3
 
-var _grab_hand : Hand = null
-var _held : CircuitComponent = null
-var _grab_offset : Vector3
+## Currently grabbing hands are stored here with key [Hand] -> value [GrabState]
+var _grabs : Dictionary = {}
 
 
 func _ready() -> void:
@@ -37,41 +44,58 @@ func set_active(value : bool) -> void:
 	print("[CircuitSim/move_tool]: State recieved from menu: ", value)
 	active = value
 	if not active:
-		_drop()
+		_grabs.clear()
 
 
-func _process(_delta : float) -> void:
-	if not active or not grabbing or _held == null or _grab_hand == null:
+func _process(delta : float) -> void:
+	if not active:
 		return
-	
-	# Follow the grabbing hand pinch center
-	var hand_global := components.to_global(_grab_hand.pinch_center)
-	_held.global_position = hand_global + _grab_offset
+
+	for hand : Hand in _grabs:
+		var grab : GrabState = _grabs[hand]
+
+		var hand_global := components.to_global(hand.pinch_center)
+		grab.held.global_position = hand_global + grab.comp_pos
+
+		var rot_delta := hand.pinch_basis * grab.hand_basis.inverse()
+		var target_q := (rot_delta * grab.comp_basis).get_rotation_quaternion()
+		var current_q := grab.held.global_transform.basis.get_rotation_quaternion()
+		var t := 1.0 - exp(-rotation_sharpness * delta)
+		var smoothed_q := current_q.slerp(target_q, t)
+		grab.held.global_transform.basis = Basis(smoothed_q).scaled(grab.scale)
 
 
-## A hand began pinching: if it landed on a component, grab it.
+## A hand began pinching: if it landed on a free component, grab it.
 func _on_pinch_started(hand : Hand) -> void:
-	if not active or grabbing:
+	if not active or _grabs.has(hand):
 		return
 	var comp := _query_component(hand.pinch_center)
 	if comp == null:
 		return
-	_grab_hand = hand
-	_held = comp
-	_grab_offset = comp.global_position - components.to_global(hand.pinch_center)
-	grabbing = true
+	# Stop grabbing an already grabbed component
+	if _is_held(comp):
+		return
+
+	var grab := GrabState.new()
+	grab.held = comp
+	grab.comp_pos = comp.global_position - components.to_global(hand.pinch_center)
+	grab.hand_basis = hand.pinch_basis
+	grab.comp_basis = comp.global_transform.basis.orthonormalized()
+	grab.scale = comp.scale
+	_grabs[hand] = grab
 
 
-## A hand released: if it was the one holding, drop.
+## Process letting go of a component
 func _on_pinch_released(hand : Hand) -> void:
-	if grabbing and hand == _grab_hand:
-		_drop()
+	_grabs.erase(hand)
 
 
-func _drop() -> void:
-	grabbing = false
-	_grab_hand = null
-	_held = null
+## Used to detect if one of the hand instances is actively holding the given component
+func _is_held(comp : CircuitComponent) -> bool:
+	for hand in _grabs:
+		if _grabs[hand].held == comp:
+			return true
+	return false
 
 
 ## Query the component at the pinch center for grabbing
