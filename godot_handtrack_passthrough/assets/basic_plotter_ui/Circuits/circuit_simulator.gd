@@ -168,12 +168,12 @@ func _run_solver(islands: Array) -> void:
 		var net_sps: Array = island["net_to_snappoints"]
 		for idx in range(net_sps.size()): # i already used :(
 			for sp in net_sps[idx]:
-				sp.solved_voltage = voltages[idx]
+				sp.set_voltage(voltages[idx])
 
 		# Write the solved currents to the elements
 		var currents: Array = result["element_currents"]
 		for j in range(island["elements"].size()):
-			island["elements"][j]["component"].solved_current = currents[j]
+			island["elements"][j]["component"].set_current(currents[j])
 
 		print("[CircuitSim] island %d solved: V=%s I=%s"
 			% [i, voltages, currents])

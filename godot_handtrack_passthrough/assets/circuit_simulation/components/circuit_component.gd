@@ -79,3 +79,17 @@ func get_shorts() -> Array:
 ## {type, terminals:[[SnapPoint], [SnapPoint]], value}
 func get_elements() -> Array:
 	return []
+
+## Update debug numbers on the component. Update all child Label3D text to be: "X mA"
+func _update_debug() -> void:
+	# solved_current is in amps from the solver; show milliamps for readability.
+	var display := "-- mA" if is_nan(solved_current) else "%.1f mA" % (solved_current * 1000.0)
+	for child in get_children():
+		if child is Label3D:
+			child.text = display
+
+
+## Setter for [member solved_current]
+func set_current(new_current: float) -> void:
+	solved_current = new_current
+	_update_debug()

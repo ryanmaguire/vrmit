@@ -80,3 +80,16 @@ func get_master_connection() -> SnapPoint:
 	if connections.is_empty():
 		return null
 	return connections[0] 
+
+## Update debug numbers on the component. Update all child Label3D text to be: "X V"
+func _update_debug() -> void:
+	var display := "-- V" if is_nan(solved_voltage) else "%.2f V" % solved_voltage
+	for child in get_children():
+		if child is Label3D:
+			child.text = display
+
+
+## Setter for [member solved_voltage]
+func set_voltage(new_voltage: float) -> void:
+	solved_voltage = new_voltage
+	_update_debug()

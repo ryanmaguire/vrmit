@@ -1231,14 +1231,14 @@ drag_to_rearrange_enabled = true
 [node name="Electrostatics" type="HBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer" unique_id=2067645953 node_paths=PackedStringArray("btn_pt_charge_tool", "btn_bar_magnet_tool", "btn_particle_flow", "btn_field_lines")]
 layout_mode = 2
 script = ExtResource("4_l1u8m")
-btn_pt_charge_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
-btn_bar_magnet_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer2/bar_magnet_tool")
-btn_particle_flow = NodePath("VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
-btn_field_lines = NodePath("VBoxContainer/GridContainer2/MarginContainer3/enable_field_lines")
 pos_charge_scene = ExtResource("5_imu5p")
 neg_charge_scene = ExtResource("6_snqju")
 bar_magnet_scene = ExtResource("7_af2fp")
 particle_multimesh = ExtResource("7_snqju")
+btn_pt_charge_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer/pt_charge_tool")
+btn_bar_magnet_tool = NodePath("VBoxContainer/Modes/GridContainer/MarginContainer2/bar_magnet_tool")
+btn_particle_flow = NodePath("VBoxContainer/GridContainer2/MarginContainer2/enable_particle_flow")
+btn_field_lines = NodePath("VBoxContainer/GridContainer2/MarginContainer3/enable_field_lines")
 metadata/_tab_index = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/PhysicsPanel/ColorRect/TabContainer/Electrostatics" unique_id=1878751406]
@@ -1405,12 +1405,16 @@ theme_override_constants/margin_bottom = 20
 [node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer" unique_id=1447839777]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer" unique_id=1725829743 node_paths=PackedStringArray("btn_global_circuits", "btn_clear_components")]
+[node name="HBoxContainer" type="HBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer" unique_id=1725829743 node_paths=PackedStringArray("btn_global_circuits", "btn_clear_components", "btn_print_net", "btn_resitor", "btn_vsrc", "btn_gnd")]
 layout_mode = 2
 theme_override_constants/separation = 24
 script = ExtResource("8_af2fp")
 btn_global_circuits = NodePath("VBoxContainer/GlobalCircuitsButton")
 btn_clear_components = NodePath("VBoxContainer/ClearnComponentsButton")
+btn_print_net = NodePath("Debug/Solve")
+btn_resitor = NodePath("Debug/RES")
+btn_vsrc = NodePath("Debug/VSRC")
+btn_gnd = NodePath("Debug/GND")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer" unique_id=209480407]
 layout_mode = 2
@@ -1436,6 +1440,7 @@ action_mode = 0
 text = "Clear Components"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer" unique_id=228711529]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -1470,6 +1475,27 @@ text = "Explosions"
 [node name="ThermalsButton" type="CheckButton" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2" unique_id=98422981]
 layout_mode = 2
 text = "Thermals"
+
+[node name="Debug" type="VBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer" unique_id=1887275823]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Solve" type="Button" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/Debug" unique_id=2065754681]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "SOLVE!"
+
+[node name="GND" type="Button" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/Debug" unique_id=136414830]
+layout_mode = 2
+text = "GND"
+
+[node name="RES" type="Button" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/Debug" unique_id=1696496563]
+layout_mode = 2
+text = "Resistor"
+
+[node name="VSRC" type="Button" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer/HBoxContainer/Debug" unique_id=376711254]
+layout_mode = 2
+text = "VSRC"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="wrist menu/CircuitsPanel/ColorRect/MarginContainer/VBoxContainer" unique_id=1441561454]
 layout_mode = 2

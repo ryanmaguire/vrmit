@@ -16,10 +16,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.071637526)
 script = ExtResource("2_hmsae")
 metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
 
+[node name="Label3D" type="Label3D" parent="SnapPoint" unique_id=1037027087]
+transform = Transform3D(0.04895439, 0, 0.99880105, 0, 1, 0, -0.99880105, 0, 0.04895439, 0.012780774, 0, 0.020424008)
+pixel_size = 0.0005
+
 [node name="SnapPoint2" type="Node3D" parent="." unique_id=1072839312]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.07050857)
 script = ExtResource("2_hmsae")
 metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
+
+[node name="Label3D" type="Label3D" parent="SnapPoint2" unique_id=1037672709]
+transform = Transform3D(0.09779145, 0, 0.995207, 0, 1, 0, -0.995207, 0, 0.09779145, 0.013406449, 0, -0.019750431)
+pixel_size = 0.0005
 
 [node name="Area3D" type="Area3D" parent="." unique_id=1257735258]
 collision_layer = 4
@@ -31,3 +39,8 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0
 shape = SubResource("CylinderShape3D_rrue8")
 
 [node name="RESISTOR" parent="." unique_id=706871281 instance=ExtResource("3_hmsae")]
+
+[node name="Label3D" type="Label3D" parent="." unique_id=52135196]
+transform = Transform3D(0.04895439, 0, 0.99880105, 0, 1, 0, -0.99880105, 0, 0.04895439, 0.031427436, 0, 0)
+pixel_size = 0.0005
+font_size = 64

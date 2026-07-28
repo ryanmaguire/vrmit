@@ -43,7 +43,7 @@ env.Append(CPPPATH=[
     "godot-cpp/gdextension",
     "src/"
     ])
-sources = Glob("src/*.cpp") + Glob("src/*.c")
+sources = Glob("src/*.cpp") + Glob("src/*.c") + Glob("src/circuit_simulator/*.cpp")
 
 if env["target"] in ["editor", "template_debug"]:
     try:
