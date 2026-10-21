@@ -2,18 +2,17 @@ class_name CircuitHands extends Node
 
 ## Manager for hand tracking in the circuit system, though this class is extensible
 ## to other uses if needed.
-## Maintains a left and right [Hand], resolves their [HandPoseDetector] from the
+## Maintains a left and right [CircuitHand], resolves their [HandPoseDetector] from the
 ## scene, and their pwer frame behavior. Don't forget to manually set nodes
 ## through exported variables or assign proper group names
 
 
 ## Emitted when [param hand] begins pinching. Hand specific
-signal hand_pinch_started(hand : Hand)
+signal hand_pinch_started(hand : CircuitHand)
 
 ## Emitted when [param hand] releases a pinch. Hand specific
-signal hand_pinch_released(hand : Hand)
+signal hand_pinch_released(hand : CircuitHand)
 
-const Hand = preload("res://assets/circuit_simulation/hand.gd")
 
 
 ## Manual setting for the left hand. Unset will default to [member left_detector_group]
@@ -37,10 +36,10 @@ const Hand = preload("res://assets/circuit_simulation/hand.gd")
 @export var group_space : StringName = &"circuits/circuit_components"
 
 ## Left hand state
-var left : Hand
+var left : CircuitHand
 
 ## Right hand state
-var right : Hand
+var right : CircuitHand
 
 
 func _ready() -> void:
@@ -53,8 +52,8 @@ func _ready() -> void:
 		space = get_tree().get_first_node_in_group(group_space)
 
 	# Create hand objects
-	left = Hand.new(left_detector)
-	right = Hand.new(right_detector)
+	left = CircuitHand.new(left_detector)
+	right = CircuitHand.new(right_detector)
 
 	# Pass through the pinch signals to work at this level
 	left.pinch_started.connect(func(): hand_pinch_started.emit(left))

@@ -25,7 +25,7 @@ class GrabState:
 	var comp_basis : Basis
 	var scale : Vector3
 
-## Currently grabbing hands are stored here with key [Hand] -> value [GrabState]
+## Currently grabbing hands are stored here with key [CircuitHand] -> value [GrabState]
 var _grabs : Dictionary = {}
 
 
@@ -46,12 +46,15 @@ func set_active(value : bool) -> void:
 	if not active:
 		_grabs.clear()
 
+func clear() -> void:
+	_grabs.clear()
+
 
 func _process(delta : float) -> void:
 	if not active:
 		return
 
-	for hand : Hand in _grabs:
+	for hand : CircuitHand in _grabs:
 		var grab : GrabState = _grabs[hand]
 
 		var hand_global := components.to_global(hand.pinch_center)
@@ -66,7 +69,7 @@ func _process(delta : float) -> void:
 
 
 ## A hand began pinching: if it landed on a free component, grab it.
-func _on_pinch_started(hand : Hand) -> void:
+func _on_pinch_started(hand : CircuitHand) -> void:
 	if not active or _grabs.has(hand):
 		return
 	var comp := _query_component(hand.pinch_center)
@@ -86,7 +89,7 @@ func _on_pinch_started(hand : Hand) -> void:
 
 
 ## Process letting go of a component
-func _on_pinch_released(hand : Hand) -> void:
+func _on_pinch_released(hand : CircuitHand) -> void:
 	_grabs.erase(hand)
 
 

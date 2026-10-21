@@ -60,7 +60,7 @@ func get_snap_points() -> Array[SnapPoint]:
 	return snapPoints
 
 
-## SAFELY destroy the compont and remove it from the simulator.
+## Safely destroy component and remove it from the overall sim. Will have to be added back.
 func destroy() -> void:
 	for sp in snapPoints:
 		if sp.has_active_connection():

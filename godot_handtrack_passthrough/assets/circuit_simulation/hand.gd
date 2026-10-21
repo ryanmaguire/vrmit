@@ -1,4 +1,4 @@
-class_name Hand extends RefCounted
+class_name CircuitHand extends RefCounted
 
 ## State for a single tracked hand.
 ## Use with [CircuitHands]
@@ -52,11 +52,11 @@ func update(space : Node3D) -> void:
 	if detector == null:
 		return
 
-	# Tracker still may not have returned
+	# Re-search for the tracker, prevents the system from breaking when the
+	# headset is taken off and put back on.
+	tracker = detector.get_hand_tracker()
 	if tracker == null:
-		tracker = detector.get_hand_tracker()
-		if tracker == null:
-			return
+		return
 
 	# Get latest data
 	data = detector.get_current_data()

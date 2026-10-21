@@ -106,6 +106,40 @@ metadata/_custom_type_script = "uid://6436lah8pro6"
 script = ExtResource("16_2cjbq")
 actions = Array[ExtResource("15_5poiv")]([SubResource("Resource_getpj"), SubResource("Resource_cegan")])
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kmb1v"]
+transparency = 1
+cull_mode = 2
+depth_draw_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1.49205e-06, 0.671528, 0.478854, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fuf3a"]
+render_priority = -100
+transparency = 1
+cull_mode = 2
+depth_draw_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.478431, 1, 0.752941, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pibwh"]
+transparency = 1
+cull_mode = 2
+depth_draw_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(1.49205e-06, 0.671528, 0.478854, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c6pm6"]
+render_priority = -100
+transparency = 1
+cull_mode = 2
+depth_draw_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.478431, 1, 0.752941, 0.8)
+
 [node name="Main" type="Node3D" unique_id=1035269370]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=70261151]
@@ -267,6 +301,7 @@ scene_properties_keys = PackedStringArray()
 
 [node name="VectorField" parent="." unique_id=457251798 groups=["fields"] instance=ExtResource("25_2f3dj")]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.5, 0)
+visible = false
 mesh = null
 skeleton = NodePath("../Plot/XYPlot")
 x_min = -5
@@ -299,10 +334,10 @@ panning_strength = 1.6
 
 [node name="Plot" parent="." unique_id=1731135529 instance=ExtResource("25_og1vs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+visible = false
 
 [node name="XYPlot" parent="Plot" index="1" node_paths=PackedStringArray("field")]
 transform = Transform3D(0.20000273, 0, 0, 0, 0.20000009, 0, 0, 0, 0.20000273, 0, 0, 0.01999998)
-visible = false
 mesh = null
 create = false
 a = 1.0
@@ -310,6 +345,8 @@ expression = "(x^2+y^2)/20"
 locked_spatial_rotation = true
 cursorX = 0.0
 cursorZ = 0.0
+surface_material = SubResource("StandardMaterial3D_kmb1v")
+surface_material_empty = SubResource("StandardMaterial3D_fuf3a")
 field = NodePath("../../VectorField")
 
 [node name="TangentPlane" parent="Plot/XYPlot" index="3"]
@@ -327,6 +364,9 @@ x_min = -5
 x_max = 5
 z_min = -5
 z_max = 5
+hide_plot = true
+surface_material = SubResource("StandardMaterial3D_pibwh")
+surface_material_empty = SubResource("StandardMaterial3D_c6pm6")
 field = NodePath("../VectorField")
 
 [node name="Circuits" type="Node3D" parent="." unique_id=807993156]
@@ -343,12 +383,10 @@ components = NodePath("../CircuitComponents")
 
 [node name="SnapPointManager" type="Node" parent="Circuits" unique_id=1386722019 groups=["circuits/snap_point_manager"]]
 script = ExtResource("37_fuf3a")
-metadata/_custom_type_script = "uid://b3nlbf6j4ox5h"
 
 [node name="MoveTool" type="Node" parent="Circuits" unique_id=791165811 groups=["circuits/move_tool"]]
 script = ExtResource("36_kmb1v")
 grab_mask = 4
-metadata/_custom_type_script = "uid://bpk3l3xwul8h0"
 
 [editable path="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2"]
 [editable path="XROrigin3D/RightTrackedHand/RightHandHumanoid2"]

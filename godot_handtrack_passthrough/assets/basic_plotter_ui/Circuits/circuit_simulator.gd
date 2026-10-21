@@ -94,6 +94,25 @@ func _on_clear() -> void:
 		print("[CircuitSim/menu]: Pushing reset to wire_tool")
 		wire_tool.clear()
 
+	# Drop references before the components they point at are freed.
+	if move_tool:
+		print("[CircuitSim/menu]: pushing resaet move_tool")
+		move_tool.clear()
+
+	if components == null:
+		components = get_tree().get_first_node_in_group(group_components)
+	if components == null:
+		print("[CircuitSim/menu]: (ERR) No root found in group ", group_components, ". not cleared")
+		return
+
+	# remove anything left
+	var removed := 0
+	for child in components.get_children():
+		if child is CircuitComponent and not child.is_queued_for_deletion():
+			child.destroy()
+			removed += 1
+	print("[CircuitSim/menu]: Destroyed ", removed, " remaining components")
+
 func _on_spawn_resistor() -> void:
 	_spawn_component(RESISTOR_SCENE)
 
