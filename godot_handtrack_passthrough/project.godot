@@ -21,8 +21,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-XRToolsUserSettings="*uid://bw0uhup0m02hn"
-XRToolsRumbleManager="*uid://bhmya33af1t0k"
+XRToolsUserSettings="*uid://c0tbxy7ih54hj"
+XRToolsRumbleManager="*uid://dr2cah8dovi8c"
 GlobalSignals="*res://scripts/global_signals.gd"
 
 [dotnet]
@@ -73,49 +73,6 @@ whoosh=""
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
-
-[shader_globals]
-
-META_ENVIRONMENT_DEPTH_AVAILABLE={
-"type": "bool",
-"value": false
-}
-META_ENVIRONMENT_DEPTH_TEXTURE={
-"type": "sampler2DArray",
-"value": ""
-}
-META_ENVIRONMENT_DEPTH_PROJECTION_VIEW_LEFT={
-"type": "mat4",
-"value": Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-}
-META_ENVIRONMENT_DEPTH_PROJECTION_VIEW_RIGHT={
-"type": "mat4",
-"value": Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-}
-META_ENVIRONMENT_DEPTH_INV_PROJECTION_VIEW_LEFT={
-"type": "mat4",
-"value": Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-}
-META_ENVIRONMENT_DEPTH_INV_PROJECTION_VIEW_RIGHT={
-"type": "mat4",
-"value": Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-}
-META_ENVIRONMENT_DEPTH_FROM_CAMERA_PROJECTION_LEFT={
-"type": "mat4",
-"value": Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-}
-META_ENVIRONMENT_DEPTH_FROM_CAMERA_PROJECTION_RIGHT={
-"type": "mat4",
-"value": Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-}
-META_ENVIRONMENT_DEPTH_TO_CAMERA_PROJECTION_LEFT={
-"type": "mat4",
-"value": Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-}
-META_ENVIRONMENT_DEPTH_TO_CAMERA_PROJECTION_RIGHT={
-"type": "mat4",
-"value": Projection(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
-}
 
 [xr]
 
