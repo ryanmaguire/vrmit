@@ -5,6 +5,7 @@ var hand_tracker : XRHandTracker
 var hand_data : HandPoseData
 
 var pinch_center : Vector3
+var global_pinch_center : Vector3
 var direction : Vector3
 var pinch_separation := 0.0
 var direction_is_valid := false
@@ -35,6 +36,8 @@ func update(vector_field : MeshInstance3D) -> void:
 	
 	if hand_tracker == null:
 		hand_tracker = hand_pose_detector.get_hand_tracker()
+	if hand_tracker == null:
+		return
 	
 	hand_data = hand_pose_detector.get_current_data()
 	dst = hand_data.dst_index
@@ -48,7 +51,8 @@ func update(vector_field : MeshInstance3D) -> void:
 		HandPoseData.Finger.THUMB
 	).origin
 	
-	pinch_center = vector_field.to_local((index_pos + thumb_pos) * 0.5)
+	global_pinch_center = (index_pos + thumb_pos) * 0.5
+	pinch_center = vector_field.to_local(global_pinch_center)
 	var pinch_vector: Vector3 = index_pos - thumb_pos
 	pinch_separation = pinch_vector.length()
 	direction_is_valid = pinch_separation >= 0.006

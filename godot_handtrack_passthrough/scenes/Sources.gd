@@ -1,6 +1,6 @@
 extends Node
 
-@onready var physics = get_parent()
+@onready var physics = get_parent() as Physics
 
 const FieldObject = preload("res://scripts/physics/FieldObject.gd")
 const PointCharge = preload("res://scripts/physics/PointCharge.gd")
@@ -13,23 +13,26 @@ const BarMagnet = preload("res://scripts/physics/BarMagnet.gd")
 
 var field_objects : Array[FieldObject] = []
 
-# HELPER FUNCTION
-func spawn_object(pos, object : FieldObject):
+# HELPER FUNCTION :D
+func spawn_object(pos, object : FieldObject) -> bool:
 	var too_close = false
 	for obj in field_objects:
 		if pos.distance_to(obj.pos) < 0.07:
 			too_close = true
 			break
 	
-	if not too_close:		
-		field_objects.append(object)
-		physics.rk4.AddObject(object)
-		object.area.position = pos
-		vector_field.add_child(object.area)
-		if object.mesh.material_override:
-			object.mesh.material_override = object.mesh.material_override.duplicate()
-		else:
-			object.mesh.material_override = object.mesh.get_active_material(0).duplicate()
+	if too_close:
+		return false
+
+	field_objects.append(object)
+	physics.rk4.AddObject(object)
+	object.area.position = pos
+	vector_field.add_child(object.area)
+	if object.mesh.material_override:
+		object.mesh.material_override = object.mesh.material_override.duplicate()
+	else:
+		object.mesh.material_override = object.mesh.get_active_material(0).duplicate()
+	return true
 			
 func remove_object(i: int):
 	physics.rk4.RemoveObject(i)
@@ -46,7 +49,8 @@ func spawn_pt_charge(pos, q):
 
 	var pt_charge = PointCharge.new(pos, q, charge_area)
 	#e_field_changed = true
-	spawn_object(pos, pt_charge)
+	if spawn_object(pos, pt_charge) and charge_area.has_method("play_spawn_animation"):
+		charge_area.call("play_spawn_animation")
  
 func spawn_bar_magnet(pos, m):
 	var bar_magnet_area = bar_magnet_scene.instantiate()

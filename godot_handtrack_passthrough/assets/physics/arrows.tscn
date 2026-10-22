@@ -7,7 +7,7 @@ vertex_color_use_as_albedo = true
 
 [sub_resource type="PrismMesh" id="PrismMesh_ltpqa"]
 material = SubResource("StandardMaterial3D_63rxh")
-size = Vector3(0.025, 0.025, 0.002)
+size = Vector3(0.03, 0.03, 0.002)
 
 [sub_resource type="MultiMesh" id="MultiMesh_aoh6o"]
 transform_format = 1

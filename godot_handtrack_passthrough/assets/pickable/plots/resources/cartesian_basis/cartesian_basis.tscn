@@ -6,8 +6,8 @@ albedo_color = Color(0.287201, 0.771098, 0.303044, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_kni8w"]
 material = SubResource("StandardMaterial3D_8s6um")
-top_radius = 0.1
-bottom_radius = 0.1
+top_radius = 0.065
+bottom_radius = 0.065
 height = 10.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_883o0"]
@@ -17,7 +17,7 @@ albedo_color = Color(0.287201, 0.771098, 0.303044, 1)
 [sub_resource type="CylinderMesh" id="CylinderMesh_k3xvn"]
 material = SubResource("StandardMaterial3D_883o0")
 top_radius = 0.0
-bottom_radius = 0.3
+bottom_radius = 0.2
 height = 0.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_es58n"]
@@ -26,8 +26,8 @@ albedo_color = Color(0.801181, 0.283617, 0.261131, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_epcbr"]
 material = SubResource("StandardMaterial3D_es58n")
-top_radius = 0.1
-bottom_radius = 0.1
+top_radius = 0.065
+bottom_radius = 0.065
 height = 10.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ad6c6"]
@@ -37,7 +37,7 @@ albedo_color = Color(0.801181, 0.283617, 0.261131, 1)
 [sub_resource type="CylinderMesh" id="CylinderMesh_felof"]
 material = SubResource("StandardMaterial3D_ad6c6")
 top_radius = 0.0
-bottom_radius = 0.3
+bottom_radius = 0.2
 height = 0.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p441v"]
@@ -46,8 +46,8 @@ albedo_color = Color(7.70092e-07, 0.502353, 0.625369, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_inj6g"]
 material = SubResource("StandardMaterial3D_p441v")
-top_radius = 0.1
-bottom_radius = 0.1
+top_radius = 0.065
+bottom_radius = 0.065
 height = 10.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a0inb"]
@@ -57,7 +57,7 @@ albedo_color = Color(7.70092e-07, 0.502353, 0.625369, 1)
 [sub_resource type="CylinderMesh" id="CylinderMesh_28mu8"]
 material = SubResource("StandardMaterial3D_a0inb")
 top_radius = 0.0
-bottom_radius = 0.3
+bottom_radius = 0.2
 height = 0.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b7j8x"]

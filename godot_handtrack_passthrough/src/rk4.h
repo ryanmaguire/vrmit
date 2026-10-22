@@ -44,7 +44,7 @@ enum FieldType
 
 /*  Simple struct for points in the Cartesian plane.                          */
 typedef struct Vec3 {
-    double x, y, z;
+    float x, y, z;
 } Vec3;
 
 /*  Struct for points in R^4, which is the phase-space of a particle in 2D.   */
@@ -53,7 +53,7 @@ typedef struct Vec6 {
 } Vec6;
 
 typedef struct Charge {
-    double q;
+    float q;
 } Charge;
 
 typedef struct BarMagnet {
@@ -95,22 +95,26 @@ extern Vec3 net_b_field_norm(const Vec3 * const pos, const FieldObject * objects
 
 /*  The Runge-Kutta vector for the phase-space differential equation.         */
 extern Vec6
-rk4_factor(const Vec6 * const u0, double h, const Vec6 * const u1, force f, const FieldObject * objects, size_t obj_count);
+rk4_factor(const Vec6 * const u0, float h, const Vec6 * const u1, force f, const FieldObject * objects, size_t obj_count);
 
 extern Vec3 
-rk4_factor_field(const Vec3 * const u0, double h, const Vec3 * const u1, field f, const FieldObject * objects, size_t obj_count);
+rk4_factor_field(const Vec3 * const u0, float h, const Vec3 * const u1, field f, const FieldObject * objects, size_t obj_count);
 
 /*  Runge-Kutta integrator for 2D second order ODEs.                          */
-extern void rk4(force f, Vec6 * const u, double h, size_t steps, const FieldObject * objects, size_t obj_count);
+extern void rk4(force f, Vec6 * const u, float h, size_t steps, const FieldObject * objects, size_t obj_count);
 
 /*  Runge-Kutta integrator for 1D first order ODEs.                           */
-extern void rk4_field(field f, Vec3 * const p, double h, size_t steps, const FieldObject * objects, size_t obj_count);
+extern void rk4_field(field f, Vec3 * const p, float h, size_t steps, const FieldObject * objects, size_t obj_count);
 /*  Integrator for a general force over a specified number of points.         */
 extern void
-integrate(force f, Vec6 * const u, size_t n_elements, double h, size_t steps, const FieldObject * objects, size_t obj_count);
+integrate(force f, Vec6 * const u, size_t n_elements, float h, size_t steps, const FieldObject * objects, size_t obj_count);
 
 extern void
-integrate_field(field f, Vec3 * const p, size_t n_elements, double h, size_t steps, const FieldObject * objects, size_t obj_count);
+integrate_field(field f, Vec3 * const p, size_t n_elements, float h, size_t steps, const FieldObject * objects, size_t obj_count);
+
+/* Coupled gravity with G = 1; workspace contains 5 * count Vec6 entries. */
+extern void rk4_gravity(Vec6 *bodies, const float *masses, size_t count,
+                        float h, Vec6 *workspace);
 
 #endif
 /*  End of vrmitMeshInteropBenchmark.                                         */

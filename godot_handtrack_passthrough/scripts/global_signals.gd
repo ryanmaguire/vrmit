@@ -65,3 +65,6 @@ signal set_field_surface_vertices(vertices:PackedVector3Array, transform:Transfo
 
 @warning_ignore("unused_signal")
 signal switch_mode(mode:String)
+
+@warning_ignore("unused_signal")
+signal control_panel_visibility_changed(is_visible:bool)

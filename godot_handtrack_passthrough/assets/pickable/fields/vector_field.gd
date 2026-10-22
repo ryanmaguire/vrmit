@@ -38,6 +38,158 @@ var v_max: float
 
 var mdt : MeshDataTool
 
+# Field rotation is driven by the interaction controller. Keeping the captured
+# basis here ensures gesture code never needs to know how this node is scaled.
+var _rotation_active := false
+var _rotation_initial_direction := Vector3.ZERO
+var _rotation_smoothed_direction := Vector3.ZERO
+var _rotation_previous_input_direction := Vector3.ZERO
+var _rotation_initial_basis := Basis.IDENTITY
+var _rotation_initial_scale := Vector3.ONE
+var _rotation_previous_direction := Vector3.ZERO
+var _angular_velocity := Vector3.ZERO
+var _has_velocity_sample := false
+var _translation_active := false
+var _translation_initial_hand_position := Vector3.ZERO
+var _translation_initial_field_position := Vector3.ZERO
+
+const ROTATION_VELOCITY_SMOOTHING := 14.0
+const ROTATION_INPUT_SMOOTHING := 27.5
+const ROTATION_INPUT_DEAD_ZONE := deg_to_rad(0.15)
+const ROTATION_MAX_INPUT_STEP := deg_to_rad(10.0)
+const ROTATION_MIN_GRAB_RADIUS := 0.15
+const ROTATION_MIN_GRAB_RADIUS_SQUARED := (
+	ROTATION_MIN_GRAB_RADIUS * ROTATION_MIN_GRAB_RADIUS
+)
+const ROTATION_INERTIA_DAMPING := 3.5
+const ROTATION_MAX_ANGULAR_SPEED := 8.0
+const ROTATION_STOP_SPEED := 0.03
+
+
+func begin_rotation(global_pinch_position: Vector3) -> bool:
+	var from_center := global_pinch_position - global_position
+	if from_center.length_squared() < ROTATION_MIN_GRAB_RADIUS_SQUARED:
+		return false
+
+	_rotation_active = true
+	_rotation_initial_direction = from_center.normalized()
+	_rotation_smoothed_direction = _rotation_initial_direction
+	_rotation_previous_input_direction = _rotation_initial_direction
+	_rotation_initial_scale = global_basis.get_scale()
+	_rotation_initial_basis = global_basis.orthonormalized()
+	_rotation_previous_direction = _rotation_initial_direction
+	_angular_velocity = Vector3.ZERO
+	_has_velocity_sample = false
+	return true
+
+
+func update_rotation(global_pinch_position: Vector3, delta: float) -> void:
+	if not _rotation_active:
+		return
+
+	var from_center := global_pinch_position - global_position
+	if from_center.is_zero_approx():
+		return
+
+	var raw_direction := from_center.normalized()
+	var target_direction := raw_direction
+	var input_step := _rotation_previous_input_direction.angle_to(raw_direction)
+	if input_step > ROTATION_MAX_INPUT_STEP:
+		var input_axis := _rotation_previous_input_direction.cross(raw_direction)
+		if not input_axis.is_zero_approx():
+			target_direction = (
+				Basis(Quaternion(
+					input_axis.normalized(),
+					ROTATION_MAX_INPUT_STEP
+				)) * _rotation_previous_input_direction
+			).normalized()
+		else:
+			target_direction = _rotation_previous_input_direction
+
+	var input_weight := 1.0 - exp(-ROTATION_INPUT_SMOOTHING * delta)
+	var filtered_direction := _rotation_smoothed_direction.slerp(
+		target_direction,
+		input_weight
+	).normalized()
+	if (
+		_rotation_smoothed_direction.angle_to(filtered_direction)
+		>= ROTATION_INPUT_DEAD_ZONE
+	):
+		_rotation_smoothed_direction = filtered_direction
+
+	var current_direction := _rotation_smoothed_direction
+	var delta_rotation := Quaternion(
+		_rotation_initial_direction,
+		current_direction
+	)
+	var rotated_basis := Basis(delta_rotation) * _rotation_initial_basis
+	global_basis = rotated_basis.orthonormalized().scaled(_rotation_initial_scale)
+
+	if _has_velocity_sample and delta > 0.0:
+		var frame_angle := _rotation_previous_direction.angle_to(current_direction)
+		var frame_axis := _rotation_previous_direction.cross(current_direction)
+		if not frame_axis.is_zero_approx() and frame_angle > 0.0001:
+			var instantaneous_velocity := (
+				frame_axis.normalized() * minf(
+					frame_angle / delta,
+					ROTATION_MAX_ANGULAR_SPEED
+				)
+			)
+			var smoothing_weight := 1.0 - exp(
+				-ROTATION_VELOCITY_SMOOTHING * delta
+			)
+			_angular_velocity = _angular_velocity.lerp(
+				instantaneous_velocity,
+				smoothing_weight
+			)
+		else:
+			_angular_velocity *= exp(-ROTATION_VELOCITY_SMOOTHING * delta)
+
+	_rotation_previous_direction = current_direction
+	_rotation_previous_input_direction = target_direction
+	_has_velocity_sample = true
+
+
+func end_rotation() -> void:
+	_rotation_active = false
+	_rotation_initial_direction = Vector3.ZERO
+	_rotation_smoothed_direction = Vector3.ZERO
+	_rotation_previous_input_direction = Vector3.ZERO
+	_rotation_previous_direction = Vector3.ZERO
+	_has_velocity_sample = false
+
+
+func stop_rotation_inertia() -> void:
+	_angular_velocity = Vector3.ZERO
+
+
+func begin_translation(global_hand_position: Vector3) -> bool:
+	if _translation_active or _rotation_active:
+		return false
+
+	stop_rotation_inertia()
+	_translation_active = true
+	_translation_initial_hand_position = global_hand_position
+	_translation_initial_field_position = global_position
+	return true
+
+
+func update_translation(global_hand_position: Vector3) -> void:
+	if not _translation_active:
+		return
+
+	global_position = (
+		_translation_initial_field_position
+		+ global_hand_position
+		- _translation_initial_hand_position
+	)
+
+
+func end_translation() -> void:
+	_translation_active = false
+	_translation_initial_hand_position = Vector3.ZERO
+	_translation_initial_field_position = Vector3.ZERO
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -385,6 +537,9 @@ func upd():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if not _rotation_active and not _translation_active:
+		_update_rotation_inertia(delta)
+
 	if create:
 		gen()
 		create = false
@@ -399,3 +554,21 @@ func _process(delta: float) -> void:
 		#	upd_slider()
 		_apply_field_alpha(a)
 		last_a = a
+
+
+func _update_rotation_inertia(delta: float) -> void:
+	var speed := _angular_velocity.length()
+	if speed < ROTATION_STOP_SPEED:
+		_angular_velocity = Vector3.ZERO
+		return
+
+	var scale := global_basis.get_scale()
+	var rotation_basis := global_basis.orthonormalized()
+	var inertia_rotation := Quaternion(
+		_angular_velocity / speed,
+		speed * delta
+	)
+	global_basis = (
+		Basis(inertia_rotation) * rotation_basis
+	).orthonormalized().scaled(scale)
+	_angular_velocity *= exp(-ROTATION_INERTIA_DAMPING * delta)

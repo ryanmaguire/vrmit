@@ -6,13 +6,11 @@ extends HBoxContainer
 @export var btn_particle_flow: Button
 @export var btn_e_field_lines: Button
 @export var btn_b_field_lines: Button
+@export var btn_solar_system: Button
 
 @export var pos_charge_scene: PackedScene
 @export var neg_charge_scene: PackedScene
 @export var bar_magnet_scene: PackedScene
-
-@export var particle_multimesh: PackedScene
-@export var arrow_multimesh: PackedScene
 
 var holding_sfx: AudioStreamPlayer3D
 var pickup_sfx: AudioStreamPlayer3D
@@ -21,8 +19,10 @@ var whoosh_sfx: AudioStreamPlayer3D
 
 # --- Classes ---
 const HandState = preload("res://assets/basic_plotter_ui/Physics/HandState.gd")
-
 const PhysicsTypes = preload("res://scripts/physics/PhysicsTypes.gd")
+const BAR_MAGNET_PREVIEW_SHADER = preload(
+	"res://assets/physics/bar magnet/bar_magnet_preview.gdshader"
+)
 
 @onready var physics: Physics = (get_tree().get_first_node_in_group("physics"))
 
@@ -51,19 +51,16 @@ var tools = {
 var functions = {
 	"particle_flow": false,
 	"e_field_lines": false,
-	"b_field_lines": false
+	"b_field_lines": false,
+	"soloar_system": false
 }
 
 var selected_tool = "N/A"
 
-const TRAIL_LENGTH := 16
 const FIELD_MOVE_THRESHOLD := 0.0015
 const FIELD_MOVE_THRESHOLD_SQUARED := (FIELD_MOVE_THRESHOLD * FIELD_MOVE_THRESHOLD)
 
-var trails: Array = []
-var trail_mesh := ImmediateMesh.new()
 var mat := StandardMaterial3D.new()
-var trail_instance := MeshInstance3D.new()
 
 var field_line_instance := MeshInstance3D.new()
 var field_line_mesh := ImmediateMesh.new()
@@ -86,14 +83,32 @@ var last_field_update_positions: Dictionary = {}
 const MAGNET_ROTATION_SMOOTHING_SPEED := 20.0
 const MAGNET_ROTATION_UPDATE_ANGLE := deg_to_rad(1.0)
 
+enum FieldGestureState {
+	IDLE,
+	PENDING,
+	ROTATING
+}
+
+enum FieldMoveHand {
+	NONE,
+	RIGHT,
+	LEFT
+}
+
+const FIELD_ROTATION_ANGLE_THRESHOLD := deg_to_rad(7.0)
+
+var r_field_gesture_state := FieldGestureState.IDLE
+var l_field_gesture_state := FieldGestureState.IDLE
+var r_field_gesture_start := Vector3.ZERO
+var l_field_gesture_start := Vector3.ZERO
+var r_placement_preview: Node3D = null
+var l_placement_preview: Node3D = null
+var field_move_hand := FieldMoveHand.NONE
+var control_panel_active := false
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = Color.WHITE
-	mat.vertex_color_use_as_albedo = false
-	trail_instance.material_override = mat
-	trail_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-
+	add_to_group("physics_tool_controller")
 	var tree = get_tree()
 
 	vector_field = tree.get_first_node_in_group("fields")
@@ -129,17 +144,19 @@ func _ready() -> void:
 	selected_stylebox.set_border_width_all(2)
 
 	_connect(btn_pt_charge_tool, _on_tool_switch.bind("pt_charge"))
-
 	_connect(btn_bar_magnet_tool, _on_tool_switch.bind("bar_magnet"))
-
-	_connect(btn_particle_flow, enable_particle_flow)
-
+	_connect(btn_particle_flow, on_btn_particle_flow_pressed)
 	_connect(btn_e_field_lines, on_btn_e_fields_pressed)
-
 	_connect(btn_b_field_lines, on_btn_b_fields_pressed)
+	_connect(btn_solar_system, on_btn_solar_system_pressed)
 
 	r_hand_pose_detector.pose_started.connect(right)
 	l_hand_pose_detector.pose_started.connect(left)
+	r_hand_pose_detector.pose_ended.connect(_on_right_pose_ended)
+	l_hand_pose_detector.pose_ended.connect(_on_left_pose_ended)
+	GlobalSignals.control_panel_visibility_changed.connect(
+		_on_control_panel_visibility_changed
+	)
 
 func finish_moving_object(obj_i: int) -> void:
 	if obj_i < 0 or obj_i >= physics.sources.field_objects.size():
@@ -174,19 +191,36 @@ func finish_moving_object(obj_i: int) -> void:
 
 func _process(delta) -> void:
 	if functions["particle_flow"]:
-		particle_flow_upd(delta * 0.06)
+		physics.particles.particle_flow_upd(delta * 0.06)
+
+	# Field gestures must keep tracking even when the field has no sources.
+	r_hand_state.update(vector_field)
+	l_hand_state.update(vector_field)
 
 	if physics.sources.field_objects:
-		r_hand_state.update(vector_field)
-		l_hand_state.update(vector_field)
+		if (
+			r_field_gesture_state == FieldGestureState.IDLE
+			and field_move_hand == FieldMoveHand.NONE
+		):
+			r_obj_index = select_obj(r_hand_state, r_previous_obj_index)
+		else:
+			r_obj_index = null
 
-		r_obj_index = select_obj(r_hand_state, r_previous_obj_index)
-
-		l_obj_index = select_obj(l_hand_state, l_previous_obj_index)
+		if (
+			l_field_gesture_state == FieldGestureState.IDLE
+			and field_move_hand == FieldMoveHand.NONE
+		):
+			l_obj_index = select_obj(l_hand_state, l_previous_obj_index)
+		else:
+			l_obj_index = null
 
 		r_moving_obj = is_moving_obj(r_obj_index, r_previous_obj_index)
-
 		l_moving_obj = is_moving_obj(l_obj_index, l_previous_obj_index)
+	else:
+		r_obj_index = null
+		l_obj_index = null
+		r_moving_obj = false
+		l_moving_obj = false
 
 	if r_moving_obj and r_obj_index != null:
 		move_selected_obj(r_hand_state, r_obj_index, delta)
@@ -208,24 +242,24 @@ func _process(delta) -> void:
 		else:
 			l_moving_obj = true
 
+	_update_field_gesture(true, delta)
+	_update_field_gesture(false, delta)
+	_update_field_translation()
+
 	if functions["e_field_lines"]:
 		if e_field_changed:
 			physics.fields.update_e_field_lines(0.05)
-
 			e_field_changed = false
 
 		physics.fields.set_field_object_moving(PhysicsTypes.FieldType.ELECTRIC_FIELD, dragging_electric_object)
-
 		physics.fields.animate_field_arrows(delta)
 
 	if functions["b_field_lines"]:
 		if b_field_changed:
 			physics.fields.update_b_field_lines(0.02)
-
 			b_field_changed = false
 
 		physics.fields.set_field_object_moving(PhysicsTypes.FieldType.MAGNETIC_FIELD, dragging_magnetic_object)
-
 		physics.fields.animate_b_field_arrows(delta)
 
 	r_previous_obj_index = r_obj_index
@@ -274,10 +308,40 @@ func select_tool(tool: String):
 	elif tool == "bar_magnet" and btn_bar_magnet_tool:
 		set_button_selected(btn_bar_magnet_tool, true)
 
+# Cancel placement without deleting sources or hiding their fields.
+func clear_inventory_tool() -> void:
+	for tool in tools:
+		tools[tool] = false
+	selected_tool = "N/A"
+	set_button_selected(btn_pt_charge_tool, false)
+	set_button_selected(btn_bar_magnet_tool, false)
+	_clear_placement_preview(true)
+	_clear_placement_preview(false)
+	if (r_field_gesture_state == FieldGestureState.ROTATING
+		or l_field_gesture_state == FieldGestureState.ROTATING):
+		vector_field.end_rotation()
+	r_field_gesture_state = FieldGestureState.IDLE
+	l_field_gesture_state = FieldGestureState.IDLE
+
+
+# The wheel enables the selected tool's field without toggling it back off.
+func select_inventory_tool(tool: String) -> void:
+	if not tools.has(tool):
+		return
+	select_tool(tool)
+	if tool == "pt_charge" and not functions["e_field_lines"]:
+		physics.fields.enable_e_field_lines()
+		functions["e_field_lines"] = true
+		e_field_changed = true
+		set_button_selected(btn_e_field_lines, true)
+	elif tool == "bar_magnet" and not functions["b_field_lines"]:
+		physics.fields.enable_b_field_lines()
+		functions["b_field_lines"] = true
+		b_field_changed = true
+		set_button_selected(btn_b_field_lines, true)
+
+
 func select_obj(hand_state: HandState, previous_obj_index):
-	# Once an object is acquired, keep the grab latched until the pinch
-	# release threshold is crossed. Fingertip collision overlaps can flicker
-	# at a magnet's edges and should only be required to begin a grab.
 	if (previous_obj_index != null and previous_obj_index >= 0 and previous_obj_index < physics.sources.field_objects.size() and not hand_state.released()):
 		return previous_obj_index
 
@@ -290,7 +354,6 @@ func select_obj(hand_state: HandState, previous_obj_index):
 
 				if previous_obj_index != i:
 					pickup_sfx.play()
-
 				return i
 
 		elif obj.object_type == PhysicsTypes.ObjectType.BAR_MAGNET:
@@ -303,7 +366,6 @@ func select_obj(hand_state: HandState, previous_obj_index):
 					if previous_obj_index != i:
 						pickup_sfx.play()
 						hand_state.begin_magnet_rotation(obj)
-
 					return i
 
 	return null
@@ -441,43 +503,18 @@ func _remove_field_object_deferred(index: int) -> void:
 	physics.sources.remove_object(index)
 
 # ------------------- PARTICLE FLOW -------------------
-var mm_instance: MultiMeshInstance3D
-var particle_count = 700
-
-func enable_particle_flow():
+func on_btn_particle_flow_pressed():
 	functions["particle_flow"] = !functions["particle_flow"]
 
 	if functions["particle_flow"]:
 		set_button_selected(btn_particle_flow, true)
-
-		await get_tree().create_timer(0.5).timeout
-
-		if mm_instance == null:
-			mm_instance = particle_multimesh.instantiate()
-			mm_instance.multimesh.instance_count = particle_count
-			vector_field.add_child(mm_instance)
-		mm_instance.visible = true
-
-		var initial_positions = physics.rk4.SetParticles(particle_count)
-
-		for i in range(mm_instance.multimesh.instance_count):
-			mm_instance.multimesh.set_instance_transform(i, Transform3D(Basis(), initial_positions[i]))
-
-		trail_instance.mesh = trail_mesh
-		if trail_instance.get_parent() == null:
-			vector_field.add_child(trail_instance)
-		trail_instance.visible = true
+		physics.particles.enable_particle_flow()
 
 	else:
 		set_button_selected(btn_particle_flow, false)
-		if mm_instance:
-			mm_instance.visible = false
-		trail_instance.visible = false
+		physics.particles.disable_particle_flow()
 
-	trails.clear()
-
-	for i in range(particle_count):
-		trails.append(PackedVector3Array())
+	physics.particles.clear_trails()
 
 func on_btn_e_fields_pressed():
 	functions["e_field_lines"] = !functions["e_field_lines"]
@@ -513,49 +550,37 @@ func on_btn_b_fields_pressed():
 		set_button_selected(btn_b_field_lines, false)
 		physics.fields.disable_b_field_lines()
 
-# ------------------- TRAILS -------------------
-func update_trails(positions: PackedVector3Array):
-	for i in positions.size():
-		var trail = trails[i]
-		trail.append(positions[i])
+func on_btn_solar_system_pressed():
+	functions["solar_system"] = !functions["solar_system"]
 
-		if trail.size() > TRAIL_LENGTH:
-			trail.remove_at(0)
+	if functions["solar_system"]:
+		set_button_selected(btn_solar_system, true)
 
-		trails[i] = trail
+		await get_tree().create_timer(0.5).timeout
 
-	rebuild_trail_mesh()
+		# CODE GOES HERE
 
-func rebuild_trail_mesh():
-	trail_mesh.clear_surfaces()
-	trail_mesh.surface_begin(Mesh.PRIMITIVE_LINES)
+		b_field_changed = false
 
-	for trail in trails:
-		for j in range(trail.size() - 1):
-			trail_mesh.surface_add_vertex(trail[j])
-			trail_mesh.surface_add_vertex(trail[j + 1])
-
-	trail_mesh.surface_end()
-
-var trail_positions = PackedVector3Array()
-
-func particle_flow_upd(h):
-	var new_states = physics.rk4.StepIntegrate(h, 1)
-
-	trail_positions.clear()
-
-	for i in range(mm_instance.multimesh.instance_count):
-		mm_instance.multimesh.set_instance_transform(i, Transform3D(Basis(), new_states[i][0]))
-
-		if new_states[i][2]:
-			trails[i].clear()
-
-		trail_positions.append(new_states[i][0])
-
-	update_trails(trail_positions)
+	else:
+		set_button_selected(btn_solar_system, false)
+		
 
 # ------------------- MORE UI -------------------
 var spawn_debounce = true
+
+func _is_inside_vector_field(hand_state: HandState) -> bool:
+	return _is_global_position_inside_vector_field(
+		hand_state.global_pinch_center
+	)
+
+func _is_global_position_inside_vector_field(global_position: Vector3) -> bool:
+	var p: Vector3 = vector_field.to_local(global_position)
+	return (
+		p.x >= vector_field.x_min and p.x <= vector_field.x_max
+		and p.y >= vector_field.y_min and p.y <= vector_field.y_max
+		and p.z >= vector_field.z_min and p.z <= vector_field.z_max
+	)
 
 func hand_is_touching_field_object(hand_state: HandState) -> bool:
 	for obj in physics.sources.field_objects:
@@ -575,59 +600,321 @@ func hand_is_touching_field_object(hand_state: HandState) -> bool:
 	return false
 
 func right(p_name: String) -> void:
-	if p_name != "index_pinch" or !spawn_debounce:
+	if p_name == "Fist":
+		_begin_field_translation(true)
 		return
-
-	if r_poke == null:
+	if p_name != "index_pinch":
 		return
 
 	r_hand_state.update(vector_field)
 
-	if hand_is_touching_field_object(r_hand_state):
+	if (
+		hand_is_touching_field_object(r_hand_state)
+		or not _is_inside_vector_field(r_hand_state)
+		or l_field_gesture_state == FieldGestureState.ROTATING
+		or field_move_hand != FieldMoveHand.NONE
+	):
 		return
 
-	spawn_debounce = false
-
-	var pos: Vector3 = vector_field.to_local(r_poke.global_position)
-
-	if tools["pt_charge"]:
-		physics.sources.spawn_pt_charge(pos, 1250.0)
-
-		e_field_changed = true
-
-	elif tools["bar_magnet"]:
-		physics.sources.spawn_bar_magnet(pos, Vector3(0.0, 700.0, 0.0))
-
-		b_field_changed = true
-
-	await get_tree().create_timer(0.2).timeout
-	spawn_debounce = true
+	r_field_gesture_start = r_hand_state.global_pinch_center
+	r_field_gesture_state = FieldGestureState.PENDING
+	vector_field.stop_rotation_inertia()
+	_create_placement_preview(true, r_hand_state.global_pinch_center)
 
 func left(p_name: String) -> void:
-	if p_name != "index_pinch" or !spawn_debounce:
+	if p_name == "Fist":
+		_begin_field_translation(false)
 		return
-
-	if l_poke == null:
+	if p_name != "index_pinch":
 		return
 
 	l_hand_state.update(vector_field)
 
-	if hand_is_touching_field_object(l_hand_state):
+	if (
+		hand_is_touching_field_object(l_hand_state)
+		or not _is_inside_vector_field(l_hand_state)
+		or r_field_gesture_state == FieldGestureState.ROTATING
+		or field_move_hand != FieldMoveHand.NONE
+	):
 		return
 
-	spawn_debounce = false
+	l_field_gesture_start = l_hand_state.global_pinch_center
+	l_field_gesture_state = FieldGestureState.PENDING
+	vector_field.stop_rotation_inertia()
+	_create_placement_preview(false, l_hand_state.global_pinch_center)
 
-	var pos: Vector3 = vector_field.to_local(l_poke.global_position)
+func _update_field_gesture(is_right_hand: bool, delta: float) -> void:
+	var state: FieldGestureState = (
+		r_field_gesture_state if is_right_hand else l_field_gesture_state
+	)
+	if state == FieldGestureState.IDLE:
+		return
 
+	var hand_state: HandState = r_hand_state if is_right_hand else l_hand_state
+	var start_position: Vector3 = (
+		r_field_gesture_start if is_right_hand else l_field_gesture_start
+	)
+	if hand_state.released():
+		_finish_field_gesture(is_right_hand)
+		return
+
+	if state == FieldGestureState.PENDING:
+		_update_placement_preview(
+			is_right_hand,
+			hand_state.global_pinch_center
+		)
+
+		# Do not rotate the world while either hand is manipulating a source.
+		if r_moving_obj or l_moving_obj:
+			return
+
+		var initial_direction: Vector3 = start_position - vector_field.global_position
+		var current_direction: Vector3 = (
+			hand_state.global_pinch_center - vector_field.global_position
+		)
+		if initial_direction.is_zero_approx() or current_direction.is_zero_approx():
+			return
+
+		var drag_angle: float = initial_direction.angle_to(current_direction)
+		if drag_angle < FIELD_ROTATION_ANGLE_THRESHOLD:
+			return
+
+		var other_state: FieldGestureState = (
+			l_field_gesture_state if is_right_hand else r_field_gesture_state
+		)
+		if other_state == FieldGestureState.ROTATING:
+			return
+
+		if not vector_field.begin_rotation(start_position):
+			return
+
+		_clear_placement_preview(is_right_hand)
+		state = FieldGestureState.ROTATING
+		if is_right_hand:
+			r_field_gesture_state = state
+		else:
+			l_field_gesture_state = state
+
+	if state == FieldGestureState.ROTATING:
+		vector_field.update_rotation(hand_state.global_pinch_center, delta)
+
+func _on_right_pose_ended(p_name: String) -> void:
+	if p_name == "index_pinch":
+		_finish_field_gesture(true)
+	elif p_name == "Fist" and field_move_hand == FieldMoveHand.RIGHT:
+		_end_field_translation()
+
+func _on_left_pose_ended(p_name: String) -> void:
+	if p_name == "index_pinch":
+		_finish_field_gesture(false)
+	elif p_name == "Fist" and field_move_hand == FieldMoveHand.LEFT:
+		_end_field_translation()
+
+func _begin_field_translation(is_right_hand: bool) -> void:
+	if (
+		control_panel_active
+		or field_move_hand != FieldMoveHand.NONE
+		or r_field_gesture_state != FieldGestureState.IDLE
+		or l_field_gesture_state != FieldGestureState.IDLE
+		or r_moving_obj
+		or l_moving_obj
+	):
+		return
+
+	var palm: Node3D = r_palm if is_right_hand else l_palm
+	if (
+		palm == null
+		or not _is_global_position_inside_vector_field(palm.global_position)
+	):
+		return
+
+	if not vector_field.begin_translation(palm.global_position):
+		return
+
+	field_move_hand = (
+		FieldMoveHand.RIGHT if is_right_hand else FieldMoveHand.LEFT
+	)
+
+func _update_field_translation() -> void:
+	if field_move_hand == FieldMoveHand.NONE:
+		return
+
+	var palm: Node3D = (
+		r_palm if field_move_hand == FieldMoveHand.RIGHT else l_palm
+	)
+	if palm != null:
+		vector_field.update_translation(palm.global_position)
+
+func _end_field_translation() -> void:
+	vector_field.end_translation()
+	field_move_hand = FieldMoveHand.NONE
+
+func _on_control_panel_visibility_changed(is_visible: bool) -> void:
+	control_panel_active = is_visible
+	if is_visible and field_move_hand != FieldMoveHand.NONE:
+		_end_field_translation()
+
+func _finish_field_gesture(is_right_hand: bool) -> void:
+	var state: FieldGestureState = (
+		r_field_gesture_state if is_right_hand else l_field_gesture_state
+	)
+	if state == FieldGestureState.IDLE:
+		return
+
+	var hand_state: HandState = r_hand_state if is_right_hand else l_hand_state
+	if state == FieldGestureState.PENDING:
+		_clear_placement_preview(is_right_hand)
+		_spawn_selected_object(hand_state.global_pinch_center, is_right_hand)
+	elif state == FieldGestureState.ROTATING:
+		vector_field.end_rotation()
+
+	if is_right_hand:
+		r_field_gesture_state = FieldGestureState.IDLE
+	else:
+		l_field_gesture_state = FieldGestureState.IDLE
+
+func _create_placement_preview(
+	is_positive: bool,
+	global_position: Vector3
+) -> void:
+	_clear_placement_preview(is_positive)
+
+	var preview_scene: PackedScene = null
 	if tools["pt_charge"]:
-		physics.sources.spawn_pt_charge(pos, -1250.0)
-
-		e_field_changed = true
-
+		preview_scene = pos_charge_scene if is_positive else neg_charge_scene
 	elif tools["bar_magnet"]:
-		physics.sources.spawn_bar_magnet(pos, Vector3(0.0, 550.0, 0.0))
+		preview_scene = bar_magnet_scene
+	else:
+		return
 
+	if preview_scene == null:
+		return
+
+	var preview := preview_scene.instantiate() as Node3D
+	if preview == null:
+		return
+
+	preview.name = "RightPlacementPreview" if is_positive else "LeftPlacementPreview"
+	_configure_placement_preview(preview)
+	vector_field.add_child(preview)
+	preview.global_position = global_position
+
+	var charge_label := preview.get_node_or_null("ChargeLabel") as Label3D
+	if charge_label:
+		charge_label.text = "+1C" if is_positive else "-1C"
+
+	if is_positive:
+		r_placement_preview = preview
+	else:
+		l_placement_preview = preview
+
+func _configure_placement_preview(node: Node) -> void:
+	if node is Area3D:
+		var area := node as Area3D
+		area.monitoring = false
+		area.monitorable = false
+		area.collision_layer = 0
+		area.collision_mask = 0
+	elif node is CollisionShape3D:
+		(node as CollisionShape3D).disabled = true
+	elif node is GPUParticles3D:
+		(node as GPUParticles3D).emitting = false
+	elif node is Label3D:
+		var label := node as Label3D
+		var label_color := label.modulate
+		label_color.a = 0.5
+		label.modulate = label_color
+		var label_outline_color := label.outline_modulate
+		label_outline_color.a = 0.5
+		label.outline_modulate = label_outline_color
+		label.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	elif node is MeshInstance3D:
+		_configure_preview_mesh(node as MeshInstance3D)
+
+	for child in node.get_children():
+		_configure_placement_preview(child)
+
+func _configure_preview_mesh(mesh_instance: MeshInstance3D) -> void:
+	mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+	if mesh_instance.material_override:
+		mesh_instance.material_override = _make_preview_material(
+			mesh_instance.material_override
+		)
+		return
+
+	if mesh_instance.mesh == null:
+		return
+
+	for surface_index in range(mesh_instance.mesh.get_surface_count()):
+		var material := mesh_instance.get_active_material(surface_index)
+		if material:
+			mesh_instance.set_surface_override_material(
+				surface_index,
+				_make_preview_material(material)
+			)
+
+func _make_preview_material(source: Material) -> Material:
+	var preview_material := source.duplicate() as Material
+	if preview_material is BaseMaterial3D:
+		var standard_material := preview_material as BaseMaterial3D
+		standard_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		var albedo := standard_material.albedo_color
+		albedo.a = 0.5
+		standard_material.albedo_color = albedo
+	elif preview_material is ShaderMaterial:
+		var shader_material := preview_material as ShaderMaterial
+		shader_material.shader = BAR_MAGNET_PREVIEW_SHADER
+		shader_material.set_shader_parameter(
+			"preview_alpha",
+			0.5
+		)
+	return preview_material
+
+func _update_placement_preview(
+	is_right_hand: bool,
+	global_position: Vector3
+) -> void:
+	var preview: Node3D = (
+		r_placement_preview if is_right_hand else l_placement_preview
+	)
+	if is_instance_valid(preview):
+		preview.global_position = global_position
+
+func _clear_placement_preview(is_right_hand: bool) -> void:
+	var preview: Node3D = (
+		r_placement_preview if is_right_hand else l_placement_preview
+	)
+	if is_instance_valid(preview):
+		preview.visible = false
+		preview.queue_free()
+
+	if is_right_hand:
+		r_placement_preview = null
+	else:
+		l_placement_preview = null
+
+func _spawn_selected_object(global_position: Vector3, is_positive: bool) -> void:
+	if not spawn_debounce:
+		return
+
+	var pos: Vector3 = vector_field.to_local(global_position)
+	if tools["pt_charge"]:
+		physics.sources.spawn_pt_charge(pos, 1250.0 if is_positive else -1250.0)
+		e_field_changed = true
+	elif tools["bar_magnet"]:
+		var moment := Vector3(0.0, 700.0 if is_positive else 550.0, 0.0)
+		physics.sources.spawn_bar_magnet(pos, moment)
 		b_field_changed = true
+	else:
+		return
 
+	release_sfx.position = pos
+	release_sfx.play()
+
+	spawn_debounce = false
+	_release_spawn_debounce()
+
+func _release_spawn_debounce() -> void:
 	await get_tree().create_timer(0.2).timeout
 	spawn_debounce = true

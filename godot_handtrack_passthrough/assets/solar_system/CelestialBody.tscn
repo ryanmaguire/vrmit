@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://b8n2a7jwmq35y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nv3qe"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_nv3qe"]
+
+[node name="CelestialBody" type="Node3D" unique_id=1430355104]
+
+[node name="BodyMesh" type="MeshInstance3D" parent="." unique_id=1725149958]
+material_override = SubResource("StandardMaterial3D_nv3qe")
+mesh = SubResource("SphereMesh_nv3qe")
+
+[node name="RingMesh" type="MeshInstance3D" parent="." unique_id=1119473899]
+visible = false

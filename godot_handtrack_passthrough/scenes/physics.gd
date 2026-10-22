@@ -4,6 +4,7 @@ class_name Physics extends Node
 @onready var sources = $Sources
 @onready var fields = $Fields
 @onready var particles = $Particles
+@onready var solar_system = $SolarSystem
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
