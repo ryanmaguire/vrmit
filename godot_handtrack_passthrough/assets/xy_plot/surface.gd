@@ -79,6 +79,17 @@ var _locked_basis: Basis
 
 
 
+func _notification(what: int) -> void:
+	# Remove and regenerate the mesh when saving to avoid scene file.
+	if not Engine.is_editor_hint():
+		return
+	match what:
+		NOTIFICATION_EDITOR_PRE_SAVE:
+			mesh = null
+		NOTIFICATION_EDITOR_POST_SAVE:
+			gen()
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	#arrow = load("res://assets/arrow.tscn")
@@ -586,7 +597,8 @@ func calculate_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
 ## @param zmax: max z bound inclusive
 ## @param res: resolution in points per unit
 func gen_mesh(xmin: int, xmax: int, zmin: int, zmax: int, res: int):
-	mesh.clear_surfaces()
+	if mesh:
+		mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
 	var offset = (zmax - zmin) * res + 1
 	#print((x_max - x_min) * resolution * offset + (z_max - z_min) * resolution)

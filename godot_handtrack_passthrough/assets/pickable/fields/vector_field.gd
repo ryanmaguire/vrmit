@@ -191,6 +191,17 @@ func end_translation() -> void:
 	_translation_initial_field_position = Vector3.ZERO
 
 
+func _notification(what: int) -> void:
+	# Remove and regenerate the mesh when saving to avoid scene file.
+	if not Engine.is_editor_hint():
+		return
+	match what:
+		NOTIFICATION_EDITOR_PRE_SAVE:
+			mesh = null
+		NOTIFICATION_EDITOR_POST_SAVE:
+			gen()
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	add_to_group("fields")
@@ -343,7 +354,8 @@ func calculate_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax
 ## @param zmax: max z bound inclusive
 ## @param res: resolution in points per unit
 func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: float) -> void:
-	mesh.clear_surfaces()
+	if mesh:
+		mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
 	
 	mdt = MeshDataTool.new()
@@ -413,7 +425,8 @@ func create_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: i
 ## @param zmax: max z bound inclusive
 ## @param res: resolution in points per unit
 func update_field(xmin: int, xmax: int, ymin: int, ymax: int, zmin: int, zmax: int, res: float) -> void:
-	mesh.clear_surfaces()
+	if mesh:
+		mesh.clear_surfaces()
 	var a_mesh = ArrayMesh.new()
 	
 	mdt = MeshDataTool.new()
