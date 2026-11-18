@@ -60,12 +60,12 @@ Vec3 coulomb_f(const Vec3 * const pos, const Vec3 * const vel, const FieldObject
     {
         if (objects[i].type == POINT_CHARGE) 
         {
-            const double rsq = (pos->x - objects[i].p.x) * (pos->x - objects[i].p.x)
+            const float rsq = (pos->x - objects[i].p.x) * (pos->x - objects[i].p.x)
             + (pos->y - objects[i].p.y) * (pos->y - objects[i].p.y)
             + (pos->z - objects[i].p.z) * (pos->z - objects[i].p.z);
 
             /*  The L2 norm, given by Pythagoras, || P || = sqrt(x^2 + y^2).          */
-            const double r = sqrt(rsq);
+            const float r = sqrt(rsq);
 
             /*  The input vector is not necessary a unit vector. The inverse square   *
             *  law thus becomes:                                                     *
@@ -78,7 +78,7 @@ Vec3 coulomb_f(const Vec3 * const pos, const Vec3 * const vel, const FieldObject
             *                                                                        *
             *  Where the "hat" indicates the unit vector in the direction of R. The  *
             *  scale factor is hence the reciprocal of the cube of the norm.         */
-            const double scale = objects[i].data.charge.q / (r * rsq);
+            const float scale = objects[i].data.charge.q / (r * rsq);
 
             /*  The force is just the scale factor times the position vector. Compute.*/
             out.x += (pos->x - objects[i].p.x) * scale;
@@ -101,20 +101,29 @@ Vec3 bar_magnet_b(const Vec3 * const pos, const Vec3 * const vel, const FieldObj
     {
         if (objects[i].type == BAR_MAGNET) 
         {
-            const double rsq = (pos->x - objects[i].p.x) * (pos->x - objects[i].p.x)
-            + (pos->y - objects[i].p.y) * (pos->y - objects[i].p.y)
-            + (pos->z - objects[i].p.z) * (pos->z - objects[i].p.z);
+            const float dx = pos->x - objects[i].p.x;
+            const float dy = pos->y - objects[i].p.y;
+            const float dz = pos->z - objects[i].p.z;
 
-            const double r = sqrt(rsq);
+            const float rsq = dx * dx + dy * dy + dz * dz;
+            const float actual_r = sqrt(rsq);
 
-            const double scale = 1.0 / (r * rsq);
+            if (actual_r < 1e-8)
+                continue;
+
+            const float softening = 0.08;
+            const float softened_rsq = rsq + softening * softening;
+            const float softened_r = sqrt(softened_rsq);
+
+            const float scale = 1.0 / (softened_r * softened_rsq);
 
             const Vec3 r_hat = {
-                (pos->x - objects[i].p.x) / r, 
-                (pos->y - objects[i].p.y) / r,
-                (pos->z - objects[i].p.z) / r};
+                dx / actual_r,
+                dy / actual_r,
+                dz / actual_r
+            };
 
-            const double mdotr_hat = (objects[i].data.bar_magnet.m.x * r_hat.x) + 
+            const float mdotr_hat = (objects[i].data.bar_magnet.m.x * r_hat.x) + 
             (objects[i].data.bar_magnet.m.y * r_hat.y) + 
             (objects[i].data.bar_magnet.m.z * r_hat.z);
 
@@ -137,7 +146,7 @@ Vec3 bar_magnet_f(const Vec3 * const pos, const Vec3 * const vel, const FieldObj
     return out;
 }
 
-/*  Net force to compute particle pos/vel with multiple types of electromagnetic phenomena.  */
+/*  Net force to compute particle flow with multiple types of electromagnetic phenomena.  */
 Vec3 net_force(const Vec3 * const pos, const Vec3 * const vel, const FieldObject * objects, size_t obj_count) 
 {
     Vec3 out = {0.0, 0.0, 0.0};
@@ -152,24 +161,34 @@ Vec3 net_force(const Vec3 * const pos, const Vec3 * const vel, const FieldObject
     return out;
 }
 
-/* Net E & B Fields to compute field lines (WIP FEATURE)                                      */
+/* Net E & B Fields to compute field lines                                           */
 Vec3 net_e_field(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
 {
+    // Coulomb force can be used for now as a substitute for E_field vector field since every pt. charge has the same charge magnitude
     Vec3 E_coulomb = coulomb_f(pos, NULL, objects, obj_count); // particle q = 1, should make a seperate coulomb_e function
     return E_coulomb;
+    // Eventually as more field objects are introduced that generate electric fields this function will return a superposition of the fields
 }
 
 Vec3 net_e_field_norm(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
 {
-    Vec3 out = {0.0, 0.0, 0.0};
     Vec3 E = net_e_field(pos, objects, obj_count);
 
-    float E_sq = E.x * E.x + E.y * E.y + E.z * E.z;
-    float E_mag = sqrt(E_sq);
+    const float E_sq = E.x * E.x + E.y * E.y + E.z * E.z;
 
-    out.x = E.x / E_mag;
-    out.y = E.y / E_mag;
-    out.z = E.z / E_mag;
+    if (E_sq < 1e-12)
+    {
+        Vec3 zero = {0.0, 0.0, 0.0};
+        return zero;
+    }
+
+    const float E_mag = sqrt(E_sq);
+
+    Vec3 out = {
+        E.x / E_mag,
+        E.y / E_mag,
+        E.z / E_mag
+    };
 
     return out;
 }
@@ -182,15 +201,23 @@ Vec3 net_b_field(const Vec3 * const pos, const FieldObject * objects, size_t obj
 
 Vec3 net_b_field_norm(const Vec3 * const pos, const FieldObject * objects, size_t obj_count) 
 {
-    Vec3 out = {0.0, 0.0, 0.0};
     Vec3 B = net_b_field(pos, objects, obj_count);
 
-    float B_sq = B.x * B.x + B.y * B.y + B.z * B.z;
-    float B_mag = sqrt(B_sq);
+    const float B_sq = B.x * B.x + B.y * B.y + B.z * B.z;
 
-    out.x = B.x / B_mag;
-    out.y = B.y / B_mag;
-    out.z = B.z / B_mag;
+    if (B_sq < 1e-12)
+    {
+        Vec3 zero = {0.0, 0.0, 0.0};
+        return zero;
+    }
+
+    const float B_mag = sqrt(B_sq);
+
+    Vec3 out = {
+        B.x / B_mag,
+        B.y / B_mag,
+        B.z / B_mag
+    };
 
     return out;
 }
@@ -206,7 +233,7 @@ Vec3 net_b_field_norm(const Vec3 * const pos, const FieldObject * objects, size_
  *  Arguments:                                                                *
  *      u0 (const Vec6 * const):                                              *
  *          The current location of the point for the ODE.                    *
- *      h (double):                                                           *
+ *      h (float):                                                           *
  *          The step size used in RK4.                                        *
  *      u1 (const Vec6 * const):                                              *
  *          The perturbation point, these are the k_n's in the RK4 method.    *
@@ -217,7 +244,7 @@ Vec3 net_b_field_norm(const Vec3 * const pos, const FieldObject * objects, size_
  *      out (Vec4):                                                           *
  *          The new perturbation factor, one of the k_n terms.                *
  ******************************************************************************/
-Vec6 rk4_factor(const Vec6 * const u0, double h, const Vec6 * const u1, force f, const FieldObject * objects, size_t obj_count)
+Vec6 rk4_factor(const Vec6 * const u0, float h, const Vec6 * const u1, force f, const FieldObject * objects, size_t obj_count)
 {
     /*  Declare a variable for the output.                                    */
     Vec6 out;
@@ -243,7 +270,7 @@ Vec6 rk4_factor(const Vec6 * const u0, double h, const Vec6 * const u1, force f,
     return out;
 }
 
-Vec3 rk4_factor_field(const Vec3 * const u0, double h, const Vec3 * const u1, field f, const FieldObject * objects, size_t obj_count) 
+Vec3 rk4_factor_field(const Vec3 * const u0, float h, const Vec3 * const u1, field f, const FieldObject * objects, size_t obj_count) 
 {
         /*  Declare a variable for the output.                                */
     Vec3 out;
@@ -275,21 +302,21 @@ Vec3 rk4_factor_field(const Vec3 * const u0, double h, const Vec3 * const u1, fi
  *          to find the path of the particle.                                 *
  *      u (Vec6 * const):                                                     *
  *          The initial position and velocity of the particle.                *
- *      h (double):                                                           *
+ *      h (float):                                                           *
  *          The step size.                                                    *
  *      steps (size_t):                                                       *
  *          The number of steps to perform.                                   *
  *  Output:                                                                   *
  *      None (void).                                                          *
  ******************************************************************************/
-void rk4(force f, Vec6 * const u, double h, size_t steps, const FieldObject * objects, size_t obj_count)
+void rk4(force f, Vec6 * const u, float h, size_t steps, const FieldObject * objects, size_t obj_count)
 {
     /*  Index for keeping track of the number of iterations performed.        */
     size_t n = 0;
 
     /*  Constant multiples of h used in the computation.                      */
-    const double h0 = 0.5 * h;
-    const double h1 = h * 0.1666666666666667;
+    const float h0 = 0.5 * h;
+    const float h1 = h * 0.1666666666666667;
 
     /*  Current acceleration vector given by the starting position.           */
     Vec3 a = f(&u->p, &u->v, objects, obj_count);
@@ -318,25 +345,28 @@ void rk4(force f, Vec6 * const u, double h, size_t steps, const FieldObject * ob
         u->v.z += h1 * (k1.v.z + 2.0*k2.v.z + 2.0*k3.v.z + k4.v.z);
 
         /*  Update the Runge-Kutta factors.                                   */
-        a = f(&u->p, &u->v, objects, obj_count);
+        if (n + 1 < steps)
+        {
+            a = f(&u->p, &u->v, objects, obj_count);
 
-        k1.p = u->v;
-        k1.v = a;
+            k1.p = u->v;
+            k1.v = a;
 
-        k2 = rk4_factor(u, h0, &k1, f, objects, obj_count);
-        k3 = rk4_factor(u, h0, &k2, f, objects, obj_count);
-        k4 = rk4_factor(u, h, &k3, f, objects, obj_count);
+            k2 = rk4_factor(u, h0, &k1, f, objects, obj_count);
+            k3 = rk4_factor(u, h0, &k2, f, objects, obj_count);
+            k4 = rk4_factor(u, h, &k3, f, objects, obj_count);
+        }
     }
 }
 
-void rk4_field(field f, Vec3 * const p, double h, size_t steps, const FieldObject * objects, size_t obj_count) 
+void rk4_field(field f, Vec3 * const p, float h, size_t steps, const FieldObject * objects, size_t obj_count) 
 {
     /*  Index for keeping track of the number of iterations performed.        */
     size_t n = 0;
 
     /*  Constant multiples of h used in the computation.                      */
-    const double h0 = 0.5 * h;
-    const double h1 = h * 0.1666666666666667;
+    const float h0 = 0.5 * h;
+    const float h1 = h * 0.1666666666666667;
 
     /*  Compute the initial Runge-Kutta factors.                              */
     Vec3 k1 = f(p, objects, obj_count);
@@ -356,11 +386,16 @@ void rk4_field(field f, Vec3 * const p, double h, size_t steps, const FieldObjec
         p->y += h1 * (k1.y + 2.0*k2.y + 2.0*k3.y + k4.y);
         p->z += h1 * (k1.z + 2.0*k2.z + 2.0*k3.z + k4.z);
 
-        /*  Update the Runge-Kutta factors.                                   */
-        k1 = f(p, objects, obj_count);
-        k2 = rk4_factor_field(p, h0, &k1, f, objects, obj_count);
-        k3 = rk4_factor_field(p, h0, &k2, f, objects, obj_count);
-        k4 = rk4_factor_field(p, h, &k3, f, objects, obj_count);
+        /*  Prepare factors only when another step will consume them. The final
+         *  iteration previously performed four field evaluations whose results
+         *  were immediately discarded.                                      */
+        if (n + 1 < steps)
+        {
+            k1 = f(p, objects, obj_count);
+            k2 = rk4_factor_field(p, h0, &k1, f, objects, obj_count);
+            k3 = rk4_factor_field(p, h0, &k2, f, objects, obj_count);
+            k4 = rk4_factor_field(p, h, &k3, f, objects, obj_count);
+        }
     }
 }
 /*  End of rk4.                                                               */
@@ -378,7 +413,7 @@ void rk4_field(field f, Vec3 * const p, double h, size_t steps, const FieldObjec
  *          Array with the initial positions and velocities of the particles. *
  *      n_elements (size_t):                                                  *
  *          The number of elements in the "u" array.                          *
- *      h (double):                                                           *
+ *      h (float):                                                           *
  *          The step size.                                                    *
  *      steps (size_t):                                                       *
  *          The number of steps to perform.                                   *
@@ -386,7 +421,7 @@ void rk4_field(field f, Vec3 * const p, double h, size_t steps, const FieldObjec
  *      None (void).                                                          *
  ******************************************************************************/
 void
-integrate(force f, Vec6 * const u, size_t n_elements, double h, size_t steps, const FieldObject * objects, size_t obj_count)
+integrate(force f, Vec6 * const u, size_t n_elements, float h, size_t steps, const FieldObject * objects, size_t obj_count)
 {
     /*  Variable for indexing over the array.                                 */
     size_t n;
@@ -399,12 +434,70 @@ integrate(force f, Vec6 * const u, size_t n_elements, double h, size_t steps, co
 /*  End of integrate.                                                         */
 
 void 
-integrate_field(field f, Vec3 * const p, size_t n_elements, double h, size_t steps, const FieldObject * objects, size_t obj_count) 
+integrate_field(field f, Vec3 * const p, size_t n_elements, float h, size_t steps, const FieldObject * objects, size_t obj_count) 
 {
     size_t n;
 
     for (n = 0; n < n_elements; ++n) 
     {
         rk4_field(f, &p[n], h, steps, objects, obj_count);
+    }
+}
+
+/* All bodies in a stage share the same instant. Masses never change between stages. */
+static void gravity_derivatives(const Vec6 *states, const float *masses,
+                                size_t count, Vec6 *derivatives)
+{
+    /* Small softening prevents division by zero at coincident positions. */
+    const float epsilon_sq = 1e-10f;
+    for (size_t i = 0; i < count; ++i) {
+        derivatives[i].p = states[i].v;
+        derivatives[i].v = (Vec3){0, 0, 0};
+        for (size_t j = 0; j < count; ++j) {
+            if (i == j) continue;
+            const float dx = states[j].p.x - states[i].p.x;
+            const float dy = states[j].p.y - states[i].p.y;
+            const float dz = states[j].p.z - states[i].p.z;
+            const float r2 = dx*dx + dy*dy + dz*dz + epsilon_sq;
+            const float scale = masses[j] / (r2 * sqrtf(r2));
+            derivatives[i].v.x += dx * scale;
+            derivatives[i].v.y += dy * scale;
+            derivatives[i].v.z += dz * scale;
+        }
+    }
+}
+
+static Vec3 gravity_offset(Vec3 value, Vec3 derivative, float h)
+{
+    return (Vec3){value.x + h * derivative.x,
+                  value.y + h * derivative.y,
+                  value.z + h * derivative.z};
+}
+
+void rk4_gravity(Vec6 *bodies, const float *masses, size_t count,
+                 float h, Vec6 *workspace)
+{
+    if (count == 0 || h <= 0) return;
+    Vec6 *k[4] = {workspace, workspace + count, workspace + 2*count,
+                  workspace + 3*count};
+    Vec6 *stage = workspace + 4*count;
+    gravity_derivatives(bodies, masses, count, k[0]);
+    for (size_t n = 1; n < 4; ++n) {
+        const float dt = n == 3 ? h : h * 0.5f;
+        for (size_t i = 0; i < count; ++i) {
+            stage[i].p = gravity_offset(bodies[i].p, k[n-1][i].p, dt);
+            stage[i].v = gravity_offset(bodies[i].v, k[n-1][i].v, dt);
+        }
+        gravity_derivatives(stage, masses, count, k[n]);
+    }
+    for (size_t i = 0; i < count; ++i) {
+        Vec6 sum = k[0][i];
+        for (size_t n = 1; n < 4; ++n) {
+            const float weight = n == 3 ? 1.0f : 2.0f;
+            sum.p = gravity_offset(sum.p, k[n][i].p, weight);
+            sum.v = gravity_offset(sum.v, k[n][i].v, weight);
+        }
+        bodies[i].p = gravity_offset(bodies[i].p, sum.p, h / 6.0f);
+        bodies[i].v = gravity_offset(bodies[i].v, sum.v, h / 6.0f);
     }
 }

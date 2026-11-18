@@ -14,4 +14,4 @@ stencil_outline_thickness = 0.92
 
 [resource]
 material = SubResource("StandardMaterial3D_lcmia")
-size = Vector2(0.005, 0.005)
+size = Vector2(0.004, 0.004)

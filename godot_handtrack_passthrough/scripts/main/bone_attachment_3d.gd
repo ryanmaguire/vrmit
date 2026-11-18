@@ -1,5 +1,6 @@
 extends BoneAttachment3D
 
+@export var menu_path: NodePath = NodePath("../../../../../../Viewport2Din3D")
 @export var head_path       : NodePath  # your XRCamera3D
 @export var palm_axis       : String    = "y"    # "x", "y" or "z" 
 @export var palm_sign       : float     =  1.0   # flip axis if needed
@@ -23,7 +24,7 @@ var menu_visible = false
 func _ready():
 	head = get_node(head_path)
 	set_process(true)
-	menu_node = get_node("../../../../../../Viewport2Din3D")
+	menu_node = get_node(menu_path)
 	GlobalSignals.connect("block_button_pressed", _on_block_button_pressed)
 
 func _process(_dt):
@@ -61,6 +62,7 @@ func _process(_dt):
 func show_menu():
 	menu_visible = true
 	has_positioned = false
+	GlobalSignals.control_panel_visibility_changed.emit(true)
 
 	if not menu_node.visible:
 		menu_node.visible = true
@@ -105,6 +107,7 @@ func hide_menu():
 	menu_visible = false
 	menu_node.visible = false
 	has_positioned = false
+	GlobalSignals.control_panel_visibility_changed.emit(false)
 
 func _on_block_button_pressed(person):
 	var scene : PackedScene

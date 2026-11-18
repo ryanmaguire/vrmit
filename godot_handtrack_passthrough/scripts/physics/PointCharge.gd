@@ -8,6 +8,8 @@ func _init(pos : Vector3, q : float, area : Area3D):
 	self.q = q
 	self.area = area
 	mesh = area.find_child("MeshInstance3D")
+	var label = area.get_node("ChargeLabel")
+	label.text = "+1C" if q > 0.0 else "-1C"
 	
 func fibonacci_sphere_dir(i, N):
 	var golden_angle = PI * (3.0 - sqrt(5.0))

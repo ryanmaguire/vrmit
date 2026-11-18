@@ -36,6 +36,18 @@
 [ext_resource type="Script" uid="uid://chklu8a4eqump" path="res://assets/circuit_simulation/wire_tool.gd" id="35_j8jky"]
 [ext_resource type="Script" uid="uid://bpk3l3xwul8h0" path="res://assets/circuit_simulation/move_tool.gd" id="36_kmb1v"]
 [ext_resource type="Script" uid="uid://b3nlbf6j4ox5h" path="res://assets/circuit_simulation/snap_point_manager.gd" id="37_fuf3a"]
+[ext_resource type="Script" uid="uid://disf3rjh5y2q0" path="res://scenes/physics.gd" id="35_c6pm6"]
+[ext_resource type="Script" uid="uid://bfn8ph17gxwbe" path="res://scenes/Sources.gd" id="35_pibwh"]
+[ext_resource type="PackedScene" uid="uid://ckuwfukp2o5hw" path="res://assets/physics/point charges/positive_charge.tscn" id="36_c6pm6"]
+[ext_resource type="PackedScene" uid="uid://btwolidrmttcl" path="res://assets/physics/point charges/negative_charge.tscn" id="37_5he1u"]
+[ext_resource type="PackedScene" uid="uid://bcpdhqeden63h" path="res://assets/physics/bar magnet/bar_magnet.tscn" id="38_5poiv"]
+[ext_resource type="Script" uid="uid://bgqpmujjmdqia" path="res://scenes/Fields.gd" id="40_5he1u"]
+[ext_resource type="PackedScene" uid="uid://cgx10sjggebrl" path="res://assets/physics/arrows.tscn" id="41_5poiv"]
+[ext_resource type="Script" uid="uid://cpti4a60jh3q3" path="res://scenes/Particles.gd" id="42_2cjbq"]
+[ext_resource type="PackedScene" uid="uid://ccpelyryvyx0n" path="res://assets/physics/particle.tscn" id="43_chjal"]
+[ext_resource type="Script" uid="uid://cbssnxvq5pa75" path="res://scenes/solar_system.gd" id="44_cjqg0"]
+[ext_resource type="Script" uid="uid://m03o227wp2vd" path="res://scripts/main/fps_display.gd" id="45_fps_display"]
+[ext_resource type="PackedScene" path="res://assets/inventory_wheel/inventory_wheel.tscn" id="46_inventory"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -153,6 +165,15 @@ transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D" unique_id=567670069]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 
+[node name="FPSDisplay" type="Label3D" parent="XROrigin3D/XRCamera3D" unique_id=1474701133]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.22, -1)
+pixel_size = 0.0007
+no_depth_test = true
+text = "FPS: --
+Frame interval: -- ms"
+outline_size = 8
+script = ExtResource("45_fps_display")
+
 [node name="LeftTrackedHand" type="XRNode3D" parent="XROrigin3D" unique_id=2145485050]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.003, 2)
 tracker = &"/user/hand_tracker/left"
@@ -171,6 +192,7 @@ transform = Transform3D(1.7881392e-07, -1.838803e-05, 0.99999994, -0.9999985, 0.
 bone_name = "LeftHand"
 bone_idx = 0
 script = ExtResource("3_yq6so")
+menu_path = NodePath("../../../../../../InventoryWheelViewport")
 head_path = NodePath("../../../../../XRCamera3D")
 palm_axis = "z"
 cardozo_cube_scene = ExtResource("4_fv21b")
@@ -294,15 +316,27 @@ enable_passthrough = true
 
 [node name="Viewport2Din3D" parent="." unique_id=1766513623 instance=ExtResource("26_bu4jf")]
 transform = Transform3D(0.15, 0, 0, 0, 0.15, 0, 0, 0, 0.15, -0.045, 0.003, 2)
+visible = false
+enabled = false
 scene = ExtResource("26_2f3dj")
 viewport_size = Vector2(511, 300)
+input_keyboard = false
+transparent = 1
 unshaded = true
 scene_properties_keys = PackedStringArray()
 
-[node name="VectorField" parent="." unique_id=457251798 groups=["fields"] instance=ExtResource("25_2f3dj")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.5, 0)
+[node name="InventoryWheelViewport" parent="." unique_id=37589641 instance=ExtResource("26_bu4jf")]
 visible = false
-mesh = null
+screen_size = Vector2(3, 3)
+scene = ExtResource("46_inventory")
+viewport_size = Vector2(640, 640)
+input_keyboard = false
+transparent = 1
+unshaded = true
+scene_properties_keys = PackedStringArray("inventory_wheel.gd")
+
+[node name="VectorField" parent="." unique_id=457251798 groups=["fields"] instance=ExtResource("25_2f3dj")]
+transform = Transform3D(0.16, 0, 0, 0, 0.16, 0, 0, 0, 0.16, 0, 0.5, 0)
 skeleton = NodePath("../Plot/XYPlot")
 x_min = -5
 x_max = 5
@@ -336,9 +370,13 @@ panning_strength = 1.6
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 visible = false
 
+[node name="CollisionShape3D" parent="Plot" index="0"]
+visible = false
+disabled = true
+
 [node name="XYPlot" parent="Plot" index="1" node_paths=PackedStringArray("field")]
 transform = Transform3D(0.20000273, 0, 0, 0, 0.20000009, 0, 0, 0, 0.20000273, 0, 0, 0.01999998)
-mesh = null
+visible = false
 create = false
 a = 1.0
 expression = "(x^2+y^2)/20"
@@ -358,7 +396,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 [node name="XYPlot" parent="." unique_id=1656272618 node_paths=PackedStringArray("field") instance=ExtResource("29_yq6so")]
 transform = Transform3D(0.38, 0, 0, 0, 0.38, 0, 0, 0, 0.38, 0, 0, 0)
 visible = false
-mesh = null
 a = 1.0
 x_min = -5
 x_max = 5
@@ -387,6 +424,28 @@ script = ExtResource("37_fuf3a")
 [node name="MoveTool" type="Node" parent="Circuits" unique_id=791165811 groups=["circuits/move_tool"]]
 script = ExtResource("36_kmb1v")
 grab_mask = 4
+[node name="Physics" type="Node" parent="." unique_id=104760835 groups=["physics"]]
+script = ExtResource("35_c6pm6")
+
+[node name="Sources" type="Node" parent="Physics" unique_id=795909939 node_paths=PackedStringArray("vector_field")]
+script = ExtResource("35_pibwh")
+pos_charge_scene = ExtResource("36_c6pm6")
+neg_charge_scene = ExtResource("37_5he1u")
+bar_magnet_scene = ExtResource("38_5poiv")
+vector_field = NodePath("../../VectorField")
+
+[node name="Fields" type="Node" parent="Physics" unique_id=1391517 node_paths=PackedStringArray("vector_field")]
+script = ExtResource("40_5he1u")
+vector_field = NodePath("../../VectorField")
+arrow_multimesh = ExtResource("41_5poiv")
+
+[node name="Particles" type="Node" parent="Physics" unique_id=2122539377 node_paths=PackedStringArray("vector_field")]
+script = ExtResource("42_2cjbq")
+particle_multimesh = ExtResource("43_chjal")
+vector_field = NodePath("../../VectorField")
+
+[node name="SolarSystem" type="Node" parent="Physics" unique_id=845492143]
+script = ExtResource("44_cjqg0")
 
 [editable path="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2"]
 [editable path="XROrigin3D/RightTrackedHand/RightHandHumanoid2"]

@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Godot_AR_Demo"
 run/main_scene="uid://dl36n1hl5wcxp"
-config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
+config/features=PackedStringArray("4.7", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -52,6 +52,7 @@ holding=""
 pickup=""
 release=""
 whoosh=""
+physics=""
 
 [layer_names]
 
@@ -70,7 +71,6 @@ whoosh=""
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
 

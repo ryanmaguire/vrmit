@@ -2,6 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://kfkr03s55iyd" path="res://assets/blocks/Sigh.png" id="1_kb0ty"]
 [ext_resource type="Texture2D" uid="uid://dnyxetugptgdw" path="res://assets/physics/point charges/Glow.png" id="2_le7o1"]
+[ext_resource type="Script" uid="uid://hkb4j20l5udi" path="res://assets/physics/point charges/label_3d.gd" id="3_kt0o4"]
+[ext_resource type="Script" uid="uid://cw4k00t0vri5c" path="res://assets/physics/point charges/point_charge_visual.gd" id="4_spawn"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_le7o1"]
 vertex_color_use_as_albedo = true
@@ -21,7 +23,7 @@ vertex_color_use_as_albedo = true
 albedo_texture = ExtResource("1_kb0ty")
 emission_enabled = true
 emission = Color(1, 0.1181316, 0.13523287, 1)
-emission_energy_multiplier = 4.0
+emission_energy_multiplier = 3.0
 billboard_mode = 1
 
 [sub_resource type="Gradient" id="Gradient_h8ha0"]
@@ -67,6 +69,8 @@ size = Vector2(0.22, 0.2)
 radius = 0.1
 
 [node name="PositiveCharge" type="Area3D" unique_id=1759717561]
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, 0, 0)
+script = ExtResource("4_spawn")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1732343302]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
@@ -78,7 +82,7 @@ visible = false
 material_override = SubResource("StandardMaterial3D_hj8w0")
 cast_shadow = 0
 lifetime = 0.14
-explosiveness = 0.4
+explosiveness = 0.6
 randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_h5644")
 draw_pass_1 = SubResource("QuadMesh_i5pmu")
@@ -89,3 +93,8 @@ mesh = SubResource("QuadMesh_hj8w0")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=955708151]
 shape = SubResource("SphereShape3D_le7o1")
+
+[node name="ChargeLabel" type="Label3D" parent="." unique_id=1728492450]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+outline_size = 10
+script = ExtResource("3_kt0o4")
