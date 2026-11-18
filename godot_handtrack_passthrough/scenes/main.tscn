@@ -33,21 +33,21 @@
 [ext_resource type="PackedScene" uid="uid://bntjhs7rr2his" path="res://assets/pickable/plots/xy-plot/xy_plot.tscn" id="29_yq6so"]
 [ext_resource type="AudioStream" uid="uid://deh4i3hmxxovt" path="res://assets/basic_plotter_ui/SFX/whoosh.wav" id="31_dgi5k"]
 [ext_resource type="Script" uid="uid://ctbmu86kesqnd" path="res://assets/circuit_simulation/circuit_hands.gd" id="34_dgi5k"]
+[ext_resource type="Script" uid="uid://dly75jbios0bt" path="res://scenes/physics.gd" id="35_c6pm6"]
 [ext_resource type="Script" uid="uid://chklu8a4eqump" path="res://assets/circuit_simulation/wire_tool.gd" id="35_j8jky"]
-[ext_resource type="Script" uid="uid://bpk3l3xwul8h0" path="res://assets/circuit_simulation/move_tool.gd" id="36_kmb1v"]
-[ext_resource type="Script" uid="uid://b3nlbf6j4ox5h" path="res://assets/circuit_simulation/snap_point_manager.gd" id="37_fuf3a"]
-[ext_resource type="Script" uid="uid://disf3rjh5y2q0" path="res://scenes/physics.gd" id="35_c6pm6"]
-[ext_resource type="Script" uid="uid://bfn8ph17gxwbe" path="res://scenes/Sources.gd" id="35_pibwh"]
+[ext_resource type="Script" uid="uid://w8abv4v3777n" path="res://scenes/Sources.gd" id="35_pibwh"]
 [ext_resource type="PackedScene" uid="uid://ckuwfukp2o5hw" path="res://assets/physics/point charges/positive_charge.tscn" id="36_c6pm6"]
+[ext_resource type="Script" uid="uid://bpk3l3xwul8h0" path="res://assets/circuit_simulation/move_tool.gd" id="36_kmb1v"]
 [ext_resource type="PackedScene" uid="uid://btwolidrmttcl" path="res://assets/physics/point charges/negative_charge.tscn" id="37_5he1u"]
+[ext_resource type="Script" uid="uid://b3nlbf6j4ox5h" path="res://assets/circuit_simulation/snap_point_manager.gd" id="37_fuf3a"]
 [ext_resource type="PackedScene" uid="uid://bcpdhqeden63h" path="res://assets/physics/bar magnet/bar_magnet.tscn" id="38_5poiv"]
-[ext_resource type="Script" uid="uid://bgqpmujjmdqia" path="res://scenes/Fields.gd" id="40_5he1u"]
+[ext_resource type="Script" uid="uid://wnihmefhkwmc" path="res://scenes/Fields.gd" id="40_5he1u"]
 [ext_resource type="PackedScene" uid="uid://cgx10sjggebrl" path="res://assets/physics/arrows.tscn" id="41_5poiv"]
-[ext_resource type="Script" uid="uid://cpti4a60jh3q3" path="res://scenes/Particles.gd" id="42_2cjbq"]
+[ext_resource type="Script" uid="uid://ctbvhhchrh12y" path="res://scenes/Particles.gd" id="42_2cjbq"]
 [ext_resource type="PackedScene" uid="uid://ccpelyryvyx0n" path="res://assets/physics/particle.tscn" id="43_chjal"]
-[ext_resource type="Script" uid="uid://cbssnxvq5pa75" path="res://scenes/solar_system.gd" id="44_cjqg0"]
+[ext_resource type="Script" uid="uid://cs5m1ioipg3e3" path="res://scenes/solar_system.gd" id="44_cjqg0"]
 [ext_resource type="Script" uid="uid://m03o227wp2vd" path="res://scripts/main/fps_display.gd" id="45_fps_display"]
-[ext_resource type="PackedScene" path="res://assets/inventory_wheel/inventory_wheel.tscn" id="46_inventory"]
+[ext_resource type="PackedScene" uid="uid://c0rdcmpeixuol" path="res://assets/inventory_wheel/inventory_wheel.tscn" id="46_inventory"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -181,13 +181,13 @@ script = ExtResource("1_vxglm")
 
 [node name="LeftHandHumanoid2" parent="XROrigin3D/LeftTrackedHand" unique_id=1116108651 instance=ExtResource("2_2f3dj")]
 
-[node name="LeftHandHumanoidMesh" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 707818375) index="0" unique_id=736114709]
+[node name="LeftHandHumanoidMesh" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 2116186343) index="0" unique_id=1304659757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.02132e-05, -9.86457e-05, -0.000219271)
 surface_material_override/0 = ExtResource("19_5q0nq")
 
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 707818375) index="1" unique_id=1429586075]
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 2116186343) index="1" unique_id=1429586075]
 
-[node name="Wrist UI Visibility" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 707818375) index="2" unique_id=1108170099]
+[node name="Wrist UI Visibility" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 2116186343) index="2" unique_id=1108170099]
 transform = Transform3D(1.7881392e-07, -1.838803e-05, 0.99999994, -0.9999985, 0.0016677376, 1.7881392e-07, -0.0016676484, -0.99999833, -1.8358229e-05, 3.8642522e-08, -1.8697472e-05, 0.027175574)
 bone_name = "LeftHand"
 bone_idx = 0
@@ -207,7 +207,7 @@ maguire_cube_scene = ExtResource("8_dgi5k")
 transform = Transform3D(0.1, -1.4555157e-11, -3.5535052e-15, 1.4555157e-11, 0.1, -1.9677337e-12, 3.5535057e-15, 1.9677337e-12, 0.1, -0.005, 0.045, 0)
 shape = SubResource("BoxShape3D_5q0nq")
 
-[node name="Thumb" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 707818375) index="3" unique_id=677776925]
+[node name="Thumb" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 2116186343) index="3" unique_id=677776925]
 transform = Transform3D(-0.6511841, 0.19506983, 0.7334213, -0.5517817, 0.5418098, -0.634018, -0.52105254, -0.8175509, -0.24518181, 0.02811512, 0.08753302, -0.09421306)
 bone_name = "LeftThumbTip"
 bone_idx = 4
@@ -218,7 +218,7 @@ bone_idx = 4
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0)
 shape = SubResource("SphereShape3D_5q0nq")
 
-[node name="Index" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 707818375) index="4" unique_id=1571793442]
+[node name="Index" type="BoneAttachment3D" parent="XROrigin3D/LeftTrackedHand/LeftHandHumanoid2/LeftHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(1116108651, 2116186343) index="4" unique_id=1571793442]
 transform = Transform3D(0.01489234, 0.39270008, 0.919546, -0.9930924, 0.11285266, -0.03211129, -0.11638325, -0.91271573, 0.39166808, -0.01110013, 0.04294307, -0.17161417)
 bone_name = "LeftIndexTip"
 bone_idx = 9
@@ -243,13 +243,13 @@ script = ExtResource("17_chjal")
 
 [node name="RightHandHumanoid2" parent="XROrigin3D/RightTrackedHand" unique_id=203249440 instance=ExtResource("18_cjqg0")]
 
-[node name="RightHandHumanoidMesh" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 1446299913) index="0" unique_id=1285426156]
+[node name="RightHandHumanoidMesh" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 477559250) index="0" unique_id=1047422910]
 surface_material_override/0 = ExtResource("19_5q0nq")
 
-[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 1446299913) index="1" unique_id=986943058]
+[node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 477559250) index="1" unique_id=986943058]
 hand_tracker = &"/user/hand_tracker/right"
 
-[node name="BoneAttachment3D" type="BoneAttachment3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 1446299913) index="2" unique_id=1103613469]
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 477559250) index="2" unique_id=1103613469]
 transform = Transform3D(1.7881392e-07, 1.838803e-05, -0.99999994, 0.9999985, 0.0016677376, 1.7881392e-07, 0.0016676484, -0.99999833, -1.8358229e-05, -3.8642522e-08, -1.8697472e-05, 0.027175574)
 bone_name = "RightHand"
 bone_idx = 0
@@ -260,7 +260,7 @@ bone_idx = 0
 transform = Transform3D(0.1, -1.4555157e-11, -3.5535052e-15, 1.4555157e-11, 0.1, -1.9677337e-12, 3.5535057e-15, 1.9677337e-12, 0.1, -0.005, 0.045, 0)
 shape = SubResource("BoxShape3D_5q0nq")
 
-[node name="Thumb" type="BoneAttachment3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 1446299913) index="3" unique_id=1559582695]
+[node name="Thumb" type="BoneAttachment3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 477559250) index="3" unique_id=1559582695]
 transform = Transform3D(-0.6363154, -0.19506986, -0.7463579, 0.56441003, 0.54180986, -0.62280273, 0.525874, -0.8175509, -0.2346625, -0.02811512, 0.08753302, -0.09421306)
 bone_name = "RightThumbTip"
 bone_idx = 4
@@ -270,7 +270,7 @@ bone_idx = 4
 [node name="CollisionShape3D" type="CollisionShape3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D/Thumb/Area3D" unique_id=1193102173]
 shape = SubResource("SphereShape3D_dgi5k")
 
-[node name="Index" type="BoneAttachment3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 1446299913) index="4" unique_id=1761455307]
+[node name="Index" type="BoneAttachment3D" parent="XROrigin3D/RightTrackedHand/RightHandHumanoid2/RightHandHumanoid/Skeleton3D" parent_id_path=PackedInt32Array(203249440, 477559250) index="4" unique_id=1761455307]
 transform = Transform3D(0.01903836, -0.39268863, -0.9194744, 0.99322706, 0.11285307, -0.027631793, 0.11461615, -0.91272074, 0.39217746, 0.011100034, 0.04294298, -0.17161338)
 bone_name = "RightIndexTip"
 bone_idx = 9
@@ -337,6 +337,7 @@ scene_properties_keys = PackedStringArray("inventory_wheel.gd")
 
 [node name="VectorField" parent="." unique_id=457251798 groups=["fields"] instance=ExtResource("25_2f3dj")]
 transform = Transform3D(0.16, 0, 0, 0, 0.16, 0, 0, 0, 0.16, 0, 0.5, 0)
+mesh = null
 skeleton = NodePath("../Plot/XYPlot")
 x_min = -5
 x_max = 5
@@ -377,6 +378,7 @@ disabled = true
 [node name="XYPlot" parent="Plot" index="1" node_paths=PackedStringArray("field")]
 transform = Transform3D(0.20000273, 0, 0, 0, 0.20000009, 0, 0, 0, 0.20000273, 0, 0, 0.01999998)
 visible = false
+mesh = null
 create = false
 a = 1.0
 expression = "(x^2+y^2)/20"
@@ -396,12 +398,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 [node name="XYPlot" parent="." unique_id=1656272618 node_paths=PackedStringArray("field") instance=ExtResource("29_yq6so")]
 transform = Transform3D(0.38, 0, 0, 0, 0.38, 0, 0, 0, 0.38, 0, 0, 0)
 visible = false
+mesh = null
 a = 1.0
 x_min = -5
 x_max = 5
 z_min = -5
 z_max = 5
-hide_plot = true
 surface_material = SubResource("StandardMaterial3D_pibwh")
 surface_material_empty = SubResource("StandardMaterial3D_c6pm6")
 field = NodePath("../VectorField")
@@ -424,6 +426,7 @@ script = ExtResource("37_fuf3a")
 [node name="MoveTool" type="Node" parent="Circuits" unique_id=791165811 groups=["circuits/move_tool"]]
 script = ExtResource("36_kmb1v")
 grab_mask = 4
+
 [node name="Physics" type="Node" parent="." unique_id=104760835 groups=["physics"]]
 script = ExtResource("35_c6pm6")
 
