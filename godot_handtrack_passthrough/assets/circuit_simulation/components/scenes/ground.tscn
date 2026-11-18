@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://yexc327uuq3h"]
+
+[ext_resource type="Script" uid="uid://ccrw4mggtd6lx" path="res://assets/circuit_simulation/components/ground.gd" id="1_inlvk"]
+[ext_resource type="Script" uid="uid://dbw5ekqmuv6bu" path="res://assets/circuit_simulation/components/snap_point.gd" id="2_q173e"]
+[ext_resource type="PackedScene" uid="uid://bww2offa7d53c" path="res://assets/circuit_simulation/components/mesh/GROUND_V2.glb" id="3_55kgk"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_q173e"]
+size = Vector3(0.065, 0.05, 0.07)
+
+[node name="Ground" type="Node3D" unique_id=1382086026]
+script = ExtResource("1_inlvk")
+metadata/_custom_type_script = "uid://ccrw4mggtd6lx"
+
+[node name="SnapPoint" type="Node3D" parent="." unique_id=47747054]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.021127751, 0)
+script = ExtResource("2_q173e")
+metadata/_custom_type_script = "uid://dbw5ekqmuv6bu"
+
+[node name="GROUND_V2" parent="." unique_id=1498896053 instance=ExtResource("3_55kgk")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1225257183]
+collision_layer = 4
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1291178364]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
+shape = SubResource("BoxShape3D_q173e")

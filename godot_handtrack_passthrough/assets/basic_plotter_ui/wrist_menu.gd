@@ -80,6 +80,12 @@ extends MarginContainer
 @export var btn_pt_charge_tool : Button
 @export var btn_spawn_pt_charge :  Button
 
+# --- Must I also annotate my additions... Ryan's stuff ⚡ ---
+@export var circuits_panel : Panel
+@export var btn_circuits_to_physics : Button
+@export var btn_physics_to_circuits : Button
+
+
 # --- State ---
 var expr: String = ""
 var cursor_index: int = 0
@@ -156,6 +162,10 @@ func _ready() -> void:
 	#Jonathan 😊
 	_connect(btn_math_mode, _on_mode_switch)
 	_connect(btn_physics_mode, _on_mode_switch)
+
+	# Ryan ⚡
+	_connect(btn_circuits_to_physics, _on_circuits_to_physics)
+	_connect(btn_physics_to_circuits, _on_physics_to_circuits)
 	
 	# Sliders and toggle
 	if plot_scale:
@@ -277,6 +287,16 @@ func _on_mode_switch() -> void:
 		math_panel.visible = !visibility
 		physics_panel.visible = visibility
 	_update_display()
+
+func _on_physics_to_circuits() -> void:
+	if physics_panel and circuits_panel:
+		physics_panel.visible = false
+		circuits_panel.visible = true
+
+func _on_circuits_to_physics() -> void:
+	if physics_panel and circuits_panel:
+		circuits_panel.visible = false
+		physics_panel.visible = true
 	
 ## Gets the string of a function to display on menu
 ##
